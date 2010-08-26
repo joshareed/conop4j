@@ -30,11 +30,80 @@ public class RunInfo {
 		public String solution = "soln.dat";
 	}
 
+	/**
+	 * Parse the specified file.
+	 * 
+	 * @param file
+	 *            the file.
+	 * @return the parsed lines.
+	 */
+	public static List<List<String>> parse(final File file) {
+		List<List<String>> parsed = Lists.newArrayList();
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new FileReader(file));
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				List<String> foo = parseLine(line.trim());
+				if (foo.size() > 0) {
+					parsed.add(foo);
+				}
+			}
+		} catch (IOException e) {
+			// do nothing
+		} finally {
+			Closeables.closeQuietly(reader);
+		}
+		return parsed;
+	}
+
+	/**
+	 * Parse the specified line.
+	 * 
+	 * @param line
+	 *            the line.
+	 * @return the parsed line.
+	 */
+	protected static List<String> parseLine(final String line) {
+		List<String> list = new ArrayList<String>();
+		boolean inQuote = false;
+		StringBuilder buffer = new StringBuilder();
+		for (int i = 0; i < line.length(); i++) {
+			char c = line.charAt(i);
+			if ((c == '\'') || (c == '"')) {
+				if (inQuote) {
+					list.add(buffer.toString());
+					inQuote = false;
+				} else {
+					inQuote = true;
+				}
+				buffer = new StringBuilder();
+			} else if ((c == ' ') || (c == '\t')) {
+				if (inQuote) {
+					buffer.append(c);
+				} else if (!"".equals(buffer.toString())) {
+					list.add(buffer.toString());
+					buffer = new StringBuilder();
+				} else {
+					buffer = new StringBuilder();
+				}
+			} else {
+				buffer.append(c);
+			}
+		}
+		if (!"".equals(buffer.toString())) {
+			list.add(buffer.toString());
+		}
+		return list;
+	}
+
 	protected final Config config;
 	protected final File dir;
 	protected List<Map<String, String>> events;
 	protected final String name;
+
 	protected List<Map<String, String>> observations;
+
 	protected List<Map<String, String>> sections;
 
 	/**
@@ -358,58 +427,5 @@ public class RunInfo {
 		default:
 			return null;
 		}
-	}
-
-	protected List<List<String>> parse(final File file) {
-		List<List<String>> parsed = Lists.newArrayList();
-		BufferedReader reader = null;
-		try {
-			reader = new BufferedReader(new FileReader(file));
-			String line = null;
-			while ((line = reader.readLine()) != null) {
-				List<String> foo = parseLine(line.trim());
-				if (foo.size() > 0) {
-					parsed.add(foo);
-				}
-			}
-		} catch (IOException e) {
-			// do nothing
-		} finally {
-			Closeables.closeQuietly(reader);
-		}
-		return parsed;
-	}
-
-	protected List<String> parseLine(final String line) {
-		List<String> list = new ArrayList<String>();
-		boolean inQuote = false;
-		StringBuilder buffer = new StringBuilder();
-		for (int i = 0; i < line.length(); i++) {
-			char c = line.charAt(i);
-			if ((c == '\'') || (c == '"')) {
-				if (inQuote) {
-					list.add(buffer.toString());
-					inQuote = false;
-				} else {
-					inQuote = true;
-				}
-				buffer = new StringBuilder();
-			} else if ((c == ' ') || (c == '\t')) {
-				if (inQuote) {
-					buffer.append(c);
-				} else if (!"".equals(buffer.toString())) {
-					list.add(buffer.toString());
-					buffer = new StringBuilder();
-				} else {
-					buffer = new StringBuilder();
-				}
-			} else {
-				buffer.append(c);
-			}
-		}
-		if (!"".equals(buffer.toString())) {
-			list.add(buffer.toString());
-		}
-		return list;
 	}
 }
