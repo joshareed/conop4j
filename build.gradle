@@ -1,0 +1,25 @@
+apply plugin: 'groovy'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.5
+targetCompatibility = 1.5
+version = '0.1-SNAPSHOT'
+group = 'org.andrill.conop'
+
+manifest.mainAttributes(
+	'Implementation-Title': 'CONOP Tool',
+	'Implementation-Version': version
+)
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	groovy 'org.codehaus.groovy:groovy-all:1.7.0'
+	compile 'com.google.guava:guava:r06'
+	compile 'org.apache.poi:poi:3.6'
+	compile 'org.apache.poi:poi-ooxml:3.6'
+	testCompile 'junit:junit:4.4'
+}
+
