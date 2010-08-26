@@ -16,6 +16,9 @@ import com.google.common.io.Closeables;
  */
 public class SummarySpreadsheet {
 
+	/**
+	 * Generates one or more summary sheets for the specified run.
+	 */
 	public interface Summary {
 		void generate(Workbook workbook, RunInfo run);
 	}
@@ -27,10 +30,24 @@ public class SummarySpreadsheet {
 
 	protected final Summary[] summaries;
 
+	/**
+	 * Create a new summary spreadsheet with the specified summary sheets.
+	 * 
+	 * @param summaries
+	 *            the summaries.
+	 */
 	public SummarySpreadsheet(final Summary... summaries) {
 		this.summaries = summaries;
 	}
 
+	/**
+	 * Write the summary spreadsheet for the specified runs.
+	 * 
+	 * @param out
+	 *            the file.
+	 * @param runs
+	 *            the runs.
+	 */
 	public void write(final File out, final RunInfo... runs) {
 		Workbook workbook = new HSSFWorkbook();
 		for (RunInfo run : runs) {

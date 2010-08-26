@@ -13,6 +13,12 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
+/**
+ * Generates a placements summary sheet with event placements and interpolated
+ * ages.
+ * 
+ * @author Josh Reed (jareed@andrill.org)
+ */
 public class Placements implements Summary {
 
 	protected int after(final List<Map<String, String>> events, final int position) {
