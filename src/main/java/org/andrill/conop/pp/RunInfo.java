@@ -44,9 +44,9 @@ public class RunInfo {
 			reader = new BufferedReader(new FileReader(file));
 			String line = null;
 			while ((line = reader.readLine()) != null) {
-				List<String> foo = parseLine(line.trim());
-				if (foo.size() > 0) {
-					parsed.add(foo);
+				List<String> row = parseLine(line.trim());
+				if (row.size() > 0) {
+					parsed.add(row);
 				}
 			}
 		} catch (IOException e) {
