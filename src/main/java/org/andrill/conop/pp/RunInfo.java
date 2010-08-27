@@ -23,11 +23,19 @@ public class RunInfo {
 	public static class Config {
 		public String eventDictionary = "event.dic";
 		public String events = "events.evt";
+		public String extant = "extant.dic";
 		public String observations = "loadfile.dat";
 		public String output = "outevnt.txt";
 		public String placements = "plcd.dat";
 		public String sections = "sections.sct";
 		public String solution = "soln.dat";
+	}
+
+	public static void main(final String[] args) {
+		RunInfo run = new RunInfo(new File("test"));
+		for (List<String> row : RunInfo.parse(new File("test/extant.csv"))) {
+			System.out.println(run.findEvent("name", row.get(0)));
+		}
 	}
 
 	/**
@@ -101,9 +109,7 @@ public class RunInfo {
 	protected final File dir;
 	protected List<Map<String, String>> events;
 	protected final String name;
-
 	protected List<Map<String, String>> observations;
-
 	protected List<Map<String, String>> sections;
 
 	/**
@@ -148,6 +154,7 @@ public class RunInfo {
 		loadFortranNumbers();
 		loadSolution();
 		loadPlacements();
+		loadExtants();
 	}
 
 	protected List<Map<String, String>> filter(final List<Map<String, String>> list, final String key,
@@ -268,6 +275,15 @@ public class RunInfo {
 	}
 
 	/**
+	 * Gets the name of this run.
+	 * 
+	 * @return the name.
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
 	 * Gets all observations.
 	 * 
 	 * @return the list of observations.
@@ -309,6 +325,24 @@ public class RunInfo {
 					if (Double.parseDouble(row.get(5)) > 0) {
 						map.put("agemax", row.get(5));
 					}
+				}
+			}
+		}
+	}
+
+	protected void loadExtants() {
+		File extants = new File(dir, config.extant);
+		if (!extants.exists()) {
+			return;
+		}
+
+		for (List<String> row : parse(extants)) {
+			boolean extant = "1".equals(row.get(2));
+			if (extant) {
+				Map<String, String> event = find(events, "code", row.get(0), "typename", "LAD");
+				if (event != null) {
+					event.put("agemin", "0");
+					event.put("agemax", "0");
 				}
 			}
 		}
