@@ -41,7 +41,7 @@ public class Placements implements Summary {
 
 	@Override
 	public void generate(final Workbook workbook, final RunInfo run) {
-		Sheet sheet = workbook.createSheet();
+		Sheet sheet = workbook.createSheet(run.getName());
 
 		// sort our sections
 		List<Map<String, String>> sections = run.getSections();
@@ -76,7 +76,8 @@ public class Placements implements Summary {
 		header.createCell(3).setCellValue("Min Age");
 		header.createCell(4).setCellValue("Max Age");
 		for (int i = 0; i < sections.size(); i++) {
-			header.createCell(i + 5).setCellValue(sections.get(i).get("name"));
+			header.createCell(2 * i + 5).setCellValue(sections.get(i).get("name") + " (O)");
+			header.createCell(2 * i + 6).setCellValue(sections.get(i).get("name") + " (P)");
 		}
 		for (Cell cell : header) {
 			cell.setCellStyle(style);
@@ -98,7 +99,7 @@ public class Placements implements Summary {
 				if (after == -1) {
 					after = events.size();
 				}
-				row.createCell(3).setCellValue(a1 + ((a2 - a1) / (after - before)));
+				row.createCell(3).setCellValue(a1 + ((a2 - a1) / (after - before)) * (i - before));
 			}
 			if (event.containsKey("agemax")) {
 				row.createCell(4).setCellValue(Double.parseDouble(event.get("agemax")));
@@ -110,10 +111,16 @@ public class Placements implements Summary {
 				if (after == -1) {
 					after = events.size();
 				}
-				row.createCell(4).setCellValue(a1 + ((a2 - a1) / (after - before)));
+				row.createCell(4).setCellValue(a1 + ((a2 - a1) / (after - before)) * (i - before));
 			}
-			for (int j = 1; j <= sections.size(); j++) {
-				row.createCell(j + 4).setCellValue(Double.parseDouble(event.get("placed." + j)));
+			for (int j = 0; j < sections.size(); j++) {
+				for (Map<String, String> o : run.getObservations()) {
+					if (event.get("id").equals(o.get("event.id")) && event.get("type").equals(o.get("event.type"))
+							&& o.get("section.id").equals("" + (j + 1))) {
+						row.createCell(2 * j + 5).setCellValue(Double.parseDouble(o.get("level")));
+					}
+				}
+				row.createCell(2 * j + 6).setCellValue(Double.parseDouble(event.get("placed." + (j + 1))));
 			}
 		}
 	}
