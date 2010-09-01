@@ -31,13 +31,6 @@ public class RunInfo {
 		public String solution = "soln.dat";
 	}
 
-	public static void main(final String[] args) {
-		RunInfo run = new RunInfo(new File("test"));
-		for (List<String> row : RunInfo.parse(new File("test/extant.csv"))) {
-			System.out.println(run.findEvent("name", row.get(0)));
-		}
-	}
-
 	/**
 	 * Parse the specified file.
 	 * 
