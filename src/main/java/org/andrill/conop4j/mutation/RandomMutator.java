@@ -1,0 +1,35 @@
+package org.andrill.conop4j.mutation;
+
+import java.util.List;
+import java.util.Random;
+
+import org.andrill.conop4j.Event;
+import org.andrill.conop4j.Solution;
+
+import com.google.common.collect.Lists;
+
+/**
+ * Randomly moves an event with no consideration to constraints.
+ * 
+ * @author Josh Reed (jareed@andrill.org)
+ */
+public class RandomMutator implements MutationStrategy {
+	protected Random random = new Random();
+
+	@Override
+	public Solution mutate(final Solution solution) {
+		List<Event> events = Lists.newArrayList(solution.getEvents());
+
+		// pick a random event and move it to a new position randomly
+		int cur = random.nextInt(events.size());
+		int pos = random.nextInt(events.size());
+		while (pos == cur) {
+			pos = random.nextInt(events.size());
+		}
+
+		// build a new solution
+		Event e = events.remove(cur);
+		events.add(pos, e);
+		return new Solution(solution.getRun(), events);
+	}
+}
