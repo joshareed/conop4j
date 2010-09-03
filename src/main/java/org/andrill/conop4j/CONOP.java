@@ -4,13 +4,17 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.andrill.conop4j.constraints.ConstraintChecker;
 import org.andrill.conop4j.mutation.MutationStrategy;
 import org.andrill.conop4j.schedule.CoolingSchedule;
 import org.andrill.conop4j.scoring.ScoringFunction;
 import org.andrill.conop4j.scoring.ScoringFunction.Type;
+
+import com.google.common.util.concurrent.MoreExecutors;
 
 /**
  * A Java implementation of simulated annealing.
@@ -27,31 +31,34 @@ public class CONOP {
 		/**
 		 * Called when a solution is tried.
 		 * 
+		 * @param temp
+		 *            the temperature.
 		 * @param current
 		 *            the current solution.
 		 * @param best
 		 *            the current best solution.
-		 * @param temp
-		 *            the temperature.
 		 */
-		void tried(Solution current, Solution best);
+		void tried(double temp, Solution current, Solution best);
 	}
 
-	private class NotifyListenersTask implements Runnable {
+	private static class NotifyListenersTask implements Runnable {
 		private final Solution best;
 		private final Solution current;
 		private final Set<Listener> listeners;
+		private final double temp;
 
-		private NotifyListenersTask(final Set<Listener> listeners, final Solution current, final Solution best) {
+		private NotifyListenersTask(final Set<Listener> listeners, final double temp, final Solution current,
+				final Solution best) {
 			this.listeners = listeners;
 			this.current = current;
 			this.best = best;
+			this.temp = temp;
 		}
 
 		@Override
 		public void run() {
 			for (Listener l : listeners) {
-				l.tried(current, best);
+				l.tried(temp, current, best);
 			}
 		}
 	}
@@ -84,7 +91,8 @@ public class CONOP {
 		this.schedule = schedule;
 		random = new Random();
 		listeners = new CopyOnWriteArraySet<Listener>();
-		executor = Executors.newSingleThreadExecutor();
+		executor = MoreExecutors.getExitingExecutorService(new ThreadPoolExecutor(0, 1, 10, TimeUnit.SECONDS,
+				new LinkedBlockingQueue<Runnable>()), 1, TimeUnit.SECONDS);
 	}
 
 	/**
@@ -162,7 +170,7 @@ public class CONOP {
 
 			// notify listeners asynchronously
 			if (listeners.size() > 0) {
-				executor.submit(new NotifyListenersTask(listeners, current, best));
+				executor.submit(new NotifyListenersTask(listeners, temp, current, best));
 			}
 
 			// get our next temperature
