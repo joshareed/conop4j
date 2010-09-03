@@ -67,4 +67,9 @@ public class Observation {
 	public double getWeightUp() {
 		return weightUp;
 	}
+
+	@Override
+	public String toString() {
+		return "Observation[event=" + event + ", level=" + level + ", weights=(" + weightUp + "," + weightDown + ")]";
+	}
 }
