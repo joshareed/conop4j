@@ -10,6 +10,7 @@ import org.andrill.conop4j.constraints.ConstraintChecker;
 import org.andrill.conop4j.mutation.MutationStrategy;
 import org.andrill.conop4j.schedule.CoolingSchedule;
 import org.andrill.conop4j.scoring.ScoringFunction;
+import org.andrill.conop4j.scoring.ScoringFunction.Type;
 
 /**
  * A Java implementation of simulated annealing.
@@ -133,15 +134,30 @@ public class CONOP {
 
 			// score this solution
 			next.setScore(scoring.score(next));
-			if (next.getScore() < best.getScore()) {
-				best = current;
-			}
+			if (scoring.getType() == Type.PENALTY) {
+				// save as best if the penalty is less
+				if (next.getScore() < best.getScore()) {
+					best = next;
+				}
 
-			// accept the new solution if it is better than the current or
-			// randomly based on score and temperature
-			if ((next.getScore() < current.getScore())
-					|| (Math.exp(-Math.abs(next.getScore() - current.getScore()) / temp) > random.nextDouble())) {
-				current = next;
+				// accept the new solution if it is better than the current or
+				// randomly based on score and temperature
+				if ((next.getScore() < current.getScore())
+						|| (Math.exp(-Math.abs(next.getScore() - current.getScore()) / temp) > random.nextDouble())) {
+					current = next;
+				}
+			} else {
+				// save as best if the score is less
+				if (next.getScore() > best.getScore()) {
+					best = next;
+				}
+
+				// accept the new solution if it is better than the current or
+				// randomly based on score and temperature
+				if ((next.getScore() > current.getScore())
+						|| (Math.exp(-Math.abs(next.getScore() - current.getScore()) / temp) > random.nextDouble())) {
+					current = next;
+				}
 			}
 
 			// notify listeners asynchronously
