@@ -34,7 +34,7 @@ public class ExponentialCooling implements CoolingSchedule {
 	@Override
 	public double next(final Solution solution) {
 		current = current / (1 + current * factor);
-		if (current < 0.001) {
+		if (current < 0.01) {
 			current = 0;
 		}
 		return current;
