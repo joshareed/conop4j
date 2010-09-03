@@ -16,12 +16,10 @@ public class EventChecker implements ConstraintChecker {
 			int position = solution.getPosition(e);
 			Event before = e.getBeforeConstraint();
 			if ((before != null) && (position > solution.getPosition(before))) {
-				System.err.println(e.getName() + " should be before " + before.getName());
 				return false;
 			}
 			Event after = e.getAfterConstraint();
 			if ((after != null) && (position < solution.getPosition(after))) {
-				System.err.println(e.getName() + " should be after " + after.getName());
 				return false;
 			}
 		}
