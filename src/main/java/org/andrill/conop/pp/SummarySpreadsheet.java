@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.andrill.conop.RunInfo;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
 
@@ -20,12 +21,7 @@ public class SummarySpreadsheet {
 	 * Generates one or more summary sheets for the specified run.
 	 */
 	public interface Summary {
-		void generate(Workbook workbook, RunInfo run);
-	}
-
-	public static void main(final String[] args) {
-		SummarySpreadsheet summary = new SummarySpreadsheet(new Placements());
-		summary.write(new File("out.xls"), new RunInfo(new File("test")));
+		void generate(Workbook workbook, RunInfo... run);
 	}
 
 	protected final Summary[] summaries;
@@ -49,13 +45,13 @@ public class SummarySpreadsheet {
 	 *            the runs.
 	 */
 	public void write(final File out, final RunInfo... runs) {
+		// build our summary workbook
 		Workbook workbook = new HSSFWorkbook();
-		for (RunInfo run : runs) {
-			for (Summary summary : summaries) {
-				summary.generate(workbook, run);
-			}
+		for (Summary summary : summaries) {
+			summary.generate(workbook, runs);
 		}
 
+		// write out our workbook
 		FileOutputStream fos = null;
 		try {
 			fos = new FileOutputStream(out);

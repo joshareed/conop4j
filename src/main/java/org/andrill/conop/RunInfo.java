@@ -1,4 +1,4 @@
-package org.andrill.conop.pp;
+package org.andrill.conop;
 
 import java.io.BufferedReader;
 import java.io.File;
