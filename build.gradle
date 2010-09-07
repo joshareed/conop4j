@@ -1,5 +1,5 @@
-apply plugin: 'groovy'
 apply plugin: 'eclipse'
+apply plugin: 'java'
 
 sourceCompatibility = 1.5
 targetCompatibility = 1.5
@@ -7,7 +7,7 @@ version = '0.1-SNAPSHOT'
 group = 'org.andrill.conop'
 
 manifest.mainAttributes(
-	'Implementation-Title': 'CONOP Tool',
+	'Implementation-Title': 'CONOP Post Processor',
 	'Implementation-Version': version
 )
 
@@ -16,10 +16,27 @@ repositories {
 }
 
 dependencies {
-	groovy 'org.codehaus.groovy:groovy-all:1.7.0'
 	compile 'com.google.guava:guava:r06'
 	compile 'org.apache.poi:poi:3.6'
 	compile 'org.apache.poi:poi-ooxml:3.6'
+	compile 'net.sf.jopt-simple:jopt-simple:3.2'
+	compile 'com.miglayout:miglayout:3.7.3.1'
 	testCompile 'junit:junit:4.4'
+}
+
+jar {
+    from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+}
+
+jar.doFirst {
+	new File("build/classes/main/org/andrill/conop/pp/version").write(version)
+}
+
+task release(dependsOn: configurations.default.buildArtifacts, type: Copy) {
+    into "$buildDir/release"
+    from configurations.default.allArtifactFiles
+}
+release.doLast {
+	new File("build/release/version").write(version)
 }
 
