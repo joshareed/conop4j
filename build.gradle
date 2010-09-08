@@ -8,7 +8,8 @@ group = 'org.andrill.conop'
 
 manifest.mainAttributes(
 	'Implementation-Title': 'CONOP Post Processor',
-	'Implementation-Version': version
+	'Implementation-Version': version,
+	'Main-Class': 'org.andrill.conop.pp.PostProcess'
 )
 
 repositories {
@@ -24,19 +25,21 @@ dependencies {
 	testCompile 'junit:junit:4.4'
 }
 
-jar {
-    from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+task release(dependsOn: configurations.default.buildArtifacts) << {
+	def dest = file("$buildDir/fatjar")
+	dest.mkdirs()
+	
+	// expand all our dependencies
+	configurations.compile.each { jar ->
+		ant.unzip(src: jar, dest: dest, overwrite: true)
+	}
+	
+	// expand our code
+	configurations.default.allArtifactFiles.each { jar ->
+		ant.unzip(src: jar, dest: dest, overwrite: true)
+	}
+	
+	// create our fatjar
+	mkdir("$buildDir/release")
+	ant.zip(destfile: "$buildDir/release/${project.name}-${version}.jar", basedir: dest)
 }
-
-jar.doFirst {
-	new File("build/classes/main/org/andrill/conop/pp/version").write(version)
-}
-
-task release(dependsOn: configurations.default.buildArtifacts, type: Copy) {
-    into "$buildDir/release"
-    from configurations.default.allArtifactFiles
-}
-release.doLast {
-	new File("build/release/version").write(version)
-}
-
