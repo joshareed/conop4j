@@ -1,22 +1,17 @@
 package org.andrill.conop4j.scoring;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
+import java.util.Map;
 
 import org.andrill.conop4j.Event;
+import org.andrill.conop4j.Observation;
 import org.andrill.conop4j.Run;
 import org.andrill.conop4j.Section;
 import org.andrill.conop4j.Solution;
-import org.andrill.conop4j.constraints.ConstraintChecker;
-import org.andrill.conop4j.constraints.EventChecker;
-import org.andrill.conop4j.mutation.ConstrainedMutator;
-import org.andrill.conop4j.mutation.MutationStrategy;
 
-import com.google.common.collect.Lists;
-import com.google.common.io.Closeables;
+import com.google.common.collect.Maps;
 
 /**
  * A test scoring function.
@@ -25,50 +20,55 @@ import com.google.common.io.Closeables;
  */
 public class ExperimentalPenalty implements ScoringFunction {
 
-	public static void main(final String[] args) {
-		// load the run
-		Run run = Run.loadCONOP9Run(new File("/Users/jareed/Desktop/riley"));
+	/**
+	 * Write the event placements using this penalty function.
+	 * 
+	 * @param solution
+	 *            the solution.
+	 * @param file
+	 *            the file.
+	 * @throws IOException
+	 *             thrown if there is a problem writing the solution.
+	 */
+	public static void write(final Solution solution, final File file) throws IOException {
+		Run run = solution.getRun();
+		Map<Section, ExperimentalPlacement> placements = Maps.newHashMap();
+		FileWriter writer = new FileWriter(file);
+		writer.write("Event\tRank");
+		for (Section s : run.getSections()) {
+			writer.write("\t" + s.getName() + " (O)\t" + s.getName() + " (P)");
+			placements.put(s, new ExperimentalPlacement(s));
+		}
+		writer.write("\n");
 
-		// load the solution
-		List<Event> events = Lists.newArrayList();
-		BufferedReader reader = null;
-		String line = null;
-		try {
-			reader = new BufferedReader(new FileReader("/Users/jareed/Desktop/riley.csv"));
-			while ((line = reader.readLine()) != null) {
-				for (Event e : run.getEvents()) {
-					if (line.equals(e.getName())) {
-						events.add(0, e);
-					}
+		// build our placements
+		for (Event e : solution.getEvents()) {
+			for (Section s : run.getSections()) {
+				placements.get(s).place(e);
+			}
+		}
+
+		int total = solution.getEvents().size();
+		for (int i = 0; i < total; i++) {
+			Event e = solution.getEvent(i);
+			writer.write("'" + e + "'\t" + (total - i));
+			for (Section s : run.getSections()) {
+				writer.write("\t");
+				Observation o = s.getObservation(e);
+				if (o != null) {
+					writer.write("" + o.getLevel());
 				}
+				writer.write("\t" + placements.get(s).getPlacement(e));
 			}
-		} catch (IOException ioe) {
-			// ignore
-		} finally {
-			Closeables.closeQuietly(reader);
+			writer.write("\n");
 		}
 
-		ScoringFunction scorer = new ExperimentalPenalty();
-		MutationStrategy mutator = new ConstrainedMutator();
-		ConstraintChecker constraints = new EventChecker();
-
-		// calculate our best solution
-		Solution best = new Solution(run, events);
-		best.setScore(scorer.score(best));
-		System.out.println("Best: " + best.getScore());
-
-		for (int i = 0; i < 100000; i++) {
-			Solution next = mutator.mutate(best);
-			while (!constraints.isValid(next)) {
-				next = mutator.mutate(best);
-			}
-			next.setScore(scorer.score(next));
-			if (next.getScore() < best.getScore()) {
-				best = next;
-			}
+		writer.write("\tTotal");
+		for (Section s : run.getSections()) {
+			writer.write("\t\t" + placements.get(s).getPenalty());
 		}
-
-		System.out.println("Best: " + best.getScore());
+		writer.write("\n");
+		writer.close();
 	}
 
 	@Override
