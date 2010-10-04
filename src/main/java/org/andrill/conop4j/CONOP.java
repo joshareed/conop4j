@@ -66,28 +66,28 @@ public class CONOP {
 	protected final ConstraintChecker constraints;
 	protected final ExecutorService executor;
 	protected final Set<Listener> listeners;
-	protected final MutationStrategy mutation;
+	protected final MutationStrategy mutator;
 	protected final Random random;
 	protected final CoolingSchedule schedule;
-	protected final ScoringFunction scoring;
+	protected final ScoringFunction scorer;
 
 	/**
 	 * Create a new simulated annealing solver.
 	 * 
 	 * @param constraints
 	 *            the constraints.
-	 * @param mutation
+	 * @param mutator
 	 *            the mutation strategy.
-	 * @param scoring
+	 * @param scorer
 	 *            the scoring function.
 	 * @param schedule
 	 *            the cooling schedule.
 	 */
-	public CONOP(final ConstraintChecker constraints, final MutationStrategy mutation, final ScoringFunction scoring,
+	public CONOP(final ConstraintChecker constraints, final MutationStrategy mutator, final ScoringFunction scorer,
 			final CoolingSchedule schedule) {
 		this.constraints = constraints;
-		this.mutation = mutation;
-		this.scoring = scoring;
+		this.mutator = mutator;
+		this.scorer = scorer;
 		this.schedule = schedule;
 		random = new Random();
 		listeners = new CopyOnWriteArraySet<Listener>();
@@ -130,52 +130,68 @@ public class CONOP {
 
 		// get our initial temperature and score
 		double temp = schedule.getInitial();
-		initial.setScore(scoring.score(initial));
+		initial.setScore(scorer.score(initial));
 
-		// anneal
-		while (temp > 0) {
-			// get a new solution that satisfies the constraints
-			Solution next = mutation.mutate(current);
-			while (!constraints.isValid(next)) {
-				next = mutation.mutate(current);
+		try {
+			// anneal
+			while (temp > 0) {
+				// get a new solution that satisfies the constraints
+				Solution next = mutator.mutate(current);
+				while (!constraints.isValid(next)) {
+					next = mutator.mutate(current);
+				}
+
+				// score this solution
+				next.setScore(scorer.score(next));
+				if (scorer.getType() == Type.PENALTY) {
+					// save as best if the penalty is less
+					if (next.getScore() < best.getScore()) {
+						best = next;
+					}
+
+					// accept the new solution if it is better than the current
+					// or randomly based on score and temperature
+					if ((next.getScore() < current.getScore())
+							|| (Math.exp(-Math.abs(next.getScore() - current.getScore()) / temp) > random.nextDouble())) {
+						current = next;
+					}
+				} else {
+					// save as best if the score is more
+					if (next.getScore() > best.getScore()) {
+						best = next;
+					}
+
+					// accept the new solution if it is better than the current
+					// or randomly based on score and temperature
+					if ((next.getScore() > current.getScore())
+							|| (Math.exp(-Math.abs(next.getScore() - current.getScore()) / temp) > random.nextDouble())) {
+						current = next;
+					}
+				}
+
+				// notify listeners asynchronously
+				if (listeners.size() > 0) {
+					executor.submit(new NotifyListenersTask(listeners, temp, current, best));
+				}
+
+				// get our next temperature
+				if (best.getScore() == 0) {
+					throw new RuntimeException("Score reached 0");
+				}
+				temp = schedule.next(current);
 			}
-
-			// score this solution
-			next.setScore(scoring.score(next));
-			if (scoring.getType() == Type.PENALTY) {
-				// save as best if the penalty is less
-				if (next.getScore() < best.getScore()) {
-					best = next;
-				}
-
-				// accept the new solution if it is better than the current or
-				// randomly based on score and temperature
-				if ((next.getScore() < current.getScore())
-						|| (Math.exp(-Math.abs(next.getScore() - current.getScore()) / temp) > random.nextDouble())) {
-					current = next;
-				}
-			} else {
-				// save as best if the score is less
-				if (next.getScore() > best.getScore()) {
-					best = next;
-				}
-
-				// accept the new solution if it is better than the current or
-				// randomly based on score and temperature
-				if ((next.getScore() > current.getScore())
-						|| (Math.exp(-Math.abs(next.getScore() - current.getScore()) / temp) > random.nextDouble())) {
-					current = next;
-				}
-			}
-
-			// notify listeners asynchronously
-			if (listeners.size() > 0) {
-				executor.submit(new NotifyListenersTask(listeners, temp, current, best));
-			}
-
-			// get our next temperature
-			temp = schedule.next(current);
+		} catch (Exception e) {
+			System.out.println("Run halted due to: " + e.getMessage());
 		}
+
+		// shut down executor and wait up to 30 seconds for listeners to finish
+		try {
+			executor.shutdown();
+			executor.awaitTermination(30, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			// do nothing
+		}
+
 		return best;
 	}
 }
