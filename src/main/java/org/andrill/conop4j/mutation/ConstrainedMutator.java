@@ -22,8 +22,8 @@ public class ConstrainedMutator implements MutationStrategy {
 
 		// pick a random event and calculate the valid position range
 		Event e = events.remove(random.nextInt(events.size()));
-		int min = e.getAfterConstraint() == null ? 0 : solution.getPosition(e.getAfterConstraint()) + 1;
-		int max = e.getBeforeConstraint() == null ? events.size() : solution.getPosition(e.getBeforeConstraint()) + 1;
+		int min = e.getAfterConstraint() == null ? 0 : solution.getPosition(e.getAfterConstraint());
+		int max = e.getBeforeConstraint() == null ? events.size() : solution.getPosition(e.getBeforeConstraint());
 
 		// add in the event at a random valid position
 		events.add(min + random.nextInt(max - min), e);
