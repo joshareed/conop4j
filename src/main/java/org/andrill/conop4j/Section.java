@@ -79,6 +79,10 @@ public class Section {
 		return levels.keySet();
 	}
 
+	public String getName() {
+		return name;
+	}
+
 	/**
 	 * Gets the observation for the specified event.
 	 * 
