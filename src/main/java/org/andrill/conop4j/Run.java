@@ -11,10 +11,20 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import org.andrill.conop4j.constraints.ConstraintChecker;
+import org.andrill.conop4j.constraints.EventChecker;
+import org.andrill.conop4j.mutation.ConstrainedMutator;
+import org.andrill.conop4j.mutation.MutationStrategy;
+import org.andrill.conop4j.schedule.AdaptiveCooling;
+import org.andrill.conop4j.scoring.ExperimentalPenalty;
+import org.andrill.conop4j.scoring.ScoringFunction;
+
+import com.google.common.base.Function;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Lists;
+import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.io.Closeables;
@@ -88,6 +98,17 @@ public class Run {
 				// TODO handle other event types
 				events.put(key, event);
 			}
+
+			// adjust weights
+			if ("1".equals(type)) {
+				weightUp = 1000000;
+			} else if ("2".equals(type)) {
+				weightDn = 1000000;
+			} else if ("4".equals(type) || "5".equals(type)) {
+				weightUp = 1000000;
+				weightDn = 1000000;
+			}
+
 			// check for uniqueness
 			boolean unique = true;
 			for (Observation o : observations.get(section)) {
@@ -112,9 +133,9 @@ public class Run {
 		return new Run(sections);
 	}
 
-	public static void main(final String[] args) {
-		Run run = Run.loadCONOP9Run(new File("../pplib/test"));
-		List<Event> events = Lists.newArrayList(run.getEvents());
+	public static void main(final String[] args) throws Exception {
+		final Run run = Run.loadCONOP9Run(new File(args[0]));
+		final List<Event> events = Lists.newArrayList(run.getEvents());
 		Collections.sort(events, new Comparator<Event>() {
 			@Override
 			public int compare(final Event o1, final Event o2) {
@@ -123,14 +144,23 @@ public class Run {
 
 			public Integer toInt(final Event e) {
 				if ((e.before != null) && (e.after == null)) {
-					return new Integer(-1);
+					return Integer.valueOf(-1);
 				} else if ((e.after != null) && (e.before == null)) {
-					return new Integer(1);
+					return Integer.valueOf(1);
 				} else {
-					return new Integer(0);
+					return Integer.valueOf(0);
 				}
 			}
 		});
+
+		// create a new CONOP run
+		final ConstraintChecker constraints = new EventChecker();
+		final MutationStrategy mutation = new ConstrainedMutator();
+		final ScoringFunction scoring = new ExperimentalPenalty();
+
+		CONOP conop = new CONOP(constraints, mutation, scoring, new AdaptiveCooling(1000, 0.0001, 100, 1000000));
+		conop.addListener(new LoggingListener(new File("run.log")));
+		conop.solve(run, new Solution(run, events));
 	}
 
 	/**
@@ -204,6 +234,7 @@ public class Run {
 	}
 
 	protected final ImmutableSet<Event> events;
+	protected final Map<Section, CoexistenceMatrix> matrices;
 	protected final ImmutableSet<Section> sections;
 
 	/**
@@ -221,6 +252,24 @@ public class Run {
 			b.addAll(s.getEvents());
 		}
 		events = b.build();
+
+		matrices = new MapMaker().makeComputingMap(new Function<Section, CoexistenceMatrix>() {
+			@Override
+			public CoexistenceMatrix apply(final Section from) {
+				return new CoexistenceMatrix(from, events.asList());
+			}
+		});
+	}
+
+	/**
+	 * Gets the coexistence matrix for the specified section.
+	 * 
+	 * @param s
+	 *            the section.
+	 * @return the coexistence matrix.
+	 */
+	public CoexistenceMatrix getCoexistenceMatrix(final Section s) {
+		return matrices.get(s);
 	}
 
 	/**
