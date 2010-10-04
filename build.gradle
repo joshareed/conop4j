@@ -8,7 +8,8 @@ group = 'org.andrill.conop'
 
 manifest.mainAttributes(
 	'Implementation-Title': 'CONOP4J',
-	'Implementation-Version': version
+	'Implementation-Version': version,
+	'Main-Class': 'org.andrill.conop4j.Run'
 )
 
 repositories {
@@ -19,4 +20,24 @@ dependencies {
 	compile 'com.google.guava:guava:r06'
 	testCompile 'junit:junit:4.4'
 }
+
+task release(dependsOn: configurations.default.buildArtifacts) << {
+	def dest = file("$buildDir/fatjar")
+	dest.mkdirs()
+	
+	// expand all our dependencies
+	configurations.compile.each { jar ->
+		ant.unzip(src: jar, dest: dest, overwrite: true)
+	}
+	
+	// expand our code
+	configurations.default.allArtifactFiles.each { jar ->
+		ant.unzip(src: jar, dest: dest, overwrite: true)
+	}
+	
+	// create our fatjar
+	mkdir("$buildDir/release")
+	ant.zip(destfile: "$buildDir/release/${project.name}-${version}.jar", basedir: dest)
+}
+
 
