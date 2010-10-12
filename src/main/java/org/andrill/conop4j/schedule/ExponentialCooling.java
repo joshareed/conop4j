@@ -8,44 +8,49 @@ import org.andrill.conop4j.Solution;
  * @author Josh Reed (jareed@andrill.org)
  */
 public class ExponentialCooling implements CoolingSchedule {
-	protected double current = 0;
-	protected double factor = 0.001;
-	protected double initial = 0;
-	protected long stepsLeft = 1;
-	protected long stepsPer = 1;
+	protected long count;
+	protected double current;
+	protected final double factor;
+	protected final double initial;
+	protected final long minStepsPer;
+	protected final long noProgress;
+	protected double score = -1;
+	protected long stop = 0;
 
 	/**
-	 * Create a new exponential cooling schedule.
+	 * Create a new AdaptiveCooling.
 	 * 
 	 * @param initial
-	 *            the initial temperature.
+	 *            the initial temp.
 	 * @param factor
-	 *            the cooling factor (< 0.01)
+	 *            the factor.
+	 * @param minStepsPer
+	 *            the minimum number of steps before changing.
 	 */
-	public ExponentialCooling(final double initial, final double factor) {
-		this.initial = initial;
-		this.factor = factor;
-		current = initial;
-		stepsPer = 1;
-		stepsLeft = stepsPer;
+	public ExponentialCooling(final double initial, final double factor, final long minStepsPer) {
+		this(initial, factor, minStepsPer, Long.MAX_VALUE);
 	}
 
 	/**
-	 * Create a new exponential cooling schedule.
+	 * Create a new AdaptiveCooling.
 	 * 
 	 * @param initial
-	 *            the initial temperature.
+	 *            the initial temp.
 	 * @param factor
-	 *            the cooling factor (< 0.01)
-	 * @param stepsPer
-	 *            the steps per temperature.
+	 *            the factor.
+	 * @param minStepsPer
+	 *            the minimum number of steps before changing.
+	 * @param noProgress
+	 *            the maximum number of steps at the same score before stopping
+	 *            due to no progress.
 	 */
-	public ExponentialCooling(final double initial, final double factor, final long stepsPer) {
+	public ExponentialCooling(final double initial, final double factor, final long minStepsPer, final long noProgress) {
 		this.initial = initial;
 		this.factor = factor;
-		this.stepsPer = stepsPer;
+		this.minStepsPer = minStepsPer;
+		this.noProgress = noProgress;
 		current = initial;
-		stepsLeft = stepsPer;
+		count = 0;
 	}
 
 	@Override
@@ -55,14 +60,26 @@ public class ExponentialCooling implements CoolingSchedule {
 
 	@Override
 	public double next(final Solution solution) {
-		stepsLeft--;
-		if (stepsLeft == 0) {
+		count++;
+		stop++;
+		if (current < 0.01) {
+			return 0;
+		} else if (stop > noProgress) {
+			throw new RuntimeException("Stopped due to no progress in " + noProgress + " iterations");
+		} else if (score == -1) {
+			score = solution.getScore();
+			return current;
+		} else if (solution.getScore() < score) {
+			score = solution.getScore();
+			count = 0;
+			stop = 0;
+			return current;
+		} else if (count > minStepsPer) {
 			current = current / (1 + current * factor);
-			if (current < 0.01) {
-				current = 0;
-			}
-			stepsLeft = stepsPer;
+			count = 0;
+			return current;
+		} else {
+			return current;
 		}
-		return current;
 	}
 }
