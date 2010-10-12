@@ -18,15 +18,26 @@ import com.google.common.io.Closeables;
  */
 public class LoggingListener implements Listener {
 	private static final DecimalFormat DEC = new DecimalFormat("0.00");
-	private final File file;
 	private long iter = 0;
+	private final File logFile;
 	private double score = Double.MAX_VALUE;
+	private final File solutionFile;
 	private long start = -1;
 
-	public LoggingListener(final File file) {
-		this.file = file;
-		if (file.exists()) {
-			file.delete();
+	/**
+	 * Create a new LoggingListener.
+	 * 
+	 * @param logFile
+	 *            the log file.
+	 */
+	public LoggingListener(final File logFile, final File solutionFile) {
+		this.logFile = logFile;
+		if (logFile.exists()) {
+			logFile.delete();
+		}
+		this.solutionFile = solutionFile;
+		if (solutionFile.exists()) {
+			solutionFile.delete();
 		}
 	}
 
@@ -44,7 +55,7 @@ public class LoggingListener implements Listener {
 			System.out.print("CONOP4J: " + DEC.format(score) + " [ " + (elapsed / 60000) + "min | " + DEC.format(temp)
 					+ "C | " + iter + " ]\r");
 			try {
-				ExperimentalPenalty.write(current, new File("solution.csv"));
+				ExperimentalPenalty.write(current, solutionFile);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -54,7 +65,7 @@ public class LoggingListener implements Listener {
 	private void write(final Object... line) {
 		BufferedWriter writer = null;
 		try {
-			writer = new BufferedWriter(new FileWriter(file, true));
+			writer = new BufferedWriter(new FileWriter(logFile, true));
 			for (int i = 0; i < line.length - 1; i++) {
 				writer.write(line[i] + "\t");
 			}
