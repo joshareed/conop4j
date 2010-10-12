@@ -13,9 +13,9 @@ import java.util.Map;
 
 import org.andrill.conop4j.constraints.ConstraintChecker;
 import org.andrill.conop4j.constraints.EventChecker;
-import org.andrill.conop4j.mutation.ConstrainedMutator;
 import org.andrill.conop4j.mutation.MutationStrategy;
-import org.andrill.conop4j.schedule.AdaptiveCooling;
+import org.andrill.conop4j.mutation.RandomMutator;
+import org.andrill.conop4j.schedule.LinearCooling;
 import org.andrill.conop4j.scoring.ExperimentalPenalty;
 import org.andrill.conop4j.scoring.ScoringFunction;
 
@@ -45,7 +45,23 @@ public class Run {
 	 * @return the run.
 	 */
 	public static Run loadCONOP9Run(final File dir) {
-		return loadCONOP9Run(new File(dir, "sections.sct"), new File(dir, "events.evt"), new File(dir, "loadfile.dat"));
+		return loadCONOP9Run(new File(dir, "sections.sct"), new File(dir, "events.evt"), new File(dir, "loadfile.dat"),
+				false);
+	}
+
+	/**
+	 * Load a CONOP9 run from the specified directory. This assumes the standard
+	 * filenames of sections.sct, events.evt, and loadfile.dat.
+	 * 
+	 * @param dir
+	 *            the run directory.
+	 * @param overrideWeights
+	 *            override the specified weights.
+	 * @return the run.
+	 */
+	public static Run loadCONOP9Run(final File dir, final boolean overrideWeights) {
+		return loadCONOP9Run(new File(dir, "sections.sct"), new File(dir, "events.evt"), new File(dir, "loadfile.dat"),
+				overrideWeights);
 	}
 
 	/**
@@ -57,9 +73,13 @@ public class Run {
 	 *            the events file.
 	 * @param loadFile
 	 *            the observations/load file.
+	 * @param overrideWeights
+	 *            override the specified weights.
 	 * @return the run.
 	 */
-	public static Run loadCONOP9Run(final File sectionFile, final File eventFile, final File loadFile) {
+	public static Run loadCONOP9Run(final File sectionFile, final File eventFile, final File loadFile,
+			final boolean overrideWeights) {
+
 		// parse section names
 		Map<String, String> sectionNames = Maps.newHashMap();
 		for (List<String> row : parse(sectionFile)) {
@@ -99,10 +119,10 @@ public class Run {
 				events.put(key, event);
 			}
 
-			// adjust weights
-			if ("1".equals(type)) {
+			// override weights
+			if (overrideWeights && "1".equals(type)) {
 				weightUp = 1000000;
-			} else if ("2".equals(type)) {
+			} else if (overrideWeights && "2".equals(type)) {
 				weightDn = 1000000;
 			} else if ("4".equals(type) || "5".equals(type)) {
 				weightUp = 1000000;
@@ -134,7 +154,7 @@ public class Run {
 	}
 
 	public static void main(final String[] args) throws Exception {
-		final Run run = Run.loadCONOP9Run(new File(args[0]));
+		final Run run = Run.loadCONOP9Run(new File(args[0]), false);
 		final List<Event> events = Lists.newArrayList(run.getEvents());
 		Collections.sort(events, new Comparator<Event>() {
 			@Override
@@ -155,12 +175,16 @@ public class Run {
 
 		// create a new CONOP run
 		final ConstraintChecker constraints = new EventChecker();
-		final MutationStrategy mutation = new ConstrainedMutator();
+		final MutationStrategy mutation = new RandomMutator();
 		final ScoringFunction scoring = new ExperimentalPenalty();
 
-		CONOP conop = new CONOP(constraints, mutation, scoring, new AdaptiveCooling(1000, 0.0001, 100, 1000000));
-		conop.addListener(new LoggingListener(new File("run.log")));
-		conop.solve(run, new Solution(run, events));
+		// do a series of runs
+		Solution solution = new Solution(run, events);
+		for (int i = 1; i <= 10; i++) {
+			CONOP conop = new CONOP(constraints, mutation, scoring, new LinearCooling(1000 / i, 500000));
+			conop.addListener(new LoggingListener(new File("run" + i + ".csv"), new File("solution" + i + ".csv")));
+			solution = conop.solve(run, solution);
+		}
 	}
 
 	/**
