@@ -11,14 +11,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import org.andrill.conop4j.constraints.ConstraintChecker;
-import org.andrill.conop4j.constraints.EventChecker;
-import org.andrill.conop4j.mutation.MutationStrategy;
-import org.andrill.conop4j.mutation.RandomMutator;
-import org.andrill.conop4j.schedule.LinearCooling;
-import org.andrill.conop4j.scoring.ExperimentalPenalty;
-import org.andrill.conop4j.scoring.ScoringFunction;
-
 import com.google.common.base.Function;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
@@ -174,17 +166,10 @@ public class Run {
 		});
 
 		// create a new CONOP run
-		final ConstraintChecker constraints = new EventChecker();
-		final MutationStrategy mutation = new RandomMutator();
-		final ScoringFunction scoring = new ExperimentalPenalty();
-
-		// do a series of runs
-		Solution solution = new Solution(run, events);
-		for (int i = 1; i <= 10; i++) {
-			CONOP conop = new CONOP(constraints, mutation, scoring, new LinearCooling(1000 / i, 500000));
-			conop.addListener(new LoggingListener(new File("run" + i + ".csv"), new File("solution" + i + ".csv")));
-			solution = conop.solve(run, solution);
-		}
+		RunConfig config = new RunConfig(new File("config.properties"));
+		CONOP conop = new CONOP(config.getConstraints(), config.getMutator(), config.getScore(), config.getSchedule());
+		conop.addListener(new LoggingListener(new File("run.csv"), new File("solution.csv")));
+		conop.solve(run, new Solution(run, events));
 	}
 
 	/**
