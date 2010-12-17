@@ -21,6 +21,7 @@ import com.google.common.io.Closeables;
  */
 public class RunInfo {
 	public static class Config {
+		public String curve = "curv.grd";
 		public String eventDictionary = "event.dic";
 		public String events = "events.evt";
 		public String extant = "extant.dic";
@@ -147,6 +148,7 @@ public class RunInfo {
 		loadFortranNumbers();
 		loadSolution();
 		loadPlacements();
+		loadRanks();
 		loadExtants();
 	}
 
@@ -361,8 +363,12 @@ public class RunInfo {
 				if (matcher.find()) {
 					String code = matcher.group(1);
 					String fortran = matcher.group(2);
-					if (line.contains("LAD") || line.contains("FAD")) {
-						find(events, "code", code, "type", line.contains("FAD") ? "1" : "2").put("fortran", fortran);
+					if (line.contains("FAD")) {
+						find(events, "code", code, "type", "1").put("fortran", fortran);
+					} else if (line.contains("LAD")) {
+						find(events, "code", code, "type", "2").put("fortran", fortran);
+					} else if (line.contains("MID")) {
+						find(events, "code", code, "type", "3").put("fortran", fortran);
 					} else {
 						find(events, "code", code).put("fortran", fortran);
 					}
@@ -418,6 +424,41 @@ public class RunInfo {
 			Map<String, String> event = find(events, "id", id, "type", type);
 			for (int i = 2; i < row.size(); i++) {
 				event.put("placed." + (i - 1), row.get(i));
+			}
+		}
+	}
+
+	protected void loadRanks() {
+		File file = new File(dir, config.curve);
+		if (!file.exists()) {
+			return;
+		}
+
+		// figure out the max and min rank
+		double min = Double.MAX_VALUE;
+		String marker = null;
+		int fortran = 0;
+		for (List<String> row : parse(file)) {
+			fortran++;
+			if (marker == null) {
+				for (String value : row) {
+					double d = Double.parseDouble(value);
+					if (d < min) {
+						min = d;
+						marker = value;
+					}
+				}
+			}
+			int minRank = row.indexOf(marker) + 1;
+			int maxRank = row.lastIndexOf(marker) + 1;
+
+			// update our event
+			Map<String, String> event = find(events, "fortran", "" + fortran);
+			if (event != null) {
+				event.put("rankmin", "" + minRank);
+				event.put("rankmax", "" + maxRank);
+			} else {
+				System.out.println("No event with fortran number of " + fortran);
 			}
 		}
 	}
