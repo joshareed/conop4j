@@ -20,6 +20,8 @@ import org.apache.poi.ss.usermodel.Workbook;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
+// fix ages
+// min/max ranges from curv.grd
 public class AgeAndPlacements implements Summary {
 
 	protected int after(final List<Map<String, String>> events, final int position) {
@@ -75,11 +77,13 @@ public class AgeAndPlacements implements Summary {
 			header.createCell(0).setCellValue("Event");
 			header.createCell(1).setCellValue("Type");
 			header.createCell(2).setCellValue("Rank");
-			header.createCell(3).setCellValue("Min Age");
-			header.createCell(4).setCellValue("Max Age");
+			header.createCell(3).setCellValue("Min Rank");
+			header.createCell(4).setCellValue("Max Rank");
+			header.createCell(5).setCellValue("Min Age");
+			header.createCell(6).setCellValue("Max Age");
 			for (int i = 0; i < sections.size(); i++) {
-				header.createCell(2 * i + 5).setCellValue(sections.get(i).get("name") + " (O)");
-				header.createCell(2 * i + 6).setCellValue(sections.get(i).get("name") + " (P)");
+				header.createCell(2 * i + 7).setCellValue(sections.get(i).get("name") + " (O)");
+				header.createCell(2 * i + 8).setCellValue(sections.get(i).get("name") + " (P)");
 			}
 			for (Cell cell : header) {
 				cell.setCellStyle(style);
@@ -91,8 +95,14 @@ public class AgeAndPlacements implements Summary {
 				row.createCell(0).setCellValue(event.get("name"));
 				row.createCell(1).setCellValue(event.get("typename"));
 				row.createCell(2).setCellValue(Integer.parseInt(event.get("solution")));
+				if (event.containsKey("rankmin")) {
+					row.createCell(3).setCellValue(Double.parseDouble(event.get("rankmin")));
+				}
+				if (event.containsKey("rankmax")) {
+					row.createCell(4).setCellValue(Double.parseDouble(event.get("rankmax")));
+				}
 				if (event.containsKey("agemin")) {
-					row.createCell(3).setCellValue(Double.parseDouble(event.get("agemin")));
+					row.createCell(5).setCellValue(Double.parseDouble(event.get("agemin")));
 				} else {
 					int before = before(events, i);
 					int after = after(events, i);
@@ -101,10 +111,10 @@ public class AgeAndPlacements implements Summary {
 					if (after == -1) {
 						after = events.size();
 					}
-					row.createCell(3).setCellValue(a1 + ((a2 - a1) / (after - before)) * (i - before));
+					row.createCell(5).setCellValue(a1 + ((a2 - a1) / (after - before)) * (i - before));
 				}
 				if (event.containsKey("agemax")) {
-					row.createCell(4).setCellValue(Double.parseDouble(event.get("agemax")));
+					row.createCell(6).setCellValue(Double.parseDouble(event.get("agemax")));
 				} else {
 					int before = before(events, i);
 					int after = after(events, i);
@@ -113,16 +123,16 @@ public class AgeAndPlacements implements Summary {
 					if (after == -1) {
 						after = events.size();
 					}
-					row.createCell(4).setCellValue(a1 + ((a2 - a1) / (after - before)) * (i - before));
+					row.createCell(6).setCellValue(a1 + ((a2 - a1) / (after - before)) * (i - before));
 				}
 				for (int j = 0; j < sections.size(); j++) {
 					for (Map<String, String> o : run.getObservations()) {
 						if (event.get("id").equals(o.get("event.id")) && event.get("type").equals(o.get("event.type"))
 								&& o.get("section.id").equals("" + (j + 1))) {
-							row.createCell(2 * j + 5).setCellValue(Double.parseDouble(o.get("level")));
+							row.createCell(2 * j + 7).setCellValue(Double.parseDouble(o.get("level")));
 						}
 					}
-					row.createCell(2 * j + 6).setCellValue(Double.parseDouble(event.get("placed." + (j + 1))));
+					row.createCell(2 * j + 8).setCellValue(Double.parseDouble(event.get("placed." + (j + 1))));
 				}
 			}
 		}
