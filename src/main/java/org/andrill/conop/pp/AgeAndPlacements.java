@@ -65,6 +65,36 @@ public class AgeAndPlacements implements Summary {
 				}
 			});
 
+			// normalize agemin properties
+			double min = 0.0;
+			for (int i = 0; i < events.size(); i++) {
+				Map<String, String> event = events.get(i);
+				if (event.containsKey("agemin")) {
+					double age = Double.parseDouble(event.get("agemin"));
+					if (age < min) {
+						event.put("agemin", "" + min);
+					} else {
+						min = age;
+					}
+				}
+			}
+
+			// normalize agemax properties
+			double max = -1;
+			for (int i = events.size() - 1; i >= 0; i--) {
+				Map<String, String> event = events.get(i);
+				if (event.containsKey("agemax")) {
+					double age = Double.parseDouble(event.get("agemax"));
+					if (max == -1) {
+						max = age;
+					} else if (age > max) {
+						event.put("agemax", "" + max);
+					} else {
+						max = age;
+					}
+				}
+			}
+
 			// create our header style
 			CellStyle style = sheet.getWorkbook().createCellStyle();
 			Font font = sheet.getWorkbook().createFont();
