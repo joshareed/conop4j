@@ -6,8 +6,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +20,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.io.Closeables;
 
 /**
- * Represents a run.
+ * Represents a CONOP run.
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
@@ -143,33 +141,6 @@ public class Run {
 
 		// create the run
 		return new Run(sections);
-	}
-
-	public static void main(final String[] args) throws Exception {
-		final Run run = Run.loadCONOP9Run(new File(args[0]), false);
-		final List<Event> events = Lists.newArrayList(run.getEvents());
-		Collections.sort(events, new Comparator<Event>() {
-			@Override
-			public int compare(final Event o1, final Event o2) {
-				return toInt(o1).compareTo(toInt(o2));
-			}
-
-			public Integer toInt(final Event e) {
-				if ((e.before != null) && (e.after == null)) {
-					return Integer.valueOf(-1);
-				} else if ((e.after != null) && (e.before == null)) {
-					return Integer.valueOf(1);
-				} else {
-					return Integer.valueOf(0);
-				}
-			}
-		});
-
-		// create a new CONOP run
-		RunConfig config = new RunConfig(new File("config.properties"));
-		CONOP conop = new CONOP(config.getConstraints(), config.getMutator(), config.getScore(), config.getSchedule());
-		conop.addListener(new LoggingListener(new File("run.csv"), new File("solution.csv")));
-		conop.solve(run, new Solution(run, events));
 	}
 
 	/**
