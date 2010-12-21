@@ -1,8 +1,8 @@
 bin/
-.gradle/
-.DS_Store
-.classpath
-.project
-.settings/
 build/
 test/
+\.gradle/
+\.project
+\.classpath
+\.settings/
+\.DS_Store
