@@ -9,6 +9,9 @@ import java.util.Properties;
 import org.andrill.conop4j.constraints.ConstraintChecker;
 import org.andrill.conop4j.constraints.EventChecker;
 import org.andrill.conop4j.constraints.NullChecker;
+import org.andrill.conop4j.listeners.ConditionalListener;
+import org.andrill.conop4j.listeners.ProgressListener;
+import org.andrill.conop4j.listeners.Ranks;
 import org.andrill.conop4j.mutation.ConstrainedMutator;
 import org.andrill.conop4j.mutation.MutationStrategy;
 import org.andrill.conop4j.mutation.RandomMutator;
@@ -22,21 +25,46 @@ import org.andrill.conop4j.scoring.ScoringFunction;
 import com.google.common.io.Closeables;
 
 /**
- * Reads a run configuration from a properties file.
+ * Reads a simulation configuration from a properties file.
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class RunConfig {
+public class Simulation {
+	public static void main(final String[] args) throws Exception {
+		// load the simulation configuration
+		Simulation config = new Simulation(new File(args[0]));
+		Run run = config.getRun();
+
+		// setup CONOP4J
+		CONOP conop = new CONOP(config.getConstraints(), config.getMutator(), config.getScore(), config.getSchedule());
+
+		// add a listener to print out progress
+		conop.addListener(new ProgressListener());
+
+		// add a listener to collect event ranks
+		Ranks ranks = new Ranks();
+		conop.addListener(ConditionalListener.tempLt(1, ranks));
+
+		// find the optimal placement
+		Solution solution = conop.solve(run, Solution.initial(run));
+
+		// write out the solution and ranks file
+		ExperimentalPenalty.write(solution, new File("solution.csv"));
+		ranks.writeTo(new File("ranks.csv"));
+	}
+
+	protected final File directory;
 	protected final Properties properties;
 
 	/**
-	 * Create a new RunConfig.
+	 * Create a new Simulation.
 	 * 
 	 * @param file
 	 *            the file.
 	 */
-	public RunConfig(final File file) {
+	public Simulation(final File file) {
 		properties = new Properties();
+		directory = file.getParentFile();
 		FileInputStream fis = null;
 		try {
 			fis = new FileInputStream(file);
@@ -64,7 +92,6 @@ public class RunConfig {
 	 */
 	public ConstraintChecker getConstraints() {
 		String constraints = properties.getProperty("constraints", "null").toLowerCase();
-
 		if ("null".equals(constraints)) {
 			return new NullChecker();
 		} else if ("event".equals(constraints)) {
@@ -89,7 +116,6 @@ public class RunConfig {
 	 */
 	public MutationStrategy getMutator() {
 		String mutator = properties.getProperty("mutator", "random").toLowerCase();
-
 		if ("random".equals(mutator)) {
 			return new RandomMutator();
 		} else if ("constrained".equals(mutator)) {
@@ -97,6 +123,13 @@ public class RunConfig {
 		} else {
 			return new RandomMutator();
 		}
+	}
+
+	public Run getRun() {
+		String data = properties.getProperty("data", ".");
+		boolean overrideWeights = !Boolean.getBoolean(properties.getProperty("weights", "true"));
+		File runDir = new File(directory, data);
+		return Run.loadCONOP9Run(runDir, overrideWeights);
 	}
 
 	/**
