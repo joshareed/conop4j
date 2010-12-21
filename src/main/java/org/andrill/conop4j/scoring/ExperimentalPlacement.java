@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -23,6 +24,7 @@ public class ExperimentalPlacement {
 			return -1 * o1.compareTo(o2);
 		}
 	};
+	protected final Map<BigDecimal, Double> cache;
 	protected int head = 0;
 	protected final Map<BigDecimal, Integer> levelMap;
 	protected final List<BigDecimal> levels;
@@ -36,6 +38,12 @@ public class ExperimentalPlacement {
 		levels = Lists.newArrayList(section.getLevels());
 		Collections.sort(levels, REVERSE);
 
+		// cache BigDecimal => double
+		cache = new IdentityHashMap<BigDecimal, Double>();
+		for (Observation o : section.getObservations()) {
+			cache.put(o.getLevel(), o.getLevel().doubleValue());
+		}
+
 		// create our placement object
 		placed = new TreeMap<BigDecimal, List<Event>>(REVERSE);
 		levelMap = Maps.newTreeMap();
@@ -43,6 +51,7 @@ public class ExperimentalPlacement {
 		for (BigDecimal l : levels) {
 			placed.put(l, new ArrayList<Event>());
 			levelMap.put(l, i++);
+			cache.put(l, l.doubleValue());
 		}
 		head = 0;
 	}
@@ -62,7 +71,8 @@ public class ExperimentalPlacement {
 		if (o == null) {
 			return 0;
 		}
-		double diff = level.subtract(o.getLevel()).doubleValue();
+
+		double diff = cache.get(level) - cache.get(o.getLevel());
 		if (diff < 0) {
 			return Math.abs(diff) * o.getWeightDown();
 		} else {

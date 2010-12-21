@@ -19,7 +19,6 @@ import com.google.common.collect.Maps;
  * @author Josh Reed (jareed@andrill.org0
  */
 public class ExperimentalPenalty implements ScoringFunction {
-
 	/**
 	 * Write the event placements using this penalty function.
 	 * 
@@ -79,7 +78,7 @@ public class ExperimentalPenalty implements ScoringFunction {
 	@Override
 	public double score(final Solution solution) {
 		double score = 0;
-		for (Section s : solution.getRun().getSections()) {
+		for (final Section s : solution.getRun().getSections()) {
 			ExperimentalPlacement topDown = new ExperimentalPlacement(s);
 			for (Event e : solution.getEvents()) {
 				topDown.place(e);
