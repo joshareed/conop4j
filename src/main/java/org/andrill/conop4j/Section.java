@@ -1,9 +1,10 @@
 package org.andrill.conop4j;
 
 import java.math.BigDecimal;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
@@ -13,7 +14,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Josh Reed (jareed@andrill.org)
  */
 public class Section {
-	protected final ImmutableMap<Event, Observation> events;
+	protected final Map<Event, Observation> events;
 	protected final ImmutableMultimap<BigDecimal, Observation> levels;
 	protected final String name;
 	protected final ImmutableSet<Observation> observations;
@@ -27,15 +28,14 @@ public class Section {
 	public Section(final String name, final List<Observation> list) {
 		this.name = name;
 		observations = ImmutableSet.copyOf(list);
+		events = new IdentityHashMap<Event, Observation>();
 
 		// index the observations by event and level
-		ImmutableMap.Builder<Event, Observation> eventBuilder = ImmutableMap.builder();
 		ImmutableMultimap.Builder<BigDecimal, Observation> levelBuilder = ImmutableMultimap.builder();
 		for (Observation o : list) {
-			eventBuilder.put(o.getEvent(), o);
+			events.put(o.getEvent(), o);
 			levelBuilder.put(o.getLevel(), o);
 		}
-		events = eventBuilder.build();
 		levels = levelBuilder.build();
 	}
 
@@ -67,7 +67,7 @@ public class Section {
 	 * @return the set of events.
 	 */
 	public ImmutableSet<Event> getEvents() {
-		return events.keySet();
+		return ImmutableSet.copyOf(events.keySet());
 	}
 
 	/**
