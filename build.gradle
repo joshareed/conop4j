@@ -3,13 +3,13 @@ apply plugin: 'eclipse'
 
 sourceCompatibility = 1.5
 targetCompatibility = 1.5
-version = '0.1-SNAPSHOT'
+version = '0.2'
 group = 'org.andrill.conop'
 
 manifest.mainAttributes(
 	'Implementation-Title': 'CONOP4J',
 	'Implementation-Version': version,
-	'Main-Class': 'org.andrill.conop4j.Run'
+	'Main-Class': 'org.andrill.conop4j.Simulation'
 )
 
 repositories {
