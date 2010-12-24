@@ -22,7 +22,7 @@ public class ProgressListener implements Listener {
 			start = System.currentTimeMillis();
 		}
 		iter++;
-		if (current.getScore() < score) {
+		if ((current.getScore() < score) || (iter % 10000 == 0)) {
 			score = current.getScore();
 			long elapsed = (System.currentTimeMillis() - start);
 			System.out.print("                                                                            \r");
