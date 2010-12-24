@@ -1,17 +1,21 @@
 package org.andrill.conop4j;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.util.Map;
 import java.util.Properties;
 
 import org.andrill.conop4j.constraints.ConstraintChecker;
 import org.andrill.conop4j.constraints.EventChecker;
 import org.andrill.conop4j.constraints.NullChecker;
-import org.andrill.conop4j.listeners.ConditionalListener;
 import org.andrill.conop4j.listeners.ProgressListener;
 import org.andrill.conop4j.listeners.Ranks;
+import org.andrill.conop4j.listeners.SnapshotListener;
 import org.andrill.conop4j.mutation.ConstrainedMutator;
 import org.andrill.conop4j.mutation.MutationStrategy;
 import org.andrill.conop4j.mutation.RandomMutator;
@@ -20,8 +24,11 @@ import org.andrill.conop4j.schedule.ExponentialCooling;
 import org.andrill.conop4j.schedule.LinearCooling;
 import org.andrill.conop4j.scoring.ConstraintsScore;
 import org.andrill.conop4j.scoring.ExperimentalPenalty;
+import org.andrill.conop4j.scoring.ExperimentalPlacement;
+import org.andrill.conop4j.scoring.ParallelExperimentalPenalty;
 import org.andrill.conop4j.scoring.ScoringFunction;
 
+import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
 
 /**
@@ -30,6 +37,23 @@ import com.google.common.io.Closeables;
  * @author Josh Reed (jareed@andrill.org)
  */
 public class Simulation {
+	private static final DecimalFormat D = new DecimalFormat("0.00");
+
+	public static File getFile(final String file) {
+		File f = new File(file);
+		int i = 0;
+		while (f.exists()) {
+			i++;
+			int j = file.indexOf('.');
+			if (j < 0) {
+				f = new File(file + i);
+			} else {
+				f = new File(file.substring(0, j) + i + file.substring(j));
+			}
+		}
+		return f;
+	}
+
 	public static void main(final String[] args) throws Exception {
 		// load the simulation configuration
 		Simulation config = new Simulation(new File(args[0]));
@@ -40,17 +64,70 @@ public class Simulation {
 
 		// add a listener to print out progress
 		conop.addListener(new ProgressListener());
+		conop.addListener(new SnapshotListener());
 
 		// add a listener to collect event ranks
 		Ranks ranks = new Ranks();
-		conop.addListener(ConditionalListener.tempLt(1, ranks));
+		conop.addListener(ranks);
 
 		// find the optimal placement
+		long start = System.currentTimeMillis();
 		Solution solution = conop.solve(run, Solution.initial(run));
+		long elapsed = (System.currentTimeMillis() - start) / 60000;
+		System.out.println("Elapsed time: " + elapsed + " minutes.  Final score: " + D.format(solution.getScore()));
+	}
 
-		// write out the solution and ranks file
-		ExperimentalPenalty.write(solution, new File("solution.csv"));
-		ranks.writeTo(new File("ranks.csv"));
+	public static void writeResults(final Solution solution, final Ranks ranks) {
+		BufferedWriter writer = null;
+		try {
+			Run run = solution.getRun();
+			Map<Section, ExperimentalPlacement> placements = Maps.newHashMap();
+
+			// open our writer
+			writer = new BufferedWriter(new FileWriter(getFile("solution.csv")));
+			writer.write("Event\tRank\tMin Rank\tMax Rank");
+			for (Section s : run.getSections()) {
+				writer.write("\t" + s.getName() + " (O)\t" + s.getName() + " (P)");
+				placements.put(s, new ExperimentalPlacement(s));
+			}
+			writer.write("\n");
+
+			// build our placements
+			double score = 0;
+			for (final Section s : solution.getRun().getSections()) {
+				ExperimentalPlacement placement = placements.get(s);
+				for (Event e : solution.getEvents()) {
+					placement.place(e);
+				}
+				score += placement.getPenalty();
+			}
+
+			int total = solution.getEvents().size();
+			for (int i = 0; i < total; i++) {
+				Event e = solution.getEvent(i);
+				writer.write("'" + e + "'\t" + (total - i) + "\t" + ranks.getMin(e) + "\t" + ranks.getMax(e));
+				for (Section s : run.getSections()) {
+					writer.write("\t");
+					Observation o = s.getObservation(e);
+					if (o != null) {
+						writer.write("" + o.getLevel());
+					}
+					writer.write("\t" + placements.get(s).getPlacement(e));
+				}
+				writer.write("\n");
+			}
+
+			writer.write("Total");
+			writer.write("\t" + score + "\t\t");
+			for (Section s : run.getSections()) {
+				writer.write("\t\t" + D.format(placements.get(s).getPenalty()));
+			}
+			writer.write("\n");
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			Closeables.closeQuietly(writer);
+		}
 	}
 
 	protected final File directory;
@@ -183,6 +260,9 @@ public class Simulation {
 
 		if ("experimental".equals(score)) {
 			return new ExperimentalPenalty();
+		} else if ("parallel-experimental".equals(score)) {
+			int processors = Integer.parseInt(properties.getProperty("processors", "2"));
+			return new ParallelExperimentalPenalty(processors);
 		} else if ("constraints".equals(score)) {
 			return new ConstraintsScore();
 		} else {
