@@ -4,7 +4,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -91,8 +91,8 @@ public class CONOP {
 		this.schedule = schedule;
 		random = new Random();
 		listeners = new CopyOnWriteArraySet<Listener>();
-		executor = MoreExecutors.getExitingExecutorService(new ThreadPoolExecutor(0, 1, 10, TimeUnit.SECONDS,
-				new LinkedBlockingQueue<Runnable>()), 1, TimeUnit.SECONDS);
+		int size = Runtime.getRuntime().availableProcessors() + 1;
+		executor = MoreExecutors.getExitingExecutorService((ThreadPoolExecutor) Executors.newFixedThreadPool(size));
 	}
 
 	/**
@@ -181,7 +181,7 @@ public class CONOP {
 				temp = schedule.next(current);
 			}
 		} catch (Exception e) {
-			System.out.println("Run halted due to: " + e.getMessage());
+			e.printStackTrace();
 		}
 
 		// shut down executor and wait up to 30 seconds for listeners to finish
