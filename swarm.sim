@@ -1,0 +1,10 @@
+constraints=event
+mutator=random
+schedule=exponential
+schedule.initial=1000
+schedule.delta=0.01
+schedule.stepsPer=250
+schedule.noProgress=1000000
+score=experimental
+data=test
+weights=true
