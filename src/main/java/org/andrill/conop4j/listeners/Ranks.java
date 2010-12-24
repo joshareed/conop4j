@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -22,6 +23,33 @@ import com.google.common.io.Closeables;
  */
 public class Ranks implements Listener {
 	private Map<Event, double[]> ranks;
+	private double score = -1;
+
+	public int getMax(final Event e) {
+		double[] array = ranks.get(e);
+		if (array == null) {
+			return -1;
+		}
+
+		int i = array.length - 1;
+		while ((array[i] != score) && (i >= 0)) {
+			i--;
+		}
+		return array.length - i;
+	}
+
+	public int getMin(final Event e) {
+		double[] array = ranks.get(e);
+		if (array == null) {
+			return -1;
+		}
+
+		int i = 0;
+		while ((array[i] != score) && (i < array.length)) {
+			i++;
+		}
+		return array.length - i;
+	}
 
 	/**
 	 * Get the ranks array.
@@ -42,12 +70,15 @@ public class Ranks implements Listener {
 				Arrays.fill(array, -1);
 				ranks.put(e, array);
 			}
+			score = best.getScore();
 		}
 
-		// update the ranks
-		double score = current.getScore();
-		for (Event e : current.getEvents()) {
-			ranks.get(e)[current.getPosition(e)] = score;
+		// only update the ranks if the score is better
+		if (current.getScore() <= score) {
+			score = current.getScore();
+			for (Event e : current.getEvents()) {
+				ranks.get(e)[current.getPosition(e)] = score;
+			}
 		}
 	}
 
@@ -58,6 +89,8 @@ public class Ranks implements Listener {
 	 *            the file.
 	 */
 	public void writeTo(final File file) {
+		DecimalFormat D = new DecimalFormat("0.00");
+
 		BufferedWriter writer = null;
 		try {
 			writer = new BufferedWriter(new FileWriter(file));
@@ -65,9 +98,9 @@ public class Ranks implements Listener {
 				writer.write(e.getKey().getName() + "\t");
 				double[] ranks = e.getValue();
 				for (int i = 0; i < ranks.length - 1; i++) {
-					writer.write(ranks[i] + "\t");
+					writer.write(D.format(ranks[i]) + "\t");
 				}
-				writer.write(ranks[ranks.length - 1] + "\n");
+				writer.write(D.format(ranks[ranks.length - 1]) + "\n");
 			}
 		} catch (IOException e) {
 			// do nothing
