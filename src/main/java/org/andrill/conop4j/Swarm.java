@@ -10,7 +10,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.andrill.conop4j.listeners.ProgressListener;
-import org.andrill.conop4j.listeners.Ranks;
+import org.andrill.conop4j.listeners.RanksListener;
 import org.andrill.conop4j.listeners.SnapshotListener;
 import org.andrill.conop4j.mutation.SharedMutator;
 
@@ -29,7 +29,7 @@ public class Swarm {
 
 		// create our shared mutator and ranks listener
 		final SharedMutator shared = new SharedMutator();
-		final Ranks ranks = new Ranks();
+		final RanksListener ranks = new RanksListener();
 
 		ExecutorService pool = MoreExecutors.getExitingExecutorService((ThreadPoolExecutor) Executors
 				.newFixedThreadPool(count));
@@ -37,7 +37,7 @@ public class Swarm {
 		long start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++) {
 			// setup CONOP4J
-			final CONOP conop = new CONOP(config.getConstraints(), shared, config.getScore(), config.getSchedule());
+			final CONOP conop = new CONOP(config.getConstraints(), shared, config.getObjectiveFunction(), config.getSchedule());
 
 			// add listeners
 			conop.addListener(shared);

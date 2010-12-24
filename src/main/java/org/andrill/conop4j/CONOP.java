@@ -10,9 +10,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.andrill.conop4j.constraints.ConstraintChecker;
 import org.andrill.conop4j.mutation.MutationStrategy;
+import org.andrill.conop4j.objective.ObjectiveFunction;
 import org.andrill.conop4j.schedule.CoolingSchedule;
-import org.andrill.conop4j.scoring.ScoringFunction;
-import org.andrill.conop4j.scoring.ScoringFunction.Type;
 
 import com.google.common.util.concurrent.MoreExecutors;
 
@@ -67,9 +66,9 @@ public class CONOP {
 	protected final ExecutorService executor;
 	protected final Set<Listener> listeners;
 	protected final MutationStrategy mutator;
+	protected final ObjectiveFunction objective;
 	protected final Random random;
 	protected final CoolingSchedule schedule;
-	protected final ScoringFunction scorer;
 
 	/**
 	 * Create a new simulated annealing solver.
@@ -78,16 +77,16 @@ public class CONOP {
 	 *            the constraints.
 	 * @param mutator
 	 *            the mutation strategy.
-	 * @param scorer
-	 *            the scoring function.
+	 * @param objective
+	 *            the objective function.
 	 * @param schedule
 	 *            the cooling schedule.
 	 */
-	public CONOP(final ConstraintChecker constraints, final MutationStrategy mutator, final ScoringFunction scorer,
-			final CoolingSchedule schedule) {
+	public CONOP(final ConstraintChecker constraints, final MutationStrategy mutator,
+			final ObjectiveFunction objective, final CoolingSchedule schedule) {
 		this.constraints = constraints;
 		this.mutator = mutator;
-		this.scorer = scorer;
+		this.objective = objective;
 		this.schedule = schedule;
 		random = new Random();
 		listeners = new CopyOnWriteArraySet<Listener>();
@@ -130,7 +129,7 @@ public class CONOP {
 
 		// get our initial temperature and score
 		double temp = schedule.getInitial();
-		initial.setScore(scorer.score(initial));
+		initial.setScore(objective.score(initial));
 
 		try {
 			// anneal
@@ -142,31 +141,17 @@ public class CONOP {
 				}
 
 				// score this solution
-				next.setScore(scorer.score(next));
-				if (scorer.getType() == Type.PENALTY) {
-					// save as best if the penalty is less
-					if (next.getScore() < best.getScore()) {
-						best = next;
-					}
+				next.setScore(objective.score(next));
+				// save as best if the penalty is less
+				if (next.getScore() < best.getScore()) {
+					best = next;
+				}
 
-					// accept the new solution if it is better than the current
-					// or randomly based on score and temperature
-					if ((next.getScore() < current.getScore())
-							|| (Math.exp(-Math.abs(next.getScore() - current.getScore()) / temp) > random.nextDouble())) {
-						current = next;
-					}
-				} else {
-					// save as best if the score is more
-					if (next.getScore() > best.getScore()) {
-						best = next;
-					}
-
-					// accept the new solution if it is better than the current
-					// or randomly based on score and temperature
-					if ((next.getScore() > current.getScore())
-							|| (Math.exp(-Math.abs(next.getScore() - current.getScore()) / temp) > random.nextDouble())) {
-						current = next;
-					}
+				// accept the new solution if it is better than the current
+				// or randomly based on score and temperature
+				if ((next.getScore() < current.getScore())
+						|| (Math.exp(-Math.abs(next.getScore() - current.getScore()) / temp) > random.nextDouble())) {
+					current = next;
 				}
 
 				// notify listeners asynchronously

@@ -14,19 +14,18 @@ import org.andrill.conop4j.constraints.ConstraintChecker;
 import org.andrill.conop4j.constraints.EventChecker;
 import org.andrill.conop4j.constraints.NullChecker;
 import org.andrill.conop4j.listeners.ProgressListener;
-import org.andrill.conop4j.listeners.Ranks;
+import org.andrill.conop4j.listeners.RanksListener;
 import org.andrill.conop4j.listeners.SnapshotListener;
 import org.andrill.conop4j.mutation.ConstrainedMutator;
 import org.andrill.conop4j.mutation.MutationStrategy;
 import org.andrill.conop4j.mutation.RandomMutator;
+import org.andrill.conop4j.objective.PlacementPenalty;
+import org.andrill.conop4j.objective.SectionPlacement;
+import org.andrill.conop4j.objective.ObjectiveFunction;
+import org.andrill.conop4j.objective.ParallelPlacementPenalty;
 import org.andrill.conop4j.schedule.CoolingSchedule;
-import org.andrill.conop4j.schedule.ExponentialCooling;
-import org.andrill.conop4j.schedule.LinearCooling;
-import org.andrill.conop4j.scoring.ConstraintsScore;
-import org.andrill.conop4j.scoring.ExperimentalPenalty;
-import org.andrill.conop4j.scoring.ExperimentalPlacement;
-import org.andrill.conop4j.scoring.ParallelExperimentalPenalty;
-import org.andrill.conop4j.scoring.ScoringFunction;
+import org.andrill.conop4j.schedule.ExponentialSchedule;
+import org.andrill.conop4j.schedule.LinearSchedule;
 
 import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
@@ -60,14 +59,15 @@ public class Simulation {
 		Run run = config.getRun();
 
 		// setup CONOP4J
-		CONOP conop = new CONOP(config.getConstraints(), config.getMutator(), config.getScore(), config.getSchedule());
+		CONOP conop = new CONOP(config.getConstraints(), config.getMutator(), config.getObjectiveFunction(),
+				config.getSchedule());
 
 		// add a listener to print out progress
 		conop.addListener(new ProgressListener());
 		conop.addListener(new SnapshotListener());
 
 		// add a listener to collect event ranks
-		Ranks ranks = new Ranks();
+		RanksListener ranks = new RanksListener();
 		conop.addListener(ranks);
 
 		// find the optimal placement
@@ -77,25 +77,25 @@ public class Simulation {
 		System.out.println("Elapsed time: " + elapsed + " minutes.  Final score: " + D.format(solution.getScore()));
 	}
 
-	public static void writeResults(final Solution solution, final Ranks ranks) {
+	public static void writeResults(final Solution solution, final RanksListener ranks) {
 		BufferedWriter writer = null;
 		try {
 			Run run = solution.getRun();
-			Map<Section, ExperimentalPlacement> placements = Maps.newHashMap();
+			Map<Section, SectionPlacement> placements = Maps.newHashMap();
 
 			// open our writer
 			writer = new BufferedWriter(new FileWriter(getFile("solution.csv")));
 			writer.write("Event\tRank\tMin Rank\tMax Rank");
 			for (Section s : run.getSections()) {
 				writer.write("\t" + s.getName() + " (O)\t" + s.getName() + " (P)");
-				placements.put(s, new ExperimentalPlacement(s));
+				placements.put(s, new SectionPlacement(s));
 			}
 			writer.write("\n");
 
 			// build our placements
 			double score = 0;
 			for (final Section s : solution.getRun().getSections()) {
-				ExperimentalPlacement placement = placements.get(s);
+				SectionPlacement placement = placements.get(s);
 				for (Event e : solution.getEvents()) {
 					placement.place(e);
 				}
@@ -202,6 +202,31 @@ public class Simulation {
 		}
 	}
 
+	/**
+	 * Gets the configured {@link ObjectiveFunction}.
+	 * 
+	 * <pre>
+	 * Key: score
+	 * Values:
+	 * 		experimental - {@link PlacementPenalty} (default)
+	 * 		parallel-experimental  - {@link ParallelPlacementPenalty}
+	 * </pre>
+	 * 
+	 * @return the configured ObjectiveFunction.
+	 */
+	public ObjectiveFunction getObjectiveFunction() {
+		String score = properties.getProperty("objective", "experimental").toLowerCase();
+
+		if ("experimental".equals(score)) {
+			return new PlacementPenalty();
+		} else if ("parallel-experimental".equals(score)) {
+			int processors = Integer.parseInt(properties.getProperty("processors", "2"));
+			return new ParallelPlacementPenalty(processors);
+		} else {
+			return new PlacementPenalty();
+		}
+	}
+
 	public Run getRun() {
 		String data = properties.getProperty("data", ".");
 		boolean overrideWeights = !Boolean.getBoolean(properties.getProperty("weights", "true"));
@@ -215,8 +240,8 @@ public class Simulation {
 	 * <pre>
 	 * Key: schedule
 	 * Values:
-	 * 		exponential - {@link ExponentialCooling} (default)
-	 * 		linear      - {@link LinearCooling}
+	 * 		exponential - {@link ExponentialSchedule} (default)
+	 * 		linear      - {@link LinearSchedule}
 	 * 
 	 * Additional Keys:
 	 * 		schedule.initial    - initial temperature (double)
@@ -235,38 +260,11 @@ public class Simulation {
 		long noProgress = Long.parseLong(properties.getProperty("schedule.noProgress", "1000000"));
 
 		if ("exponential".equals(schedule)) {
-			return new ExponentialCooling(initial, delta, stepsPer, noProgress);
+			return new ExponentialSchedule(initial, delta, stepsPer, noProgress);
 		} else if ("linear".equals(schedule)) {
-			return new LinearCooling(initial, stepsPer, delta);
+			return new LinearSchedule(initial, stepsPer, delta);
 		} else {
-			return new ExponentialCooling(initial, delta, stepsPer, noProgress);
-		}
-	}
-
-	/**
-	 * Gets the configured {@link ScoringFunction}.
-	 * 
-	 * <pre>
-	 * Key: score
-	 * Values:
-	 * 		experimental - {@link ExperimentalPenalty} (default)
-	 * 		constraints  - {@link ConstraintsScore}
-	 * </pre>
-	 * 
-	 * @return the configured ScoringFunction.
-	 */
-	public ScoringFunction getScore() {
-		String score = properties.getProperty("score", "experimental").toLowerCase();
-
-		if ("experimental".equals(score)) {
-			return new ExperimentalPenalty();
-		} else if ("parallel-experimental".equals(score)) {
-			int processors = Integer.parseInt(properties.getProperty("processors", "2"));
-			return new ParallelExperimentalPenalty(processors);
-		} else if ("constraints".equals(score)) {
-			return new ConstraintsScore();
-		} else {
-			return new ExperimentalPenalty();
+			return new ExponentialSchedule(initial, delta, stepsPer, noProgress);
 		}
 	}
 }

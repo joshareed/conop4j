@@ -1,4 +1,4 @@
-package org.andrill.conop4j.scoring;
+package org.andrill.conop4j.objective;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -17,7 +17,12 @@ import org.andrill.conop4j.Section;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-public class ExperimentalPlacement {
+/**
+ * Places events within the section.
+ * 
+ * @author Josh Reed (jareed@andrill.org)
+ */
+public class SectionPlacement {
 	private static final Comparator<BigDecimal> REVERSE = new Comparator<BigDecimal>() {
 		@Override
 		public int compare(final BigDecimal o1, final BigDecimal o2) {
@@ -31,7 +36,7 @@ public class ExperimentalPlacement {
 	protected final TreeMap<BigDecimal, List<Event>> placed;
 	protected final Section section;
 
-	public ExperimentalPlacement(final Section section) {
+	public SectionPlacement(final Section section) {
 		this.section = section;
 
 		// get our sorted levels

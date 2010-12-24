@@ -21,7 +21,7 @@ import com.google.common.io.Closeables;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class Ranks implements Listener {
+public class RanksListener implements Listener {
 	private Map<Event, double[]> ranks;
 	private double score = -1;
 

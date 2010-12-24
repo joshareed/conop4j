@@ -1,4 +1,4 @@
-package org.andrill.conop4j.scoring;
+package org.andrill.conop4j.objective;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -16,20 +16,15 @@ import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.MoreExecutors;
 
 /**
- * A parallel version of {@link ExperimentalPenalty}.
+ * A parallel version of {@link PlacementPenalty}.
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class ParallelExperimentalPenalty implements ScoringFunction {
+public class ParallelPlacementPenalty implements ObjectiveFunction {
 	private final ExecutorService pool;
 
-	public ParallelExperimentalPenalty(final int size) {
+	public ParallelPlacementPenalty(final int size) {
 		pool = MoreExecutors.getExitingExecutorService((ThreadPoolExecutor) Executors.newFixedThreadPool(size));
-	}
-
-	@Override
-	public Type getType() {
-		return Type.PENALTY;
 	}
 
 	@Override
@@ -39,7 +34,7 @@ public class ParallelExperimentalPenalty implements ScoringFunction {
 			jobs.add(pool.submit(new Callable<Double>() {
 				@Override
 				public Double call() throws Exception {
-					ExperimentalPlacement placement = new ExperimentalPlacement(s);
+					SectionPlacement placement = new SectionPlacement(s);
 					for (Event e : solution.getEvents()) {
 						placement.place(e);
 					}

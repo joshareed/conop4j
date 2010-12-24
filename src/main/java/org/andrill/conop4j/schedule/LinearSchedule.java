@@ -7,7 +7,7 @@ import org.andrill.conop4j.Solution;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class LinearCooling implements CoolingSchedule {
+public class LinearSchedule implements CoolingSchedule {
 	protected double current = 0.0;
 	protected double delta = 1;
 	protected double initial = 0;
@@ -22,7 +22,7 @@ public class LinearCooling implements CoolingSchedule {
 	 * @param steps
 	 *            the number of temperature steps to 0.
 	 */
-	public LinearCooling(final double initial, final long steps) {
+	public LinearSchedule(final double initial, final long steps) {
 		this.initial = initial;
 		stepsPer = 1;
 		delta = initial / steps;
@@ -40,7 +40,7 @@ public class LinearCooling implements CoolingSchedule {
 	 * @param delta
 	 *            the temperature delta.
 	 */
-	public LinearCooling(final double initial, final long stepsPer, final double delta) {
+	public LinearSchedule(final double initial, final long stepsPer, final double delta) {
 		this.initial = initial;
 		this.stepsPer = stepsPer;
 		this.delta = delta;

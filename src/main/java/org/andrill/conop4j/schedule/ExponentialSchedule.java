@@ -7,7 +7,7 @@ import org.andrill.conop4j.Solution;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class ExponentialCooling implements CoolingSchedule {
+public class ExponentialSchedule implements CoolingSchedule {
 	protected long count;
 	protected double current;
 	protected final double factor;
@@ -27,7 +27,7 @@ public class ExponentialCooling implements CoolingSchedule {
 	 * @param minStepsPer
 	 *            the minimum number of steps before changing.
 	 */
-	public ExponentialCooling(final double initial, final double factor, final long minStepsPer) {
+	public ExponentialSchedule(final double initial, final double factor, final long minStepsPer) {
 		this(initial, factor, minStepsPer, Long.MAX_VALUE);
 	}
 
@@ -44,7 +44,7 @@ public class ExponentialCooling implements CoolingSchedule {
 	 *            the maximum number of steps at the same score before stopping
 	 *            due to no progress.
 	 */
-	public ExponentialCooling(final double initial, final double factor, final long minStepsPer, final long noProgress) {
+	public ExponentialSchedule(final double initial, final double factor, final long minStepsPer, final long noProgress) {
 		this.initial = initial;
 		this.factor = factor;
 		this.minStepsPer = minStepsPer;
