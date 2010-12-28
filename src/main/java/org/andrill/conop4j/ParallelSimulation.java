@@ -17,7 +17,7 @@ import org.andrill.conop4j.mutation.SharedMutator;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.MoreExecutors;
 
-public class Swarm {
+public class ParallelSimulation {
 	private static final DecimalFormat D = new DecimalFormat("0.00");
 
 	public static void main(final String[] args) throws Exception {
@@ -37,7 +37,8 @@ public class Swarm {
 		long start = System.currentTimeMillis();
 		for (int i = 0; i < count; i++) {
 			// setup CONOP4J
-			final CONOP conop = new CONOP(config.getConstraints(), shared, config.getObjectiveFunction(), config.getSchedule());
+			final CONOP conop = new CONOP(config.getConstraints(), shared, config.getObjectiveFunction(),
+					config.getSchedule());
 
 			// add listeners
 			conop.addListener(shared);
