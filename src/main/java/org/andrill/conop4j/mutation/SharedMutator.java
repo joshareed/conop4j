@@ -15,7 +15,7 @@ public class SharedMutator implements MutationStrategy, Listener {
 
 	@Override
 	public Solution mutate(final Solution solution) {
-		if ((shared != null) && (shared.getScore() < solution.getScore())) {
+		if ((shared != null) && (shared.getScore() < 0.75 * solution.getScore())) {
 			return new Solution(shared.getRun(), shared.getEvents());
 		} else {
 			List<Event> events = Lists.newArrayList(solution.getEvents());
