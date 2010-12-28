@@ -6,7 +6,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import org.andrill.conop4j.constraints.ConstraintChecker;
 import org.andrill.conop4j.mutation.MutationStrategy;
@@ -167,14 +166,6 @@ public class CONOP {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-
-		// shut down executor and wait up to 30 seconds for listeners to finish
-		try {
-			executor.shutdown();
-			executor.awaitTermination(30, TimeUnit.SECONDS);
-		} catch (InterruptedException e) {
-			// do nothing
 		}
 
 		return best;
