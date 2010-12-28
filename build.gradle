@@ -3,7 +3,7 @@ apply plugin: 'eclipse'
 
 sourceCompatibility = 1.5
 targetCompatibility = 1.5
-version = '0.2'
+version = '0.4'
 group = 'org.andrill.conop'
 
 manifest.mainAttributes(
