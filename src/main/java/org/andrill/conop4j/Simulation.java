@@ -19,10 +19,10 @@ import org.andrill.conop4j.listeners.SnapshotListener;
 import org.andrill.conop4j.mutation.ConstrainedMutator;
 import org.andrill.conop4j.mutation.MutationStrategy;
 import org.andrill.conop4j.mutation.RandomMutator;
-import org.andrill.conop4j.objective.PlacementPenalty;
-import org.andrill.conop4j.objective.SectionPlacement;
 import org.andrill.conop4j.objective.ObjectiveFunction;
 import org.andrill.conop4j.objective.ParallelPlacementPenalty;
+import org.andrill.conop4j.objective.PlacementPenalty;
+import org.andrill.conop4j.objective.SectionPlacement;
 import org.andrill.conop4j.schedule.CoolingSchedule;
 import org.andrill.conop4j.schedule.ExponentialSchedule;
 import org.andrill.conop4j.schedule.LinearSchedule;
@@ -75,6 +75,9 @@ public class Simulation {
 		Solution solution = conop.solve(run, Solution.initial(run));
 		long elapsed = (System.currentTimeMillis() - start) / 60000;
 		System.out.println("Elapsed time: " + elapsed + " minutes.  Final score: " + D.format(solution.getScore()));
+
+		// write out the solution and ranks
+		writeResults(solution, ranks);
 	}
 
 	public static void writeResults(final Solution solution, final RanksListener ranks) {
@@ -170,8 +173,10 @@ public class Simulation {
 	public ConstraintChecker getConstraints() {
 		String constraints = properties.getProperty("constraints", "null").toLowerCase();
 		if ("null".equals(constraints)) {
+			System.out.println("Constraints: Null Checker");
 			return new NullChecker();
 		} else if ("event".equals(constraints)) {
+			System.out.println("Constraints: Event Checker");
 			return new EventChecker();
 		} else {
 			System.out.println("Unknown constraints '" + constraints + "'.  Defaulting to NullChecker.");
@@ -194,10 +199,13 @@ public class Simulation {
 	public MutationStrategy getMutator() {
 		String mutator = properties.getProperty("mutator", "random").toLowerCase();
 		if ("random".equals(mutator)) {
+			System.out.println("Mutator: Random");
 			return new RandomMutator();
 		} else if ("constrained".equals(mutator)) {
+			System.out.println("Mutator: Constrained");
 			return new ConstrainedMutator();
 		} else {
+			System.out.println("Mutator: Random");
 			return new RandomMutator();
 		}
 	}
@@ -218,11 +226,14 @@ public class Simulation {
 		String score = properties.getProperty("objective", "experimental").toLowerCase();
 
 		if ("experimental".equals(score)) {
+			System.out.println("Objective: Experimental");
 			return new PlacementPenalty();
 		} else if ("parallel-experimental".equals(score)) {
 			int processors = Integer.parseInt(properties.getProperty("processors", "2"));
+			System.out.println("Objective: Parallel Experimental [" + processors + "]");
 			return new ParallelPlacementPenalty(processors);
 		} else {
+			System.out.println("Objective: Experimental");
 			return new PlacementPenalty();
 		}
 	}
@@ -260,10 +271,13 @@ public class Simulation {
 		long noProgress = Long.parseLong(properties.getProperty("schedule.noProgress", "1000000"));
 
 		if ("exponential".equals(schedule)) {
+			System.out.println("Schedule: Exponential");
 			return new ExponentialSchedule(initial, delta, stepsPer, noProgress);
 		} else if ("linear".equals(schedule)) {
+			System.out.println("Schedule: Linear");
 			return new LinearSchedule(initial, stepsPer, delta);
 		} else {
+			System.out.println("Schedule: Exponential");
 			return new ExponentialSchedule(initial, delta, stepsPer, noProgress);
 		}
 	}
