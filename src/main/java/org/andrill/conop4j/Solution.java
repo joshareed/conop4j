@@ -1,13 +1,21 @@
 package org.andrill.conop4j;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.andrill.conop4j.objective.PlacementPenalty;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.io.Closeables;
 
 /**
  * A solution contains a set of events in a particular order.
@@ -15,6 +23,50 @@ import com.google.common.collect.Lists;
  * @author Josh Reed (jareed@andrill.org)
  */
 public class Solution {
+	private static Event find(final Run run, final String col1, final String col2) {
+		String name = col1;
+		if (col1.startsWith("'") || col1.startsWith("\"")) {
+			name = name.substring(1, name.length() - 1);
+		}
+		try {
+			Integer.parseInt(col2);
+		} catch (NumberFormatException e) {
+			String type = col2;
+			if (col2.startsWith("'") || col2.startsWith("\"")) {
+				type = col2.substring(1, col2.length() - 1);
+			}
+			if ("LAD".equals(type) || "FAD".equals(type) || "MID".equals(type)) {
+				name = name + " " + type;
+			}
+		}
+		for (Event e : run.getEvents().asList()) {
+			if (name.equalsIgnoreCase(e.getName())) {
+				return e;
+			}
+		}
+		System.out.println("No match for " + name);
+		return null;
+	}
+
+	public static Solution fromCSV(final Run run, final File csv) {
+		String line = null;
+		BufferedReader reader = null;
+		List<Event> list = Lists.newArrayList();
+		try {
+			reader = new BufferedReader(new FileReader(csv));
+			reader.readLine(); // eat header line
+			while (((line = reader.readLine()) != null) && (list.size() < run.getEvents().size())) {
+				String[] split = line.split("\t");
+				list.add(find(run, split[0], split[1]));
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			Closeables.closeQuietly(reader);
+		}
+		return new Solution(run, list);
+	}
+
 	/**
 	 * Creates an initial solution with events sorted by type.
 	 * 
@@ -41,6 +93,14 @@ public class Solution {
 			}
 		});
 		return new Solution(run, events);
+	}
+
+	public static void main(final String[] args) {
+		Run run = Run.loadCONOP9Run(new File(args[0]));
+		Solution solution = fromCSV(run, new File(args[1]));
+		PlacementPenalty penalty = new PlacementPenalty();
+		double score = penalty.score(solution);
+		System.out.println("Score: " + new DecimalFormat("0.00").format(score));
 	}
 
 	protected final ImmutableList<Event> events;
