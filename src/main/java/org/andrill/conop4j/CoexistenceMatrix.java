@@ -13,11 +13,33 @@ import com.google.common.collect.ImmutableMap.Builder;
  */
 public class CoexistenceMatrix {
 	public enum Coexistence {
-		ABSENT, CONJUNCT, DISJUNCT
+		ABSENT, CONJUNCT, DISJUNCT, MIXED
 	}
 
 	protected final ImmutableMap<Event, Integer> events;
 	protected final Coexistence[][] matrix;
+
+	/**
+	 * Creates a new coexistence matrix for the specified run.
+	 * 
+	 * @param run
+	 *            the run.
+	 */
+	public CoexistenceMatrix(final Run run) {
+		// index our events
+		int i = 0;
+		Builder<Event, Integer> eventBuilder = ImmutableMap.builder();
+		for (Event e : run.getEvents()) {
+			eventBuilder.put(e, i++);
+		}
+		events = eventBuilder.build();
+
+		// create our matrix
+		matrix = new Coexistence[events.size()][events.size()];
+
+		// populate the matrix
+		populateMatrix(run);
+	}
 
 	/**
 	 * Create a new coexistence matrix for the specified section and list of all
@@ -106,6 +128,26 @@ public class CoexistenceMatrix {
 	 */
 	public Coexistence getCoexistence(final Event e1, final Event e2) {
 		return matrix[events.get(e1)][events.get(e2)];
+	}
+
+	protected void populateMatrix(final Run run) {
+		for (Entry<Event, Integer> e1 : events.entrySet()) {
+			for (Entry<Event, Integer> e2 : events.entrySet()) {
+				boolean first = true;
+				for (Section s : run.getSections()) {
+					Coexistence coex = computeCoexistence(e1.getKey(), e2.getKey(), s);
+					if (first) {
+						first = false;
+						matrix[e1.getValue()][e2.getValue()] = coex;
+					} else if ((coex != Coexistence.ABSENT) && (matrix[e1.getValue()][e2.getValue()] != coex)) {
+						matrix[e1.getValue()][e2.getValue()] = Coexistence.MIXED;
+					}
+					if (matrix[e1.getValue()][e2.getValue()] == Coexistence.MIXED) {
+						break;
+					}
+				}
+			}
+		}
 	}
 
 	protected void populateMatrix(final Section section) {
