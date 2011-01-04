@@ -257,13 +257,15 @@ public class Simulation {
 	public ObjectiveFunction getObjectiveFunction() {
 		String score = properties.getProperty("objective", "experimental");
 
-		if ("experimental".equalsIgnoreCase(score)) {
-			System.out.println("Objective: Experimental");
-			return new PlacementPenalty();
-		} else if ("parallel-experimental".equalsIgnoreCase(score)) {
-			int processors = Integer.parseInt(properties.getProperty("processors", "2"));
-			System.out.println("Objective: Parallel Experimental [" + processors + "]");
-			return new ParallelPlacementPenalty(processors);
+		if ("placement".equalsIgnoreCase(score)) {
+			int processors = Integer.parseInt(properties.getProperty("processors", "1"));
+			if (processors == 1) {
+				System.out.println("Objective: Placement");
+				return new PlacementPenalty();
+			} else {
+				System.out.println("Objective: Parallel Placement [" + processors + "]");
+				return new ParallelPlacementPenalty(processors);
+			}
 		} else {
 			Class<?> clazz;
 			try {
