@@ -5,6 +5,6 @@ schedule.initial=1000
 schedule.delta=0.01
 schedule.stepsPer=250
 schedule.noProgress=1000000
-objective=experimental
+objective=placement
 data=test
 weights=true
