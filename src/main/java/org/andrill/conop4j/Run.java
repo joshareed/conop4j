@@ -9,12 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Function;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Lists;
-import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.io.Closeables;
@@ -214,7 +212,7 @@ public class Run {
 	}
 
 	protected final ImmutableSet<Event> events;
-	protected final Map<Section, CoexistenceMatrix> matrices;
+	protected CoexistenceMatrix matrix = null;
 	protected final ImmutableSet<Section> sections;
 
 	/**
@@ -232,24 +230,13 @@ public class Run {
 			b.addAll(s.getEvents());
 		}
 		events = b.build();
-
-		matrices = new MapMaker().makeComputingMap(new Function<Section, CoexistenceMatrix>() {
-			@Override
-			public CoexistenceMatrix apply(final Section from) {
-				return new CoexistenceMatrix(from, events.asList());
-			}
-		});
 	}
 
-	/**
-	 * Gets the coexistence matrix for the specified section.
-	 * 
-	 * @param s
-	 *            the section.
-	 * @return the coexistence matrix.
-	 */
-	public CoexistenceMatrix getCoexistenceMatrix(final Section s) {
-		return matrices.get(s);
+	public CoexistenceMatrix getCoexistenceMatrix() {
+		if (matrix == null) {
+			matrix = new CoexistenceMatrix(this);
+		}
+		return matrix;
 	}
 
 	/**
