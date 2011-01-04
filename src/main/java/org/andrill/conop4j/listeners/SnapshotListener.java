@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.text.DecimalFormat;
 
-import org.andrill.conop4j.CONOP.Listener;
 import org.andrill.conop4j.Simulation;
 import org.andrill.conop4j.Solution;
 

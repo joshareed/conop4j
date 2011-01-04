@@ -2,7 +2,6 @@ package org.andrill.conop4j.listeners;
 
 import java.text.DecimalFormat;
 
-import org.andrill.conop4j.CONOP.Listener;
 import org.andrill.conop4j.Solution;
 
 /**

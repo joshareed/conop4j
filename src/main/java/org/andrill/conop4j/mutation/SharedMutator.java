@@ -3,9 +3,9 @@ package org.andrill.conop4j.mutation;
 import java.util.List;
 import java.util.Random;
 
-import org.andrill.conop4j.CONOP.Listener;
 import org.andrill.conop4j.Event;
 import org.andrill.conop4j.Solution;
+import org.andrill.conop4j.listeners.Listener;
 
 import com.google.common.collect.Lists;
 

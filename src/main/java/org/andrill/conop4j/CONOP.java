@@ -8,6 +8,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.andrill.conop4j.constraints.ConstraintChecker;
+import org.andrill.conop4j.listeners.Listener;
 import org.andrill.conop4j.mutation.MutationStrategy;
 import org.andrill.conop4j.objective.ObjectiveFunction;
 import org.andrill.conop4j.schedule.CoolingSchedule;
@@ -20,24 +21,6 @@ import com.google.common.util.concurrent.MoreExecutors;
  * @author Josh Reed (jareed@andrill.org)
  */
 public class CONOP {
-
-	/**
-	 * Notified when new solutions are tried.
-	 */
-	public interface Listener {
-
-		/**
-		 * Called when a solution is tried.
-		 * 
-		 * @param temp
-		 *            the temperature.
-		 * @param current
-		 *            the current solution.
-		 * @param best
-		 *            the current best solution.
-		 */
-		void tried(double temp, Solution current, Solution best);
-	}
 
 	private static class NotifyListenersTask implements Runnable {
 		private final Solution best;
@@ -149,7 +132,7 @@ public class CONOP {
 				// accept the new solution if it is better than the current
 				// or randomly based on score and temperature
 				if ((next.getScore() < current.getScore())
-						|| (Math.exp(-Math.abs(next.getScore() - current.getScore()) / temp) > random.nextDouble())) {
+						|| (Math.exp(-(next.getScore() - current.getScore()) / temp) > random.nextDouble())) {
 					current = next;
 				}
 

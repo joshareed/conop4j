@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.andrill.conop4j.CONOP.Listener;
 import org.andrill.conop4j.Event;
 import org.andrill.conop4j.Solution;
 
