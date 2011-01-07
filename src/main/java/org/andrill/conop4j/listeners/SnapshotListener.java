@@ -1,6 +1,7 @@
 package org.andrill.conop4j.listeners;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -13,6 +14,7 @@ import com.google.common.io.Closeables;
 
 public class SnapshotListener implements Listener {
 	private static final DecimalFormat D = new DecimalFormat("0.00");
+	protected File file;
 	protected long iteration = 0;
 	protected long last = 0;
 	protected long start = -1;
@@ -20,6 +22,7 @@ public class SnapshotListener implements Listener {
 
 	public SnapshotListener() {
 		try {
+			file = new File("solution.tmp");
 			writer = new BufferedWriter(new FileWriter(Simulation.getFile("snapshot.csv")));
 			Runtime.getRuntime().addShutdownHook(new Thread() {
 				@Override
@@ -44,6 +47,7 @@ public class SnapshotListener implements Listener {
 		if (min > last) {
 			last = min;
 			try {
+				Simulation.writeResults(file, best, null);
 				writer.write(min + "\t" + iteration + "\t" + D.format(temp) + "\t" + D.format(best.getScore()) + "\n");
 				writer.flush();
 			} catch (IOException e) {

@@ -80,15 +80,18 @@ public class Simulation {
 		writeResults(solution, ranks);
 	}
 
-	public static void writeResults(final Solution solution, final RanksListener ranks) {
+	public static void writeResults(final File file, final Solution solution, final RanksListener ranks) {
 		BufferedWriter writer = null;
 		try {
 			Run run = solution.getRun();
 			Map<Section, SectionPlacement> placements = Maps.newHashMap();
 
 			// open our writer
-			writer = new BufferedWriter(new FileWriter(getFile("solution.csv")));
-			writer.write("Event\tRank\tMin Rank\tMax Rank");
+			writer = new BufferedWriter(new FileWriter(file));
+			writer.write("Event\tRank");
+			if (ranks != null) {
+				writer.write("\tMin Rank\tMax Rank");
+			}
 			for (Section s : run.getSections()) {
 				writer.write("\t" + s.getName() + " (O)\t" + s.getName() + " (P)");
 				placements.put(s, new SectionPlacement(s));
@@ -108,7 +111,10 @@ public class Simulation {
 			int total = solution.getEvents().size();
 			for (int i = 0; i < total; i++) {
 				Event e = solution.getEvent(i);
-				writer.write("'" + e + "'\t" + (total - i) + "\t" + ranks.getMin(e) + "\t" + ranks.getMax(e));
+				writer.write("'" + e + "'\t" + (total - i));
+				if (ranks != null) {
+					writer.write("\t" + ranks.getMin(e) + "\t" + ranks.getMax(e));
+				}
 				for (Section s : run.getSections()) {
 					writer.write("\t");
 					Observation o = s.getObservation(e);
@@ -121,7 +127,10 @@ public class Simulation {
 			}
 
 			writer.write("Total");
-			writer.write("\t" + score + "\t\t");
+			writer.write("\t" + D.format(score));
+			if (ranks != null) {
+				writer.write("\t\t");
+			}
 			for (Section s : run.getSections()) {
 				writer.write("\t\t" + D.format(placements.get(s).getPenalty()));
 			}
@@ -131,6 +140,10 @@ public class Simulation {
 		} finally {
 			Closeables.closeQuietly(writer);
 		}
+	}
+
+	public static void writeResults(final Solution solution, final RanksListener ranks) {
+		writeResults(getFile("solution.csv"), solution, ranks);
 	}
 
 	protected final File directory;
