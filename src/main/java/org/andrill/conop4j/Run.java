@@ -232,6 +232,11 @@ public class Run {
 		events = b.build();
 	}
 
+	/**
+	 * Gets the coexistence matrix for this run.
+	 * 
+	 * @return the coexistence matrix.
+	 */
 	public CoexistenceMatrix getCoexistenceMatrix() {
 		if (matrix == null) {
 			matrix = new CoexistenceMatrix(this);

@@ -23,6 +23,12 @@ import com.google.common.util.concurrent.MoreExecutors;
 public class ParallelPlacementPenalty implements ObjectiveFunction {
 	private final ExecutorService pool;
 
+	/**
+	 * Create a new ParallelPlacementPenalty.
+	 * 
+	 * @param size
+	 *            the number of threads.
+	 */
 	public ParallelPlacementPenalty(final int size) {
 		pool = MoreExecutors.getExitingExecutorService((ThreadPoolExecutor) Executors.newFixedThreadPool(size));
 	}

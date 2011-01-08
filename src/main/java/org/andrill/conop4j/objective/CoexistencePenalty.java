@@ -5,6 +5,11 @@ import org.andrill.conop4j.CoexistenceMatrix.Coexistence;
 import org.andrill.conop4j.Event;
 import org.andrill.conop4j.Solution;
 
+/**
+ * Create a penalty based on event coexistence violations.
+ * 
+ * @author Josh Reed (jareed@andrill.org)
+ */
 public class CoexistencePenalty implements ObjectiveFunction {
 
 	@Override

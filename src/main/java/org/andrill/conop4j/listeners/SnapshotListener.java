@@ -12,6 +12,11 @@ import org.andrill.conop4j.Solution;
 
 import com.google.common.io.Closeables;
 
+/**
+ * Writes a log and current best solution to files every minute.
+ * 
+ * @author Josh Reed (jareed@andrill.org)
+ */
 public class SnapshotListener implements Listener {
 	private static final DecimalFormat D = new DecimalFormat("0.00");
 	protected File file;
@@ -20,6 +25,9 @@ public class SnapshotListener implements Listener {
 	protected long start = -1;
 	protected Writer writer;
 
+	/**
+	 * Create a new SnapshotListener.
+	 */
 	public SnapshotListener() {
 		try {
 			file = new File("solution.tmp");

@@ -24,6 +24,8 @@ public class Section {
 	 * 
 	 * @param name
 	 *            the name.
+	 * @param list
+	 *            the list of observations.
 	 */
 	public Section(final String name, final List<Observation> list) {
 		this.name = name;
@@ -79,6 +81,11 @@ public class Section {
 		return levels.keySet();
 	}
 
+	/**
+	 * Gets the name of this section.
+	 * 
+	 * @return the name.
+	 */
 	public String getName() {
 		return name;
 	}

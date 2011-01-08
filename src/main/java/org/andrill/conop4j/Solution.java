@@ -48,6 +48,15 @@ public class Solution {
 		return null;
 	}
 
+	/**
+	 * Load a solution from a CSV file.
+	 * 
+	 * @param run
+	 *            the run.
+	 * @param csv
+	 *            the CSV file.
+	 * @return the solution.
+	 */
 	public static Solution fromCSV(final Run run, final File csv) {
 		String line = null;
 		BufferedReader reader = null;
@@ -95,6 +104,12 @@ public class Solution {
 		return new Solution(run, events);
 	}
 
+	/**
+	 * Score a solution.
+	 * 
+	 * @param args
+	 *            the arguments.
+	 */
 	public static void main(final String[] args) {
 		Run run = Run.loadCONOP9Run(new File(args[0]));
 		Solution solution = fromCSV(run, new File(args[1]));
@@ -111,6 +126,8 @@ public class Solution {
 	/**
 	 * Create a new Solution with the specified ordered list of events.
 	 * 
+	 * @param run
+	 *            the run.
 	 * @param events
 	 *            the list of events.
 	 */

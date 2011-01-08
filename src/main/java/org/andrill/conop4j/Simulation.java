@@ -38,6 +38,13 @@ import com.google.common.io.Closeables;
 public class Simulation {
 	private static final DecimalFormat D = new DecimalFormat("0.00");
 
+	/**
+	 * Gets a new file using the specified base filename.
+	 * 
+	 * @param file
+	 *            the base filename.
+	 * @return the file.
+	 */
 	public static File getFile(final String file) {
 		File f = new File(file);
 		int i = 0;
@@ -53,7 +60,13 @@ public class Simulation {
 		return f;
 	}
 
-	public static void main(final String[] args) throws Exception {
+	/**
+	 * Runs a standard simulation.
+	 * 
+	 * @param args
+	 *            the arguments.
+	 */
+	public static void main(final String[] args) {
 		// load the simulation configuration
 		Simulation config = new Simulation(new File(args[0]));
 		Run run = config.getRun();
@@ -80,6 +93,16 @@ public class Simulation {
 		writeResults(solution, ranks);
 	}
 
+	/**
+	 * Writes the results of a simulation.
+	 * 
+	 * @param file
+	 *            the file.
+	 * @param solution
+	 *            the solution.
+	 * @param ranks
+	 *            the ranks.
+	 */
 	public static void writeResults(final File file, final Solution solution, final RanksListener ranks) {
 		BufferedWriter writer = null;
 		try {
@@ -142,6 +165,14 @@ public class Simulation {
 		}
 	}
 
+	/**
+	 * Writes the results to solution.csv.
+	 * 
+	 * @param solution
+	 *            the solution.
+	 * @param ranks
+	 *            the ranks.
+	 */
 	public static void writeResults(final Solution solution, final RanksListener ranks) {
 		writeResults(getFile("solution.csv"), solution, ranks);
 	}
@@ -301,6 +332,11 @@ public class Simulation {
 		}
 	}
 
+	/**
+	 * Gets the run for this simulation.
+	 * 
+	 * @return the run.
+	 */
 	public Run getRun() {
 		String data = properties.getProperty("data", ".");
 		boolean overrideWeights = !Boolean.getBoolean(properties.getProperty("weights", "true"));

@@ -4,6 +4,7 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -17,10 +18,22 @@ import org.andrill.conop4j.mutation.SharedMutator;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.MoreExecutors;
 
+/**
+ * Run a parallel simulation where CONOP processes on the same machine
+ * communicate with each other.
+ * 
+ * @author Josh Reed (jareed@andrill.org)
+ */
 public class ParallelSimulation {
 	private static final DecimalFormat D = new DecimalFormat("0.00");
 
-	public static void main(final String[] args) throws Exception {
+	/**
+	 * Run the simulation.
+	 * 
+	 * @param args
+	 *            the arguments.
+	 */
+	public static void main(final String[] args) {
 		// load the simulation configuration
 		final Simulation config = new Simulation(new File(args[0]));
 		int count = Integer.parseInt(args[1]);
@@ -28,7 +41,7 @@ public class ParallelSimulation {
 		System.out.println("Starting a swarm of " + count + " CONOP instances using settings from " + args[0]);
 
 		// create our shared mutator and ranks listener
-		final SharedMutator shared = new SharedMutator();
+		final SharedMutator shared = new SharedMutator(config.getMutator());
 		final RanksListener ranks = new RanksListener();
 
 		ExecutorService pool = MoreExecutors.getExitingExecutorService((ThreadPoolExecutor) Executors
@@ -63,9 +76,15 @@ public class ParallelSimulation {
 
 		Solution best = null;
 		for (Future<Solution> f : runs) {
-			Solution sol = f.get();
-			if ((best == null) || (sol.getScore() < best.getScore())) {
-				best = sol;
+			try {
+				Solution sol = f.get();
+				if ((best == null) || (sol.getScore() < best.getScore())) {
+					best = sol;
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				e.printStackTrace();
 			}
 		}
 		long elapsed = (System.currentTimeMillis() - start) / 60000;

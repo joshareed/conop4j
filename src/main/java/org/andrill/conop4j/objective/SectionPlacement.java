@@ -36,6 +36,12 @@ public class SectionPlacement {
 	protected final TreeMap<BigDecimal, List<Event>> placed;
 	protected final Section section;
 
+	/**
+	 * Create a new section placement for the specified section.
+	 * 
+	 * @param section
+	 *            the section.
+	 */
 	public SectionPlacement(final Section section) {
 		this.section = section;
 
@@ -61,6 +67,11 @@ public class SectionPlacement {
 		head = 0;
 	}
 
+	/**
+	 * Gets the placement penalty for this section.
+	 * 
+	 * @return the penalty.
+	 */
 	public double getPenalty() {
 		double penalty = 0;
 		for (Entry<BigDecimal, List<Event>> entry : placed.entrySet()) {
@@ -85,6 +96,13 @@ public class SectionPlacement {
 		}
 	}
 
+	/**
+	 * Gets the placement level for the specified event.
+	 * 
+	 * @param e
+	 *            the event.
+	 * @return the placement level.
+	 */
 	public BigDecimal getPlacement(final Event e) {
 		for (Entry<BigDecimal, List<Event>> entry : placed.entrySet()) {
 			if (entry.getValue().contains(e)) {
@@ -104,6 +122,12 @@ public class SectionPlacement {
 		return Math.abs(current - shifted);
 	}
 
+	/**
+	 * Place the specified event.
+	 * 
+	 * @param e
+	 *            the event.
+	 */
 	public void place(final Event e) {
 		Observation o = section.getObservation(e);
 		if (o == null) {

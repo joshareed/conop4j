@@ -12,8 +12,29 @@ import com.google.common.collect.ImmutableMap.Builder;
  * @author Josh Reed (jareed@andrill.org)
  */
 public class CoexistenceMatrix {
+	/**
+	 * The Coexistence level.
+	 */
 	public enum Coexistence {
-		ABSENT, CONJUNCT, DISJUNCT, MIXED
+		/**
+		 * One or both of the events are absent.
+		 */
+		ABSENT,
+
+		/**
+		 * The events overlap.
+		 */
+		CONJUNCT,
+
+		/**
+		 * The events do not overlap.
+		 */
+		DISJUNCT,
+
+		/**
+		 * The events overlap in some sections and do not overlap in others.
+		 */
+		MIXED
 	}
 
 	protected final ImmutableMap<Event, Integer> events;

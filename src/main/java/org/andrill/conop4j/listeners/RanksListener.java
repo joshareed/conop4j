@@ -24,6 +24,13 @@ public class RanksListener implements Listener {
 	private Map<Event, double[]> ranks;
 	private double score = -1;
 
+	/**
+	 * Gets the max rank for the specified event.
+	 * 
+	 * @param e
+	 *            the event.
+	 * @return the max rank.
+	 */
 	public int getMax(final Event e) {
 		double[] array = ranks.get(e);
 		if (array == null) {
@@ -37,6 +44,13 @@ public class RanksListener implements Listener {
 		return array.length - i;
 	}
 
+	/**
+	 * Gets the min rank for the specified event.
+	 * 
+	 * @param e
+	 *            the event.
+	 * @return the min rank.
+	 */
 	public int getMin(final Event e) {
 		double[] array = ranks.get(e);
 		if (array == null) {

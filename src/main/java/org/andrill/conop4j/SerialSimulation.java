@@ -7,10 +7,22 @@ import org.andrill.conop4j.listeners.ProgressListener;
 import org.andrill.conop4j.listeners.RanksListener;
 import org.andrill.conop4j.listeners.SnapshotListener;
 
+/**
+ * Runs a serial simulation which runs several CONOP processes, one after
+ * another.
+ * 
+ * @author Josh Reed (jareed@andrill.org)
+ */
 public class SerialSimulation {
 	private static final DecimalFormat D = new DecimalFormat("0.00");
 
-	public static void main(final String[] args) throws Exception {
+	/**
+	 * Run the simulation.
+	 * 
+	 * @param args
+	 *            the arguments.
+	 */
+	public static void main(final String[] args) {
 		// load the simulation configuration
 		final Simulation config = new Simulation(new File(args[0]));
 		Run run = config.getRun();

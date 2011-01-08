@@ -6,6 +6,8 @@ package org.andrill.conop4j;
  * @author Josh Reed (jareed@andrill.org)
  */
 public class Event {
+	private static int ID = 0;
+
 	/**
 	 * Create a paired event.
 	 * 
@@ -26,6 +28,7 @@ public class Event {
 
 	protected Event after;
 	protected Event before;
+	protected final int id;
 	protected final String name;
 
 	/**
@@ -52,6 +55,7 @@ public class Event {
 		this.name = name;
 		this.before = before;
 		this.after = after;
+		id = ID++;
 	}
 
 	@Override
@@ -92,6 +96,15 @@ public class Event {
 	 */
 	public Event getBeforeConstraint() {
 		return before;
+	}
+
+	/**
+	 * Gets the internal id of this event.
+	 * 
+	 * @return the internal id.
+	 */
+	public int getInternalId() {
+		return id;
 	}
 
 	/**
