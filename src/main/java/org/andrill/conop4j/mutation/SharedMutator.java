@@ -1,36 +1,48 @@
 package org.andrill.conop4j.mutation;
 
-import java.util.List;
-import java.util.Random;
-
-import org.andrill.conop4j.Event;
 import org.andrill.conop4j.Solution;
 import org.andrill.conop4j.listeners.Listener;
 
-import com.google.common.collect.Lists;
-
+/**
+ * A shared mutator for multiple CONOP processes on the same machine.
+ * 
+ * @author Josh Reed (jareed@andrill.org)
+ */
 public class SharedMutator implements MutationStrategy, Listener {
-	protected Random random = new Random();
+	protected final double factor;
+	protected final MutationStrategy mutator;
 	protected Solution shared;
+
+	/**
+	 * Create a new SharedMutator that wraps the specified mutator.
+	 * 
+	 * @param mutator
+	 *            the base mutator.
+	 */
+	public SharedMutator(final MutationStrategy mutator) {
+		this(mutator, 0.75);
+	}
+
+	/**
+	 * Create a new SharedMutator that wraps the specified mutator and
+	 * acceptance factor.
+	 * 
+	 * @param mutator
+	 *            the base mutator.
+	 * @param factor
+	 *            the acceptance factor.
+	 */
+	public SharedMutator(final MutationStrategy mutator, final double factor) {
+		this.mutator = mutator;
+		this.factor = factor;
+	}
 
 	@Override
 	public Solution mutate(final Solution solution) {
-		if ((shared != null) && (shared.getScore() < 0.75 * solution.getScore())) {
+		if ((shared != null) && (shared.getScore() < factor * solution.getScore())) {
 			return new Solution(shared.getRun(), shared.getEvents());
 		} else {
-			List<Event> events = Lists.newArrayList(solution.getEvents());
-
-			// pick a random event and move it to a new position randomly
-			int cur = random.nextInt(events.size());
-			int pos = random.nextInt(events.size());
-			while (pos == cur) {
-				pos = random.nextInt(events.size());
-			}
-
-			// build a new solution
-			Event e = events.remove(cur);
-			events.add(pos, e);
-			return new Solution(solution.getRun(), events);
+			return mutator.mutate(solution);
 		}
 	}
 
