@@ -7,6 +7,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.MulticastSocket;
 import java.util.List;
 import java.util.Map;
@@ -43,17 +44,19 @@ public class MulticastSharedMutator implements MutationStrategy, Listener {
 				events.put(e.getInternalId(), e);
 			}
 
-			// setup our multicast socket
 			try {
-				socket = new MulticastSocket(4499);
-				group = InetAddress.getByName("230.0.0.9");
+				// setup our multicast socket
+				group = InetAddress.getByName("224.0.0.17");
+				socket = new MulticastSocket(new InetSocketAddress(4499));
 				socket.joinGroup(group);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+
 		}
 
 		public void broadcast(final Solution solution) {
+			lastBroadcast = 0;
 			ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 			DataOutputStream dos = null;
 			try {
@@ -101,6 +104,7 @@ public class MulticastSharedMutator implements MutationStrategy, Listener {
 	}
 
 	protected final double factor;
+	protected long lastBroadcast = 0;
 	protected double localBest = Double.MAX_VALUE;
 	protected final MulticastThread multicast;
 	protected final MutationStrategy mutator;
@@ -126,7 +130,10 @@ public class MulticastSharedMutator implements MutationStrategy, Listener {
 	@Override
 	public Solution mutate(final Solution solution) {
 		if ((remote != null) && (remote.getScore() < factor * solution.getScore())) {
-			return new Solution(remote.getRun(), remote.getEvents());
+			System.out.println("Teleported to " + remote.getScore());
+			Solution next = new Solution(remote.getRun(), remote.getEvents());
+			remote = null;
+			return next;
 		} else {
 			return mutator.mutate(solution);
 		}
@@ -134,8 +141,11 @@ public class MulticastSharedMutator implements MutationStrategy, Listener {
 
 	@Override
 	public void tried(final double temp, final Solution current, final Solution best) {
+		lastBroadcast++;
 		if (best.getScore() < localBest) {
 			localBest = best.getScore();
+			multicast.broadcast(best);
+		} else if (lastBroadcast > 10000) {
 			multicast.broadcast(best);
 		}
 	}
