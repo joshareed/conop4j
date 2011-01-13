@@ -63,17 +63,36 @@ public class CONOP {
 	 *            the objective function.
 	 * @param schedule
 	 *            the cooling schedule.
+	 * @param listeners
+	 *            the listeners.
 	 */
 	public CONOP(final ConstraintChecker constraints, final MutationStrategy mutator,
-			final ObjectiveFunction objective, final CoolingSchedule schedule) {
+			final ObjectiveFunction objective, final CoolingSchedule schedule, final Listener... listeners) {
 		this.constraints = constraints;
 		this.mutator = mutator;
 		this.objective = objective;
 		this.schedule = schedule;
 		random = new Random();
-		listeners = new CopyOnWriteArraySet<Listener>();
+		this.listeners = new CopyOnWriteArraySet<Listener>();
 		int size = Runtime.getRuntime().availableProcessors() + 1;
 		executor = MoreExecutors.getExitingExecutorService((ThreadPoolExecutor) Executors.newFixedThreadPool(size));
+
+		// check for listeners
+		if (constraints instanceof Listener) {
+			this.listeners.add((Listener) constraints);
+		}
+		if (mutator instanceof Listener) {
+			this.listeners.add((Listener) mutator);
+		}
+		if (objective instanceof Listener) {
+			this.listeners.add((Listener) objective);
+		}
+		if (schedule instanceof Listener) {
+			this.listeners.add((Listener) schedule);
+		}
+		for (Listener l : listeners) {
+			this.listeners.add(l);
+		}
 	}
 
 	/**
