@@ -37,9 +37,9 @@ public class RanksListener implements Listener {
 			return -1;
 		}
 
-		int i = array.length - 1;
-		while ((array[i] != score) && (i >= 0)) {
-			i--;
+		int i = 0;
+		while ((array[i] != score) && (i < array.length)) {
+			i++;
 		}
 		return array.length - i;
 	}
@@ -57,9 +57,9 @@ public class RanksListener implements Listener {
 			return -1;
 		}
 
-		int i = 0;
-		while ((array[i] != score) && (i < array.length)) {
-			i++;
+		int i = array.length - 1;
+		while ((array[i] != score) && (i >= 0)) {
+			i--;
 		}
 		return array.length - i;
 	}
