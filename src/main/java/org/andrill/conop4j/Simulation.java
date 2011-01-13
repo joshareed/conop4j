@@ -7,16 +7,25 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import org.andrill.conop4j.constraints.ConstraintChecker;
 import org.andrill.conop4j.constraints.EventChecker;
 import org.andrill.conop4j.constraints.NullChecker;
+import org.andrill.conop4j.listeners.Listener;
 import org.andrill.conop4j.listeners.ProgressListener;
 import org.andrill.conop4j.listeners.RanksListener;
 import org.andrill.conop4j.listeners.SnapshotListener;
 import org.andrill.conop4j.mutation.ConstrainedMutator;
+import org.andrill.conop4j.mutation.MulticastSharedMutator;
 import org.andrill.conop4j.mutation.MutationStrategy;
 import org.andrill.conop4j.mutation.RandomMutator;
 import org.andrill.conop4j.objective.ObjectiveFunction;
@@ -27,8 +36,10 @@ import org.andrill.conop4j.schedule.CoolingSchedule;
 import org.andrill.conop4j.schedule.ExponentialSchedule;
 import org.andrill.conop4j.schedule.LinearSchedule;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
+import com.google.common.util.concurrent.MoreExecutors;
 
 /**
  * Reads a simulation configuration from a properties file.
@@ -70,27 +81,96 @@ public class Simulation {
 		// load the simulation configuration
 		Simulation config = new Simulation(new File(args[0]));
 		Run run = config.getRun();
-
-		// setup CONOP4J
-		CONOP conop = new CONOP(config.getConstraints(), config.getMutator(), config.getObjectiveFunction(),
-				config.getSchedule());
-
-		// add a listener to print out progress
-		conop.addListener(new ProgressListener());
-		conop.addListener(new SnapshotListener());
-
-		// add a listener to collect event ranks
 		RanksListener ranks = new RanksListener();
-		conop.addListener(ranks);
+		ProgressListener progress = new ProgressListener();
+		SnapshotListener snapshot = new SnapshotListener();
 
 		// find the optimal placement
 		long start = System.currentTimeMillis();
-		Solution solution = conop.solve(run, Solution.initial(run));
+		Solution solution = runSimulation(config, run, Solution.initial(run), ranks, progress, snapshot);
 		long elapsed = (System.currentTimeMillis() - start) / 60000;
 		System.out.println("Elapsed time: " + elapsed + " minutes.  Final score: " + D.format(solution.getScore()));
 
 		// write out the solution and ranks
 		writeResults(solution, ranks);
+	}
+
+	/**
+	 * Runs a simulation.
+	 * 
+	 * @param simulation
+	 *            the simulation.
+	 * @param run
+	 *            the run.
+	 * @param initial
+	 *            the initial solution.
+	 * @param listeners
+	 *            the listeners.
+	 * @return the solution.
+	 */
+	public static Solution runSimulation(final Simulation simulation, final Run run, final Solution initial,
+			final Listener... listeners) {
+		int serial = simulation.getSerialRunCount();
+		int parallel = simulation.getParallelProcessCount();
+		ExecutorService pool = MoreExecutors.getExitingExecutorService((ThreadPoolExecutor) Executors
+				.newFixedThreadPool(parallel));
+
+		Solution solution = initial;
+		for (int i = 0; i < serial; i++) {
+			if (serial > 1) {
+				System.out.println("Starting iteration " + (i + 1) + "/" + serial);
+			}
+			List<Future<Solution>> tasks = Lists.newArrayList();
+			final Solution next = new Solution(solution.getRun(), solution.getEvents());
+			if (parallel > 1) {
+				System.out.println("Starting a swarm of " + parallel + " CONOP processes");
+			}
+			for (int j = 0; j < parallel; j++) {
+				// create our CONOP process
+				final CONOP conop = new CONOP(simulation.getConstraints(), simulation.getMutator(),
+						simulation.getObjectiveFunction(), simulation.getSchedule());
+
+				// add our listeners
+				for (Listener l : listeners) {
+					if ((j == 0) || (l instanceof RanksListener)) {
+						conop.addListener(l);
+					}
+				}
+
+				// start a parallel process
+				tasks.add(pool.submit(new Callable<Solution>() {
+					@Override
+					public Solution call() throws Exception {
+						return conop.solve(run, new Solution(run, next.getEvents()));
+					}
+				}));
+			}
+
+			// get our best solution from the parallel tasks
+			Solution best = null;
+			for (Future<Solution> f : tasks) {
+				try {
+					Solution s = f.get();
+					if ((best == null) || (s.getScore() < best.getScore())) {
+						best = s;
+					}
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					e.printStackTrace();
+				}
+			}
+			solution = best;
+		}
+
+		// run the endgame simulation
+		File endgame = simulation.getEndgame();
+		if (endgame == null) {
+			return solution;
+		} else {
+			System.out.println("Starting endgame scenario: " + endgame.getName());
+			return runSimulation(new Simulation(endgame), run, solution, listeners);
+		}
 	}
 
 	/**
@@ -179,6 +259,7 @@ public class Simulation {
 
 	protected final File directory;
 	protected final Properties properties;
+	protected Run run;
 
 	/**
 	 * Create a new Simulation.
@@ -245,6 +326,22 @@ public class Simulation {
 	}
 
 	/**
+	 * Gets the endgame simulation.
+	 * 
+	 * @return the endgame simulation.
+	 */
+	public File getEndgame() {
+		String endgame = properties.getProperty("endgame");
+		if (endgame != null) {
+			File f = new File(directory, endgame);
+			if (f.exists()) {
+				return f;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Gets the configured {@link MutationStrategy}.
 	 * 
 	 * <pre>
@@ -257,19 +354,21 @@ public class Simulation {
 	 * @return the configured MutationStrategy.
 	 */
 	public MutationStrategy getMutator() {
+		// get our mutator
 		String mutator = properties.getProperty("mutator", "random");
+		MutationStrategy base = null;
 		if ("random".equalsIgnoreCase(mutator)) {
 			System.out.println("Mutator: Random");
-			return new RandomMutator();
+			base = new RandomMutator();
 		} else if ("constrained".equalsIgnoreCase(mutator)) {
 			System.out.println("Mutator: Constrained");
-			return new ConstrainedMutator();
+			base = new ConstrainedMutator();
 		} else {
 			Class<?> clazz;
 			try {
 				clazz = Class.forName(mutator);
 				if (MutationStrategy.class.isAssignableFrom(clazz)) {
-					return (MutationStrategy) clazz.newInstance();
+					base = (MutationStrategy) clazz.newInstance();
 				} else {
 					System.out.println("Class " + mutator + " does not implement the "
 							+ MutationStrategy.class.getName() + " interface");
@@ -282,7 +381,17 @@ public class Simulation {
 				System.out.println("Unable to find class " + mutator + ".  Check your classpath.");
 			}
 			System.out.println("Unknown mutator '" + mutator + "'.  Defaulting to RandomMutator.");
-			return new RandomMutator();
+			base = new RandomMutator();
+		}
+
+		// check for multicast
+		boolean multicast = Boolean.parseBoolean(properties.getProperty("multicast", "false"));
+		double factor = Double.parseDouble(properties.getProperty("multicast.factor", "0.75"));
+		if (multicast) {
+			System.out.println("Multicasting: true");
+			return new MulticastSharedMutator(getRun(), base, factor);
+		} else {
+			return base;
 		}
 	}
 
@@ -333,15 +442,27 @@ public class Simulation {
 	}
 
 	/**
+	 * Gets the parallel process count.
+	 * 
+	 * @return the parallel count.
+	 */
+	public int getParallelProcessCount() {
+		return Integer.parseInt(properties.getProperty("swarm", "1"));
+	}
+
+	/**
 	 * Gets the run for this simulation.
 	 * 
 	 * @return the run.
 	 */
 	public Run getRun() {
-		String data = properties.getProperty("data", ".");
-		boolean overrideWeights = !Boolean.getBoolean(properties.getProperty("weights", "true"));
-		File runDir = new File(directory, data);
-		return Run.loadCONOP9Run(runDir, overrideWeights);
+		if (run == null) {
+			String data = properties.getProperty("data", ".");
+			boolean overrideWeights = !Boolean.getBoolean(properties.getProperty("weights", "true"));
+			File runDir = new File(directory, data);
+			run = Run.loadCONOP9Run(runDir, overrideWeights);
+		}
+		return run;
 	}
 
 	/**
@@ -395,5 +516,14 @@ public class Simulation {
 			System.out.println("Unknown cooling schedule '" + schedule + "'.  Defaulting to Exponential.");
 			return new ExponentialSchedule(initial, delta, stepsPer, noProgress);
 		}
+	}
+
+	/**
+	 * Gets the serial run count.
+	 * 
+	 * @return the serial count.
+	 */
+	public int getSerialRunCount() {
+		return Integer.parseInt(properties.getProperty("series", "1"));
 	}
 }

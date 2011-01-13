@@ -23,6 +23,7 @@ import com.google.common.io.Closeables;
  * @author Josh Reed (jareed@andrill.org)
  */
 public class Solution {
+
 	private static Event find(final Run run, final String col1, final String col2) {
 		String name = col1;
 		if (col1.startsWith("'") || col1.startsWith("\"")) {
