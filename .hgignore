@@ -6,3 +6,4 @@ test/
 \.classpath
 \.settings/
 \.DS_Store
+.csv
