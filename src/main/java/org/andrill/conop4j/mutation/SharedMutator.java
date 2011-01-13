@@ -20,7 +20,7 @@ public class SharedMutator implements MutationStrategy, Listener {
 	 *            the base mutator.
 	 */
 	public SharedMutator(final MutationStrategy mutator) {
-		this(mutator, 0.75);
+		this(mutator, 0.95);
 	}
 
 	/**
