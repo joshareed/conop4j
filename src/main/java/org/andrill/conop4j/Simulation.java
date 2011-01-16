@@ -28,6 +28,7 @@ import org.andrill.conop4j.mutation.ConstrainedMutator;
 import org.andrill.conop4j.mutation.MulticastSharedMutator;
 import org.andrill.conop4j.mutation.MutationStrategy;
 import org.andrill.conop4j.mutation.RandomMutator;
+import org.andrill.conop4j.mutation.SharedMutator;
 import org.andrill.conop4j.objective.ObjectiveFunction;
 import org.andrill.conop4j.objective.ParallelPlacementPenalty;
 import org.andrill.conop4j.objective.PlacementPenalty;
@@ -125,10 +126,11 @@ public class Simulation {
 			if (parallel > 1) {
 				System.out.println("Starting a swarm of " + parallel + " CONOP processes");
 			}
+			SharedMutator shared = new SharedMutator(simulation.getMutator());
 			for (int j = 0; j < parallel; j++) {
 				// create our CONOP process
-				final CONOP conop = new CONOP(simulation.getConstraints(), simulation.getMutator(),
-						simulation.getObjectiveFunction(), simulation.getSchedule());
+				final CONOP conop = new CONOP(simulation.getConstraints(), shared, simulation.getObjectiveFunction(),
+						simulation.getSchedule());
 
 				// add our listeners
 				for (Listener l : listeners) {
@@ -488,7 +490,14 @@ public class Simulation {
 		double initial = Double.parseDouble(properties.getProperty("schedule.initial", "1000"));
 		double delta = Double.parseDouble(properties.getProperty("schedule.delta", "0.01"));
 		long stepsPer = Long.parseLong(properties.getProperty("schedule.stepsPer", "100"));
-		long noProgress = Long.parseLong(properties.getProperty("schedule.noProgress", "1000000"));
+
+		long noProgress;
+		String foo = properties.getProperty("schedule.noProgress");
+		if (foo == null) {
+			noProgress = Long.MAX_VALUE;
+		} else {
+			noProgress = Long.parseLong(foo);
+		}
 
 		if ("exponential".equalsIgnoreCase(schedule)) {
 			System.out.println("Schedule: Exponential");
