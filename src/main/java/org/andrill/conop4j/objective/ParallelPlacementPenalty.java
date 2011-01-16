@@ -1,6 +1,7 @@
 package org.andrill.conop4j.objective;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -13,6 +14,7 @@ import org.andrill.conop4j.Section;
 import org.andrill.conop4j.Solution;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.MoreExecutors;
 
 /**
@@ -21,6 +23,7 @@ import com.google.common.util.concurrent.MoreExecutors;
  * @author Josh Reed (jareed@andrill.org)
  */
 public class ParallelPlacementPenalty implements ObjectiveFunction {
+	private final Map<Section, SectionPlacement> placements = Maps.newHashMap();
 	private final ExecutorService pool;
 
 	/**
@@ -40,7 +43,12 @@ public class ParallelPlacementPenalty implements ObjectiveFunction {
 			jobs.add(pool.submit(new Callable<Double>() {
 				@Override
 				public Double call() throws Exception {
-					SectionPlacement placement = new SectionPlacement(s);
+					SectionPlacement placement = placements.get(s);
+					if (placement == null) {
+						placement = new SectionPlacement(s);
+						placements.put(s, placement);
+					}
+					placement.reset();
 					for (Event e : solution.getEvents()) {
 						placement.place(e);
 					}

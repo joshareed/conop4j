@@ -23,17 +23,28 @@ import com.google.common.collect.Maps;
  * @author Josh Reed (jareed@andrill.org)
  */
 public class SectionPlacement {
+	private static final IdentityHashMap<BigDecimal, Double> cache = new IdentityHashMap<BigDecimal, Double>() {
+		@Override
+		public Double get(final Object key) {
+			Double value = super.get(key);
+			if (value == null) {
+				BigDecimal k = (BigDecimal) key;
+				value = k.doubleValue();
+				put(k, value);
+			}
+			return value;
+		};
+	};
 	private static final Comparator<BigDecimal> REVERSE = new Comparator<BigDecimal>() {
 		@Override
 		public int compare(final BigDecimal o1, final BigDecimal o2) {
 			return -1 * o1.compareTo(o2);
 		}
 	};
-	protected final Map<BigDecimal, Double> cache;
 	protected int head = 0;
 	protected final Map<BigDecimal, Integer> levelMap;
 	protected final List<BigDecimal> levels;
-	protected final TreeMap<BigDecimal, List<Event>> placed;
+	protected final Map<BigDecimal, List<Event>> placed;
 	protected final Section section;
 
 	/**
@@ -49,12 +60,6 @@ public class SectionPlacement {
 		levels = Lists.newArrayList(section.getLevels());
 		Collections.sort(levels, REVERSE);
 
-		// cache BigDecimal => double
-		cache = new IdentityHashMap<BigDecimal, Double>();
-		for (Observation o : section.getObservations()) {
-			cache.put(o.getLevel(), o.getLevel().doubleValue());
-		}
-
 		// create our placement object
 		placed = new TreeMap<BigDecimal, List<Event>>(REVERSE);
 		levelMap = Maps.newTreeMap();
@@ -62,7 +67,6 @@ public class SectionPlacement {
 		for (BigDecimal l : levels) {
 			placed.put(l, new ArrayList<Event>());
 			levelMap.put(l, i++);
-			cache.put(l, l.doubleValue());
 		}
 		head = 0;
 	}
@@ -158,6 +162,12 @@ public class SectionPlacement {
 				}
 				placed.get(levels.get(head)).add(e);
 			}
+		}
+	}
+
+	public void reset() {
+		for (Entry<BigDecimal, List<Event>> e : placed.entrySet()) {
+			e.getValue().clear();
 		}
 	}
 }
