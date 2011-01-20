@@ -22,7 +22,7 @@ import com.google.common.util.concurrent.MoreExecutors;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class ParallelPlacementPenalty implements ObjectiveFunction, Parallel {
+public class PlacementPenalty implements ObjectiveFunction, Parallel {
 	protected final Map<Section, SectionPlacement> placements = Maps.newHashMap();
 	protected ExecutorService pool;
 	protected int procs = 1;
