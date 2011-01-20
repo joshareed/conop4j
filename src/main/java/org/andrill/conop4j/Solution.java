@@ -11,7 +11,8 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.andrill.conop4j.objective.PlacementPenalty;
+import org.andrill.conop4j.objective.MatrixPlacement;
+import org.andrill.conop4j.objective.ParallelPlacementPenalty;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -114,9 +115,15 @@ public class Solution {
 	public static void main(final String[] args) {
 		Run run = Run.loadCONOP9Run(new File(args[0]));
 		Solution solution = fromCSV(run, new File(args[1]));
-		PlacementPenalty penalty = new PlacementPenalty();
+		DecimalFormat pretty = new DecimalFormat("0.00");
+		ParallelPlacementPenalty penalty = new ParallelPlacementPenalty();
+		long start = System.currentTimeMillis();
 		double score = penalty.score(solution);
-		System.out.println("Score: " + new DecimalFormat("0.00").format(score));
+		System.out.println("Score: " + pretty.format(score) + " " + (System.currentTimeMillis() - start) + "ms");
+		MatrixPlacement matrix = new MatrixPlacement();
+		start = System.currentTimeMillis();
+		score = matrix.score(solution);
+		System.out.println("Score: " + pretty.format(score) + " " + (System.currentTimeMillis() - start) + "ms");
 	}
 
 	protected final ImmutableList<Event> events;
