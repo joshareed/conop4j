@@ -29,9 +29,10 @@ import org.andrill.conop4j.mutation.MulticastSharedMutator;
 import org.andrill.conop4j.mutation.MutationStrategy;
 import org.andrill.conop4j.mutation.RandomMutator;
 import org.andrill.conop4j.mutation.SharedMutator;
+import org.andrill.conop4j.objective.MatrixPenalty;
 import org.andrill.conop4j.objective.ObjectiveFunction;
 import org.andrill.conop4j.objective.Parallel;
-import org.andrill.conop4j.objective.ParallelPlacementPenalty;
+import org.andrill.conop4j.objective.PlacementPenalty;
 import org.andrill.conop4j.objective.SectionPlacement;
 import org.andrill.conop4j.schedule.CoolingSchedule;
 import org.andrill.conop4j.schedule.ExponentialSchedule;
@@ -400,8 +401,8 @@ public class Simulation {
 	 * <pre>
 	 * Key: score
 	 * Values:
-	 * 		experimental - {@link PlacementPenalty} (default)
-	 * 		parallel-experimental  - {@link ParallelPlacementPenalty}
+	 * 		placement - {@link PlacementPenalty} (default)
+	 * 		matrix    - {@link MatrixPenalty}
 	 * </pre>
 	 * 
 	 * @return the configured ObjectiveFunction.
@@ -412,7 +413,9 @@ public class Simulation {
 
 		ObjectiveFunction objective = null;
 		if ("placement".equalsIgnoreCase(value)) {
-			objective = new ParallelPlacementPenalty();
+			objective = new PlacementPenalty();
+		} else if ("matrix".equalsIgnoreCase(value)) {
+			objective = new MatrixPenalty();
 		} else {
 			Class<?> clazz;
 			try {
@@ -432,7 +435,7 @@ public class Simulation {
 			}
 			if (objective == null) {
 				System.err.println("Unknown objective function '" + value + "'.  Defaulting to Placement.");
-				objective = new ParallelPlacementPenalty();
+				objective = new PlacementPenalty();
 			}
 		}
 
