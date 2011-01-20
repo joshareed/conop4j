@@ -25,4 +25,9 @@ public class EventChecker implements ConstraintChecker {
 		}
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "Event";
+	}
 }

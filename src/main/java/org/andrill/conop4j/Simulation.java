@@ -30,8 +30,8 @@ import org.andrill.conop4j.mutation.MutationStrategy;
 import org.andrill.conop4j.mutation.RandomMutator;
 import org.andrill.conop4j.mutation.SharedMutator;
 import org.andrill.conop4j.objective.ObjectiveFunction;
+import org.andrill.conop4j.objective.Parallel;
 import org.andrill.conop4j.objective.ParallelPlacementPenalty;
-import org.andrill.conop4j.objective.PlacementPenalty;
 import org.andrill.conop4j.objective.SectionPlacement;
 import org.andrill.conop4j.schedule.CoolingSchedule;
 import org.andrill.conop4j.schedule.ExponentialSchedule;
@@ -298,31 +298,29 @@ public class Simulation {
 	 * @return the configured ConstraintChecker.
 	 */
 	public ConstraintChecker getConstraints() {
-		String constraints = properties.getProperty("constraints", "null");
-		if ("null".equalsIgnoreCase(constraints)) {
-			System.out.println("Constraints: Null Checker");
+		String value = properties.getProperty("constraints", "null");
+		if ("null".equalsIgnoreCase(value)) {
 			return new NullChecker();
-		} else if ("event".equalsIgnoreCase(constraints)) {
-			System.out.println("Constraints: Event Checker");
+		} else if ("event".equalsIgnoreCase(value)) {
 			return new EventChecker();
 		} else {
 			Class<?> clazz;
 			try {
-				clazz = Class.forName(constraints);
+				clazz = Class.forName(value);
 				if (ConstraintChecker.class.isAssignableFrom(clazz)) {
 					return (ConstraintChecker) clazz.newInstance();
 				} else {
-					System.out.println("Class " + constraints + " does not implement the "
+					System.err.println("Class " + value + " does not implement the "
 							+ ConstraintChecker.class.getName() + " interface");
 				}
 			} catch (ClassNotFoundException e) {
-				System.out.println("Unable to find class " + constraints + ".  Check your classpath.");
+				System.err.println("Unable to find class " + value + ".  Check your classpath.");
 			} catch (InstantiationException e) {
-				System.out.println("Unable to find class " + constraints + ".  Check your classpath.");
+				System.err.println("Unable to find class " + value + ".  Check your classpath.");
 			} catch (IllegalAccessException e) {
-				System.out.println("Unable to find class " + constraints + ".  Check your classpath.");
+				System.err.println("Unable to find class " + value + ".  Check your classpath.");
 			}
-			System.out.println("Unknown constraints '" + constraints + "'.  Defaulting to NullChecker.");
+			System.err.println("Unknown constraints '" + value + "'.  Defaulting to NullChecker.");
 			return new NullChecker();
 		}
 	}
@@ -357,43 +355,42 @@ public class Simulation {
 	 */
 	public MutationStrategy getMutator() {
 		// get our mutator
-		String mutator = properties.getProperty("mutator", "random");
-		MutationStrategy base = null;
-		if ("random".equalsIgnoreCase(mutator)) {
-			System.out.println("Mutator: Random");
-			base = new RandomMutator();
-		} else if ("constrained".equalsIgnoreCase(mutator)) {
-			System.out.println("Mutator: Constrained");
-			base = new ConstrainedMutator();
+		String value = properties.getProperty("mutator", "random");
+		MutationStrategy mutator = null;
+		if ("random".equalsIgnoreCase(value)) {
+			mutator = new RandomMutator();
+		} else if ("constrained".equalsIgnoreCase(value)) {
+			mutator = new ConstrainedMutator();
 		} else {
 			Class<?> clazz;
 			try {
-				clazz = Class.forName(mutator);
+				clazz = Class.forName(value);
 				if (MutationStrategy.class.isAssignableFrom(clazz)) {
-					base = (MutationStrategy) clazz.newInstance();
+					mutator = (MutationStrategy) clazz.newInstance();
 				} else {
-					System.out.println("Class " + mutator + " does not implement the "
-							+ MutationStrategy.class.getName() + " interface");
+					System.err.println("Class " + value + " does not implement the " + MutationStrategy.class.getName()
+							+ " interface");
 				}
 			} catch (ClassNotFoundException e) {
-				System.out.println("Unable to find class " + mutator + ".  Check your classpath.");
+				System.err.println("Unable to find class " + value + ".  Check your classpath.");
 			} catch (InstantiationException e) {
-				System.out.println("Unable to find class " + mutator + ".  Check your classpath.");
+				System.err.println("Unable to find class " + value + ".  Check your classpath.");
 			} catch (IllegalAccessException e) {
-				System.out.println("Unable to find class " + mutator + ".  Check your classpath.");
+				System.err.println("Unable to find class " + value + ".  Check your classpath.");
 			}
-			System.out.println("Unknown mutator '" + mutator + "'.  Defaulting to RandomMutator.");
-			base = new RandomMutator();
+			if (mutator == null) {
+				System.err.println("Unknown mutator '" + value + "'.  Defaulting to RandomMutator.");
+				mutator = new RandomMutator();
+			}
 		}
 
 		// check for multicast
 		boolean multicast = Boolean.parseBoolean(properties.getProperty("multicast", "false"));
 		double factor = Double.parseDouble(properties.getProperty("multicast.factor", "0.75"));
 		if (multicast) {
-			System.out.println("Multicasting: true");
-			return new MulticastSharedMutator(getRun(), base, factor);
+			return new MulticastSharedMutator(getRun(), mutator, factor);
 		} else {
-			return base;
+			return mutator;
 		}
 	}
 
@@ -410,37 +407,40 @@ public class Simulation {
 	 * @return the configured ObjectiveFunction.
 	 */
 	public ObjectiveFunction getObjectiveFunction() {
-		String score = properties.getProperty("objective", "experimental");
+		String value = properties.getProperty("objective", "experimental");
+		int processors = Integer.parseInt(properties.getProperty("processors", "1"));
 
-		if ("placement".equalsIgnoreCase(score)) {
-			int processors = Integer.parseInt(properties.getProperty("processors", "1"));
-			if (processors == 1) {
-				System.out.println("Objective: Placement");
-				return new PlacementPenalty();
-			} else {
-				System.out.println("Objective: Parallel Placement [" + processors + "]");
-				return new ParallelPlacementPenalty(processors);
-			}
+		ObjectiveFunction objective = null;
+		if ("placement".equalsIgnoreCase(value)) {
+			objective = new ParallelPlacementPenalty();
 		} else {
 			Class<?> clazz;
 			try {
-				clazz = Class.forName(score);
+				clazz = Class.forName(value);
 				if (ObjectiveFunction.class.isAssignableFrom(clazz)) {
-					return (ObjectiveFunction) clazz.newInstance();
+					objective = (ObjectiveFunction) clazz.newInstance();
 				} else {
-					System.out.println("Class " + score + " does not implement the "
+					System.err.println("Class " + value + " does not implement the "
 							+ ObjectiveFunction.class.getName() + " interface");
 				}
 			} catch (ClassNotFoundException e) {
-				System.out.println("Unable to find class " + score + ".  Check your classpath.");
+				System.err.println("Unable to find class " + value + ".  Check your classpath.");
 			} catch (InstantiationException e) {
-				System.out.println("Unable to find class " + score + ".  Check your classpath.");
+				System.err.println("Unable to find class " + value + ".  Check your classpath.");
 			} catch (IllegalAccessException e) {
-				System.out.println("Unable to find class " + score + ".  Check your classpath.");
+				System.err.println("Unable to find class " + value + ".  Check your classpath.");
 			}
-			System.out.println("Unknown objective function '" + score + "'.  Defaulting to ExperimentalPlacement.");
-			return new PlacementPenalty();
+			if (objective == null) {
+				System.err.println("Unknown objective function '" + value + "'.  Defaulting to Placement.");
+				objective = new ParallelPlacementPenalty();
+			}
 		}
+
+		// check if it is parallel aware
+		if (objective instanceof Parallel) {
+			((Parallel) objective).setProcessors(processors);
+		}
+		return objective;
 	}
 
 	/**
@@ -486,11 +486,12 @@ public class Simulation {
 	 * @return the configured CoolingSchedule.
 	 */
 	public CoolingSchedule getSchedule() {
-		String schedule = properties.getProperty("schedule", "exponential");
+		String value = properties.getProperty("schedule", "exponential");
 		double initial = Double.parseDouble(properties.getProperty("schedule.initial", "1000"));
 		double delta = Double.parseDouble(properties.getProperty("schedule.delta", "0.01"));
 		long stepsPer = Long.parseLong(properties.getProperty("schedule.stepsPer", "100"));
 
+		// figure out the no progress value
 		long noProgress;
 		String foo = properties.getProperty("schedule.noProgress");
 		if (foo == null) {
@@ -499,30 +500,30 @@ public class Simulation {
 			noProgress = Long.parseLong(foo);
 		}
 
-		if ("exponential".equalsIgnoreCase(schedule)) {
-			System.out.println("Schedule: Exponential");
+		// instance our schedule
+		if ("exponential".equalsIgnoreCase(value)) {
 			return new ExponentialSchedule(initial, delta, stepsPer, noProgress);
-		} else if ("linear".equalsIgnoreCase(schedule)) {
-			System.out.println("Schedule: Linear");
+		} else if ("linear".equalsIgnoreCase(value)) {
 			return new LinearSchedule(initial, stepsPer, delta);
 		} else {
 			Class<?> clazz;
 			try {
-				clazz = Class.forName(schedule);
+				clazz = Class.forName(value);
 				if (CoolingSchedule.class.isAssignableFrom(clazz)) {
 					return (CoolingSchedule) clazz.newInstance();
 				} else {
-					System.out.println("Class " + schedule + " does not implement the "
-							+ CoolingSchedule.class.getName() + " interface");
+					System.err.println("Class " + value + " does not implement the " + CoolingSchedule.class.getName()
+							+ " interface");
 				}
 			} catch (ClassNotFoundException e) {
-				System.out.println("Unable to find class " + schedule + ".  Check your classpath.");
+				System.err.println("Unable to find class " + value + ".  Check your classpath.");
 			} catch (InstantiationException e) {
-				System.out.println("Unable to find class " + schedule + ".  Check your classpath.");
+				System.err.println("Unable to find class " + value + ".  Check your classpath.");
 			} catch (IllegalAccessException e) {
-				System.out.println("Unable to find class " + schedule + ".  Check your classpath.");
+				System.err.println("Unable to find class " + value + ".  Check your classpath.");
 			}
-			System.out.println("Unknown cooling schedule '" + schedule + "'.  Defaulting to Exponential.");
+
+			System.err.println("Unknown cooling schedule '" + value + "'.  Defaulting to Exponential.");
 			return new ExponentialSchedule(initial, delta, stepsPer, noProgress);
 		}
 	}

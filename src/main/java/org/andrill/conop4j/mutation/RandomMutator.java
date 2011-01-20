@@ -32,4 +32,9 @@ public class RandomMutator implements MutationStrategy {
 		events.add(pos, e);
 		return new Solution(solution.getRun(), events);
 	}
+
+	@Override
+	public String toString() {
+		return "Random";
+	}
 }

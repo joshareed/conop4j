@@ -29,4 +29,9 @@ public class ConstrainedMutator implements MutationStrategy {
 		events.add(min + random.nextInt(max - min), e);
 		return new Solution(solution.getRun(), events);
 	}
+
+	@Override
+	public String toString() {
+		return "Constrained";
+	}
 }

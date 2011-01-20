@@ -140,6 +140,11 @@ public class MulticastSharedMutator implements MutationStrategy, Listener {
 	}
 
 	@Override
+	public String toString() {
+		return "Multicast [" + mutator + "]";
+	}
+
+	@Override
 	public void tried(final double temp, final Solution current, final Solution best) {
 		lastBroadcast++;
 		if (best.getScore() < localBest) {

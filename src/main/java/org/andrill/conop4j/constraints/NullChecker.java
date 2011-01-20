@@ -13,4 +13,9 @@ public class NullChecker implements ConstraintChecker {
 	public boolean isValid(final Solution solution) {
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "Null";
+	}
 }

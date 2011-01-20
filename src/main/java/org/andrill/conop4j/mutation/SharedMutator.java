@@ -47,6 +47,11 @@ public class SharedMutator implements MutationStrategy, Listener {
 	}
 
 	@Override
+	public String toString() {
+		return "Shared [" + mutator + "]";
+	}
+
+	@Override
 	public void tried(final double temp, final Solution current, final Solution best) {
 		if ((shared == null) || (best.getScore() < shared.getScore())) {
 			shared = best;
