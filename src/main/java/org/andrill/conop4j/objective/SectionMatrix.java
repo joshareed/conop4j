@@ -25,6 +25,7 @@ public class SectionMatrix {
 		}
 	};
 	protected final List<BigDecimal> levels;
+	protected double[][] matrix;
 	protected double[][] penalties;
 	protected final Section section;
 
@@ -74,9 +75,11 @@ public class SectionMatrix {
 				}
 			}
 		}
+		if (matrix == null) {
+			matrix = new double[eventCount][levels.size()];
+		}
 
 		// initialize our score matrix with the penalties
-		double matrix[][] = new double[eventCount][levels.size()];
 		for (int i = 0; i < eventCount; i++) {
 			Event e = solution.getEvent(i);
 			System.arraycopy(penalties[e.getInternalId()], 0, matrix[i], 0, levelCount);
