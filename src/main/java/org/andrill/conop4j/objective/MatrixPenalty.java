@@ -23,7 +23,7 @@ import com.google.common.util.concurrent.MoreExecutors;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class MatrixPlacement implements ObjectiveFunction, Parallel {
+public class MatrixPenalty implements ObjectiveFunction, Parallel {
 	protected Map<Section, SectionMatrix> matrices = Maps.newHashMap();
 	protected ExecutorService pool;
 	protected int procs = 1;
