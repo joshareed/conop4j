@@ -9,12 +9,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import org.andrill.conop4j.Event;
 import org.andrill.conop4j.Section;
 import org.andrill.conop4j.Solution;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
 
 /**
@@ -22,51 +22,57 @@ import com.google.common.util.concurrent.MoreExecutors;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class ParallelPlacementPenalty implements ObjectiveFunction {
-	private final Map<Section, SectionPlacement> placements = Maps.newHashMap();
-	private final ExecutorService pool;
+public class ParallelPlacementPenalty implements ObjectiveFunction, Parallel {
+	protected final Map<Section, SectionPlacement> placements = Maps.newHashMap();
+	protected ExecutorService pool;
+	protected int procs = 1;
 
-	/**
-	 * Create a new ParallelPlacementPenalty.
-	 * 
-	 * @param size
-	 *            the number of threads.
-	 */
-	public ParallelPlacementPenalty(final int size) {
-		pool = MoreExecutors.getExitingExecutorService((ThreadPoolExecutor) Executors.newFixedThreadPool(size));
+	protected Future<Double> execute(final SectionPlacement placement, final Solution solution) {
+		if (pool == null) {
+			return Futures.immediateFuture(placement.score(solution));
+		} else {
+			return pool.submit(new Callable<Double>() {
+				@Override
+				public Double call() throws Exception {
+					return placement.score(solution);
+				}
+			});
+		}
 	}
 
 	@Override
 	public double score(final Solution solution) {
-		List<Future<Double>> jobs = Lists.newArrayList();
-		for (final Section s : solution.getRun().getSections()) {
-			jobs.add(pool.submit(new Callable<Double>() {
-				@Override
-				public Double call() throws Exception {
-					SectionPlacement placement = placements.get(s);
-					if (placement == null) {
-						placement = new SectionPlacement(s);
-						placements.put(s, placement);
-					}
-					placement.reset();
-					for (Event e : solution.getEvents()) {
-						placement.place(e);
-					}
-					return placement.getPenalty();
-				}
-			}));
+		List<Future<Double>> results = Lists.newArrayList();
+		for (final Section section : solution.getRun().getSections()) {
+			SectionPlacement placement = placements.get(section);
+			if (placement == null) {
+				placement = new SectionPlacement(section);
+				placements.put(section, placement);
+			}
+			results.add(execute(placement, solution));
 		}
 
-		double score = 0;
-		for (Future<Double> f : jobs) {
+		double penalty = 0;
+		for (Future<Double> r : results) {
 			try {
-				score += f.get();
+				penalty += r.get();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} catch (ExecutionException e) {
 				e.printStackTrace();
 			}
 		}
-		return score;
+		return penalty;
+	}
+
+	@Override
+	public void setProcessors(final int procs) {
+		this.procs = procs;
+		pool = MoreExecutors.getExitingExecutorService((ThreadPoolExecutor) Executors.newFixedThreadPool(procs));
+	}
+
+	@Override
+	public String toString() {
+		return "Placement [" + procs + "]";
 	}
 }
