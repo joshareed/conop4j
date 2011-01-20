@@ -13,6 +13,7 @@ import java.util.TreeMap;
 import org.andrill.conop4j.Event;
 import org.andrill.conop4j.Observation;
 import org.andrill.conop4j.Section;
+import org.andrill.conop4j.Solution;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -24,6 +25,8 @@ import com.google.common.collect.Maps;
  */
 public class SectionPlacement {
 	private static final IdentityHashMap<BigDecimal, Double> cache = new IdentityHashMap<BigDecimal, Double>() {
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public Double get(final Object key) {
 			Double value = super.get(key);
@@ -165,9 +168,27 @@ public class SectionPlacement {
 		}
 	}
 
+	/**
+	 * Resets the placement.
+	 */
 	public void reset() {
 		for (Entry<BigDecimal, List<Event>> e : placed.entrySet()) {
 			e.getValue().clear();
 		}
+	}
+
+	/**
+	 * Scores the specified solution against this section.
+	 * 
+	 * @param solution
+	 *            the solution.
+	 * @return the score.
+	 */
+	public double score(final Solution solution) {
+		reset();
+		for (Event e : solution.getEvents()) {
+			place(e);
+		}
+		return getPenalty();
 	}
 }
