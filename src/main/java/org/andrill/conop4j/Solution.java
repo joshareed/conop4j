@@ -11,6 +11,8 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.andrill.conop4j.constraints.ConstraintChecker;
+import org.andrill.conop4j.constraints.EventChecker;
 import org.andrill.conop4j.objective.MatrixPenalty;
 import org.andrill.conop4j.objective.PlacementPenalty;
 
@@ -116,14 +118,13 @@ public class Solution {
 		Run run = Run.loadCONOP9Run(new File(args[0]));
 		Solution solution = fromCSV(run, new File(args[1]));
 		DecimalFormat pretty = new DecimalFormat("0.00");
+		ConstraintChecker constraints = new EventChecker();
 		PlacementPenalty penalty = new PlacementPenalty();
-		long start = System.currentTimeMillis();
-		double score = penalty.score(solution);
-		System.out.println("Score: " + pretty.format(score) + " " + (System.currentTimeMillis() - start) + "ms");
+		System.out.println("Score (" + penalty + "): " + pretty.format(penalty.score(solution)) + " [Valid: "
+				+ constraints.isValid(solution) + "]");
 		MatrixPenalty matrix = new MatrixPenalty();
-		start = System.currentTimeMillis();
-		score = matrix.score(solution);
-		System.out.println("Score: " + pretty.format(score) + " " + (System.currentTimeMillis() - start) + "ms");
+		System.out.println("Score (" + matrix + "): " + pretty.format(matrix.score(solution)) + " [Valid: "
+				+ constraints.isValid(solution) + "]");
 	}
 
 	protected final ImmutableList<Event> events;
