@@ -69,7 +69,7 @@ public class ExponentialSchedule implements CoolingSchedule {
 		} else if (score == -1) {
 			score = solution.getScore();
 			return current;
-		} else if (solution.getScore() < score) {
+		} else if (solution.getScore() <= score) {
 			score = solution.getScore();
 			count = 0;
 			stop = 0;
