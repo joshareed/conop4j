@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.andrill.conop4j.constraints.ConstraintChecker;
@@ -167,7 +168,12 @@ public class CONOP {
 				temp = schedule.next(current);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			if ((e instanceof InterruptedException) || (e instanceof RejectedExecutionException)) {
+				System.out.println("Halted: user interrupt");
+			} else {
+				System.out.println("Halted: " + e.getMessage());
+				e.printStackTrace();
+			}
 		}
 
 		return best;
