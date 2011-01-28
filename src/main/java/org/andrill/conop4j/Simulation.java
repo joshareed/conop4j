@@ -85,7 +85,7 @@ public class Simulation {
 		Run run = config.getRun();
 		RanksListener ranks = new RanksListener();
 		ProgressListener progress = new ProgressListener();
-		SnapshotListener snapshot = new SnapshotListener();
+		SnapshotListener snapshot = new SnapshotListener(ranks);
 
 		// find the optimal placement
 		long start = System.currentTimeMillis();

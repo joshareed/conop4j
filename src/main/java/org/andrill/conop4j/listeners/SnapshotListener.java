@@ -22,13 +22,19 @@ public class SnapshotListener implements Listener {
 	protected File file;
 	protected long iteration = 0;
 	protected long last = 0;
+	protected RanksListener ranks;
 	protected long start = -1;
 	protected Writer writer;
 
 	/**
 	 * Create a new SnapshotListener.
+	 * 
+	 * @param ranks
+	 *            the ranks listener or null.
+	 * 
 	 */
-	public SnapshotListener() {
+	public SnapshotListener(final RanksListener ranks) {
+		this.ranks = ranks;
 		try {
 			file = new File("solution.tmp");
 			writer = new BufferedWriter(new FileWriter(Simulation.getFile("snapshot.csv")));
@@ -55,7 +61,7 @@ public class SnapshotListener implements Listener {
 		if (min > last) {
 			last = min;
 			try {
-				Simulation.writeResults(file, best, null);
+				Simulation.writeResults(file, best, ranks);
 				writer.write(min + "\t" + iteration + "\t" + D.format(temp) + "\t" + D.format(best.getScore()) + "\n");
 				writer.flush();
 			} catch (IOException e) {
