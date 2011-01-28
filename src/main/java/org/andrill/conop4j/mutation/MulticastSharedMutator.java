@@ -106,9 +106,10 @@ public class MulticastSharedMutator implements MutationStrategy, Listener {
 	protected final double factor;
 	protected long lastBroadcast = 0;
 	protected double localBest = Double.MAX_VALUE;
-	protected final MulticastThread multicast;
+	protected MulticastThread multicast;
 	protected final MutationStrategy mutator;
 	protected Solution remote;
+	protected boolean started = false;
 
 	/**
 	 * Create a new MulticastSharedMutator.
@@ -124,7 +125,6 @@ public class MulticastSharedMutator implements MutationStrategy, Listener {
 		this.mutator = mutator;
 		this.factor = factor;
 		multicast = new MulticastThread(run);
-		multicast.start();
 	}
 
 	@Override
@@ -146,6 +146,10 @@ public class MulticastSharedMutator implements MutationStrategy, Listener {
 
 	@Override
 	public void tried(final double temp, final Solution current, final Solution best) {
+		if (!started) {
+			started = true;
+			multicast.start();
+		}
 		lastBroadcast++;
 		if (best.getScore() < localBest) {
 			localBest = best.getScore();
