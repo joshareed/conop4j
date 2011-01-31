@@ -27,4 +27,9 @@ public class CoexistencePenalty implements ObjectiveFunction {
 		}
 		return violations;
 	}
+
+	@Override
+	public String toString() {
+		return "Coexistence";
+	}
 }
