@@ -13,6 +13,7 @@ import java.util.Map;
 
 import org.andrill.conop4j.constraints.ConstraintChecker;
 import org.andrill.conop4j.constraints.EventChecker;
+import org.andrill.conop4j.objectives.CoexistencePenalty;
 import org.andrill.conop4j.objectives.MatrixPenalty;
 import org.andrill.conop4j.objectives.PlacementPenalty;
 
@@ -119,12 +120,13 @@ public class Solution {
 		Solution solution = fromCSV(run, new File(args[1]));
 		DecimalFormat pretty = new DecimalFormat("0.00");
 		ConstraintChecker constraints = new EventChecker();
+		System.out.println("Valid: " + constraints.isValid(solution));
 		PlacementPenalty penalty = new PlacementPenalty();
-		System.out.println("Score (" + penalty + "): " + pretty.format(penalty.score(solution)) + " [Valid: "
-				+ constraints.isValid(solution) + "]");
+		System.out.println("Score (" + penalty + "): " + pretty.format(penalty.score(solution)));
 		MatrixPenalty matrix = new MatrixPenalty();
-		System.out.println("Score (" + matrix + "): " + pretty.format(matrix.score(solution)) + " [Valid: "
-				+ constraints.isValid(solution) + "]");
+		System.out.println("Score (" + matrix + "): " + pretty.format(matrix.score(solution)));
+		CoexistencePenalty coex = new CoexistencePenalty();
+		System.out.println("Score (" + coex + "): " + pretty.format(coex.score(solution)));
 	}
 
 	protected final ImmutableList<Event> events;
