@@ -1,4 +1,4 @@
-package org.andrill.conop4j.mutation;
+package org.andrill.conop4j.mutators;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

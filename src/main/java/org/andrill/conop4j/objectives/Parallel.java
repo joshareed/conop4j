@@ -1,4 +1,4 @@
-package org.andrill.conop4j.objective;
+package org.andrill.conop4j.objectives;
 
 /**
  * Defines the interface for a parallel function.

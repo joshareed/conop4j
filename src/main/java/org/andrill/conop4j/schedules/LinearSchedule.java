@@ -1,4 +1,4 @@
-package org.andrill.conop4j.schedule;
+package org.andrill.conop4j.schedules;
 
 import org.andrill.conop4j.Solution;
 

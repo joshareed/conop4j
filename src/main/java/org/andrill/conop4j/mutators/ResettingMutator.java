@@ -1,4 +1,4 @@
-package org.andrill.conop4j.mutation;
+package org.andrill.conop4j.mutators;
 
 import org.andrill.conop4j.Solution;
 import org.andrill.conop4j.listeners.Listener;
@@ -10,15 +10,20 @@ import org.andrill.conop4j.listeners.Listener;
  * @author Josh Reed (jareed@andrill.org)
  */
 public class ResettingMutator implements MutationStrategy, Listener {
+	/**
+	 * The default reset counter.
+	 */
+	public static final long DEFAULT_RESET = 10;
 	protected MutationStrategy base;
 	protected long counter = 0;
 	protected Solution local = null;
+	protected long reset = 0;
 
 	/**
 	 * Create a new ResettingMutator that wraps a {@link ConstrainedMutator}.
 	 */
 	public ResettingMutator() {
-		this(new ConstrainedMutator());
+		this(new ConstrainedMutator(), DEFAULT_RESET);
 	}
 
 	/**
@@ -26,9 +31,12 @@ public class ResettingMutator implements MutationStrategy, Listener {
 	 * 
 	 * @param base
 	 *            the base mutator.
+	 * @param reset
+	 *            the reset counter.
 	 */
-	public ResettingMutator(final MutationStrategy base) {
+	public ResettingMutator(final MutationStrategy base, final long reset) {
 		this.base = base;
+		this.reset = reset;
 	}
 
 	@Override

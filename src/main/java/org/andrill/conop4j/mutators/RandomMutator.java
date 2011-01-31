@@ -1,4 +1,4 @@
-package org.andrill.conop4j.mutation;
+package org.andrill.conop4j.mutators;
 
 import java.util.List;
 import java.util.Random;

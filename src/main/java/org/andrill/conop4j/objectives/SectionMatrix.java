@@ -1,4 +1,4 @@
-package org.andrill.conop4j.objective;
+package org.andrill.conop4j.objectives;
 
 import java.math.BigDecimal;
 import java.util.Collections;

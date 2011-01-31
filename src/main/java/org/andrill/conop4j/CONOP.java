@@ -10,9 +10,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import org.andrill.conop4j.constraints.ConstraintChecker;
 import org.andrill.conop4j.listeners.Listener;
-import org.andrill.conop4j.mutation.MutationStrategy;
-import org.andrill.conop4j.objective.ObjectiveFunction;
-import org.andrill.conop4j.schedule.CoolingSchedule;
+import org.andrill.conop4j.mutators.MutationStrategy;
+import org.andrill.conop4j.objectives.ObjectiveFunction;
+import org.andrill.conop4j.schedules.CoolingSchedule;
 
 import com.google.common.util.concurrent.MoreExecutors;
 

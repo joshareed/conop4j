@@ -13,8 +13,8 @@ import java.util.Map;
 
 import org.andrill.conop4j.constraints.ConstraintChecker;
 import org.andrill.conop4j.constraints.EventChecker;
-import org.andrill.conop4j.objective.MatrixPenalty;
-import org.andrill.conop4j.objective.PlacementPenalty;
+import org.andrill.conop4j.objectives.MatrixPenalty;
+import org.andrill.conop4j.objectives.PlacementPenalty;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
