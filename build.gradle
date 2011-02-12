@@ -18,26 +18,28 @@ repositories {
 
 dependencies {
 	compile 'com.google.guava:guava:r06'
+	compile 'org.apache.poi:poi:3.6'
+	compile 'org.apache.poi:poi-ooxml:3.6'
+	compile 'net.sf.jopt-simple:jopt-simple:3.2'
+	compile 'com.miglayout:miglayout:3.7.3.1'
 	testCompile 'junit:junit:4.4'
 }
 
 task release(dependsOn: configurations.default.buildArtifacts) << {
 	def dest = file("$buildDir/fatjar")
 	dest.mkdirs()
-	
+
 	// expand all our dependencies
 	configurations.compile.each { jar ->
 		ant.unzip(src: jar, dest: dest, overwrite: true)
 	}
-	
+
 	// expand our code
 	configurations.default.allArtifactFiles.each { jar ->
 		ant.unzip(src: jar, dest: dest, overwrite: true)
 	}
-	
+
 	// create our fatjar
 	mkdir("$buildDir/release")
 	ant.zip(destfile: "$buildDir/release/${project.name}-${version}.jar", basedir: dest)
 }
-
-

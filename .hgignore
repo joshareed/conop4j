@@ -1,9 +1,0 @@
-bin/
-build/
-test/
-\.gradle/
-\.project
-\.classpath
-\.settings/
-\.DS_Store
-.csv
