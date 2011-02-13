@@ -3,13 +3,10 @@ package org.andrill.conop.analysis;
 import java.io.File;
 import java.util.List;
 
-import javax.swing.JFrame;
-
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
 import org.andrill.conop.analysis.SummarySpreadsheet.Summary;
-import org.andrill.conop.ui.PostProcessFrame;
 
 import com.google.common.collect.Lists;
 
@@ -20,7 +17,7 @@ import com.google.common.collect.Lists;
  */
 public class PostProcess {
 
-	private static void cli(final String[] args) {
+	public static void cli(final String[] args) {
 		// define our option parser
 		OptionParser parser = new OptionParser() {
 			{
@@ -34,15 +31,20 @@ public class PostProcess {
 		// parse our options
 		OptionSet options = parser.parse(args);
 
-		// get our input and output files/dirs
-		File in = (File) options.valueOf("in");
+		// get our runs
+		List<RunInfo> runs = Lists.newArrayList();
+		for (Object f : options.valuesOf("in")) {
+			runs.add(new RunInfo((File) f));
+		}
+
+		// get the output file
 		File out = (File) options.valueOf("out");
 
 		// get our summary classes
 		List<Summary> summaries = Lists.newArrayList();
 		for (Object summary : options.valuesOf("summary")) {
 			String name = summary.toString();
-			String className = name.indexOf('.') > 0 ? name : "org.andrill.conop.pp." + name;
+			String className = name.indexOf('.') > 0 ? name : "org.andrill.conop.analysis." + name;
 			try {
 				Class<?> clazz = Class.forName(className);
 				summaries.add((Summary) clazz.newInstance());
@@ -59,28 +61,21 @@ public class PostProcess {
 		}
 
 		// write our summary spreadsheet
-		System.out.println("Post-processing CONOP runs in '" + in + "' using the following summaries:");
+		StringBuilder names = new StringBuilder("(");
+		for (int i = 0; i < runs.size(); i++) {
+			names.append(runs.get(i).getName());
+			if (i < runs.size() - 1) {
+				names.append(", ");
+			}
+		}
+		names.append(")");
+
+		System.out.println("Post-processing CONOP runs in '" + names + "' using the following summaries:");
 		for (Summary s : summaries) {
 			System.out.println("  - " + s.getClass().getSimpleName());
 		}
 		System.out.println("Output going to: '" + out + "'");
 		SummarySpreadsheet spreadsheet = new SummarySpreadsheet(summaries.toArray(new Summary[summaries.size()]));
-		spreadsheet.write(out, new RunInfo(in));
-	}
-
-	private static void gui() {
-		PostProcessFrame frame = new PostProcessFrame();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.pack();
-		frame.setResizable(false);
-		frame.setVisible(true);
-	}
-
-	public static void main(final String[] args) {
-		if (args.length == 0) {
-			gui();
-		} else {
-			cli(args);
-		}
+		spreadsheet.write(out, runs.toArray(new RunInfo[0]));
 	}
 }
