@@ -1,5 +1,8 @@
 package org.andrill.conop.search.schedules;
 
+import java.util.Properties;
+
+import org.andrill.conop.search.AbstractConfigurable;
 import org.andrill.conop.search.Solution;
 
 /**
@@ -7,7 +10,7 @@ import org.andrill.conop.search.Solution;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class LinearSchedule implements CoolingSchedule {
+public class LinearSchedule extends AbstractConfigurable implements CoolingSchedule {
 	protected double current = 0.0;
 	protected double delta = 1;
 	protected double initial = 0;
@@ -15,37 +18,19 @@ public class LinearSchedule implements CoolingSchedule {
 	protected long stepsPer = 1;
 
 	/**
-	 * Create a new linear cooling schedule.
-	 * 
-	 * @param initial
-	 *            the initial temperature.
-	 * @param steps
-	 *            the number of temperature steps to 0.
+	 * Create a new LinearSchedule.
 	 */
-	public LinearSchedule(final double initial, final long steps) {
-		this.initial = initial;
-		stepsPer = 1;
-		delta = initial / steps;
-		stepsLeft = stepsPer;
-		current = initial;
+	public LinearSchedule() {
+		this.initial = 1000;
+		this.delta = 0.01;
+		this.stepsPer = 100;
 	}
 
-	/**
-	 * Create a new linear cooling schedule.
-	 * 
-	 * @param initial
-	 *            the initial temperature.
-	 * @param stepsPer
-	 *            the steps per temperature.
-	 * @param delta
-	 *            the temperature delta.
-	 */
-	public LinearSchedule(final double initial, final long stepsPer, final double delta) {
-		this.initial = initial;
-		this.stepsPer = stepsPer;
-		this.delta = delta;
-		stepsLeft = stepsPer;
-		current = initial;
+	@Override
+	public void configure(final Properties properties) {
+		this.initial = Double.parseDouble(properties.getProperty("schedule.initial", "1000"));
+		this.delta = Double.parseDouble(properties.getProperty("schedule.delta", "0.01"));
+		this.stepsPer = Long.parseLong(properties.getProperty("schedule.stepsPer", "100"));
 	}
 
 	@Override

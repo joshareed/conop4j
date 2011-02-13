@@ -1,5 +1,6 @@
 package org.andrill.conop.search.mutators;
 
+import org.andrill.conop.search.Configurable;
 import org.andrill.conop.search.Solution;
 
 /**
@@ -7,7 +8,7 @@ import org.andrill.conop.search.Solution;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public interface MutationStrategy {
+public interface MutationStrategy extends Configurable {
 
 	/**
 	 * Mutates the specified solution into a new solution.

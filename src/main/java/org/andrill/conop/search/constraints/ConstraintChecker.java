@@ -1,5 +1,6 @@
 package org.andrill.conop.search.constraints;
 
+import org.andrill.conop.search.Configurable;
 import org.andrill.conop.search.Solution;
 
 /**
@@ -8,7 +9,7 @@ import org.andrill.conop.search.Solution;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public interface ConstraintChecker {
+public interface ConstraintChecker extends Configurable {
 
 	/**
 	 * Check whether the specified solution satisfies all constraints.

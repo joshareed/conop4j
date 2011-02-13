@@ -12,6 +12,7 @@ import java.net.MulticastSocket;
 import java.util.List;
 import java.util.Map;
 
+import org.andrill.conop.search.AbstractConfigurable;
 import org.andrill.conop.search.Event;
 import org.andrill.conop.search.Run;
 import org.andrill.conop.search.Solution;
@@ -26,7 +27,8 @@ import com.google.common.io.Closeables;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class MulticastSharedMutator implements MutationStrategy, Listener {
+public class MulticastSharedMutator extends AbstractConfigurable implements
+		MutationStrategy, Listener {
 	private class MulticastThread extends Thread {
 		Map<Integer, Event> events = Maps.newHashMap();
 		InetAddress group;
@@ -121,7 +123,8 @@ public class MulticastSharedMutator implements MutationStrategy, Listener {
 	 * @param factor
 	 *            the acceptance factor.
 	 */
-	public MulticastSharedMutator(final Run run, final MutationStrategy mutator, final double factor) {
+	public MulticastSharedMutator(final Run run,
+			final MutationStrategy mutator, final double factor) {
 		this.mutator = mutator;
 		this.factor = factor;
 		multicast = new MulticastThread(run);
@@ -129,7 +132,8 @@ public class MulticastSharedMutator implements MutationStrategy, Listener {
 
 	@Override
 	public Solution mutate(final Solution solution) {
-		if ((remote != null) && (remote.getScore() < factor * solution.getScore())) {
+		if ((remote != null)
+				&& (remote.getScore() < factor * solution.getScore())) {
 			System.out.println("Teleported to " + remote.getScore());
 			Solution next = new Solution(remote.getRun(), remote.getEvents());
 			remote = null;
@@ -145,7 +149,8 @@ public class MulticastSharedMutator implements MutationStrategy, Listener {
 	}
 
 	@Override
-	public void tried(final double temp, final Solution current, final Solution best) {
+	public void tried(final double temp, final Solution current,
+			final Solution best) {
 		if (!started) {
 			started = true;
 			multicast.start();

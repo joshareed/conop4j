@@ -1,5 +1,6 @@
 package org.andrill.conop.search.mutators;
 
+import org.andrill.conop.search.AbstractConfigurable;
 import org.andrill.conop.search.Solution;
 import org.andrill.conop.search.listeners.Listener;
 
@@ -9,7 +10,8 @@ import org.andrill.conop.search.listeners.Listener;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class ResettingMutator implements MutationStrategy, Listener {
+public class ResettingMutator extends AbstractConfigurable implements
+		MutationStrategy, Listener {
 	/**
 	 * The default reset counter.
 	 */
@@ -50,7 +52,8 @@ public class ResettingMutator implements MutationStrategy, Listener {
 	}
 
 	@Override
-	public void tried(final double temp, final Solution current, final Solution best) {
+	public void tried(final double temp, final Solution current,
+			final Solution best) {
 		if ((local == null) || (best.getScore() <= local.getScore())) {
 			local = best;
 			counter = 0;

@@ -1,5 +1,6 @@
 package org.andrill.conop.search.constraints;
 
+import org.andrill.conop.search.AbstractConfigurable;
 import org.andrill.conop.search.Solution;
 
 /**
@@ -7,7 +8,8 @@ import org.andrill.conop.search.Solution;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class NullChecker implements ConstraintChecker {
+public class NullChecker extends AbstractConfigurable implements
+		ConstraintChecker {
 
 	@Override
 	public boolean isValid(final Solution solution) {

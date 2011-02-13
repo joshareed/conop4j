@@ -1,5 +1,6 @@
 package org.andrill.conop.search.mutators;
 
+import org.andrill.conop.search.AbstractConfigurable;
 import org.andrill.conop.search.Solution;
 import org.andrill.conop.search.listeners.Listener;
 
@@ -8,7 +9,8 @@ import org.andrill.conop.search.listeners.Listener;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class SharedMutator implements MutationStrategy, Listener {
+public class SharedMutator extends AbstractConfigurable implements
+		MutationStrategy, Listener {
 	protected final double factor;
 	protected final MutationStrategy mutator;
 	protected Solution shared;
@@ -39,7 +41,8 @@ public class SharedMutator implements MutationStrategy, Listener {
 
 	@Override
 	public Solution mutate(final Solution solution) {
-		if ((shared != null) && (shared.getScore() < factor * solution.getScore())) {
+		if ((shared != null)
+				&& (shared.getScore() < factor * solution.getScore())) {
 			return new Solution(shared.getRun(), shared.getEvents());
 		} else {
 			return mutator.mutate(solution);
@@ -52,7 +55,8 @@ public class SharedMutator implements MutationStrategy, Listener {
 	}
 
 	@Override
-	public void tried(final double temp, final Solution current, final Solution best) {
+	public void tried(final double temp, final Solution current,
+			final Solution best) {
 		if ((shared == null) || (best.getScore() < shared.getScore())) {
 			shared = best;
 		}

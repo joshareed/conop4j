@@ -1,5 +1,6 @@
 package org.andrill.conop.search.constraints;
 
+import org.andrill.conop.search.AbstractConfigurable;
 import org.andrill.conop.search.Event;
 import org.andrill.conop.search.Solution;
 
@@ -8,7 +9,8 @@ import org.andrill.conop.search.Solution;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class EventChecker implements ConstraintChecker {
+public class EventChecker extends AbstractConfigurable implements
+		ConstraintChecker {
 
 	@Override
 	public boolean isValid(final Solution solution) {

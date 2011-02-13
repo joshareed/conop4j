@@ -4,12 +4,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.andrill.conop.search.AbstractConfigurable;
 import org.andrill.conop.search.CoexistenceMatrix;
+import org.andrill.conop.search.CoexistenceMatrix.Coexistence;
 import org.andrill.conop.search.Event;
 import org.andrill.conop.search.Run;
 import org.andrill.conop.search.Section;
 import org.andrill.conop.search.Solution;
-import org.andrill.conop.search.CoexistenceMatrix.Coexistence;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -20,7 +21,8 @@ import com.google.common.collect.Maps;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class CoexistenceChecker implements ConstraintChecker {
+public class CoexistenceChecker extends AbstractConfigurable implements
+		ConstraintChecker {
 	protected Map<Event, Event> conjunct = Maps.newHashMap();
 
 	protected void init(final Run run) {
@@ -34,7 +36,8 @@ public class CoexistenceChecker implements ConstraintChecker {
 				}
 			}
 			if ((counter > 0.5 * run.getSections().size())
-					&& (((e.getBeforeConstraint() == null) && (e.getAfterConstraint() == null)) || (e
+					&& (((e.getBeforeConstraint() == null) && (e
+							.getAfterConstraint() == null)) || (e
 							.getBeforeConstraint() != null))) {
 				important.add(e);
 			}

@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -25,13 +26,11 @@ import org.andrill.conop.search.listeners.ProgressListener;
 import org.andrill.conop.search.listeners.RanksListener;
 import org.andrill.conop.search.listeners.SnapshotListener;
 import org.andrill.conop.search.mutators.ConstrainedMutator;
-import org.andrill.conop.search.mutators.MulticastSharedMutator;
 import org.andrill.conop.search.mutators.MutationStrategy;
 import org.andrill.conop.search.mutators.RandomMutator;
 import org.andrill.conop.search.mutators.SharedMutator;
 import org.andrill.conop.search.objectives.MatrixPenalty;
 import org.andrill.conop.search.objectives.ObjectiveFunction;
-import org.andrill.conop.search.objectives.Parallel;
 import org.andrill.conop.search.objectives.PlacementPenalty;
 import org.andrill.conop.search.objectives.SectionPlacement;
 import org.andrill.conop.search.schedules.CoolingSchedule;
@@ -298,32 +297,15 @@ public class Simulation {
 	 * 
 	 * @return the configured ConstraintChecker.
 	 */
+	@SuppressWarnings("serial")
 	public ConstraintChecker getConstraints() {
-		String value = properties.getProperty("constraints", "null");
-		if ("null".equalsIgnoreCase(value)) {
-			return new NullChecker();
-		} else if ("event".equalsIgnoreCase(value)) {
-			return new EventChecker();
-		} else {
-			Class<?> clazz;
-			try {
-				clazz = Class.forName(value);
-				if (ConstraintChecker.class.isAssignableFrom(clazz)) {
-					return (ConstraintChecker) clazz.newInstance();
-				} else {
-					System.err.println("Class " + value + " does not implement the "
-							+ ConstraintChecker.class.getName() + " interface");
-				}
-			} catch (ClassNotFoundException e) {
-				System.err.println("Unable to find class " + value + ".  Check your classpath.");
-			} catch (InstantiationException e) {
-				System.err.println("Unable to find class " + value + ".  Check your classpath.");
-			} catch (IllegalAccessException e) {
-				System.err.println("Unable to find class " + value + ".  Check your classpath.");
+		return lookup("constraints", ConstraintChecker.class, new HashMap<String, ConstraintChecker>() {
+			{
+				put("null", new NullChecker());
+				put("event", new EventChecker());
+				put("default", new NullChecker());
 			}
-			System.err.println("Unknown constraints '" + value + "'.  Defaulting to NullChecker.");
-			return new NullChecker();
-		}
+		});
 	}
 
 	/**
@@ -354,45 +336,15 @@ public class Simulation {
 	 * 
 	 * @return the configured MutationStrategy.
 	 */
+	@SuppressWarnings("serial")
 	public MutationStrategy getMutator() {
-		// get our mutator
-		String value = properties.getProperty("mutator", "random");
-		MutationStrategy mutator = null;
-		if ("random".equalsIgnoreCase(value)) {
-			mutator = new RandomMutator();
-		} else if ("constrained".equalsIgnoreCase(value)) {
-			mutator = new ConstrainedMutator();
-		} else {
-			Class<?> clazz;
-			try {
-				clazz = Class.forName(value);
-				if (MutationStrategy.class.isAssignableFrom(clazz)) {
-					mutator = (MutationStrategy) clazz.newInstance();
-				} else {
-					System.err.println("Class " + value + " does not implement the " + MutationStrategy.class.getName()
-							+ " interface");
-				}
-			} catch (ClassNotFoundException e) {
-				System.err.println("Unable to find class " + value + ".  Check your classpath.");
-			} catch (InstantiationException e) {
-				System.err.println("Unable to find class " + value + ".  Check your classpath.");
-			} catch (IllegalAccessException e) {
-				System.err.println("Unable to find class " + value + ".  Check your classpath.");
+		return lookup("mutator", MutationStrategy.class, new HashMap<String, MutationStrategy>() {
+			{
+				put("random", new RandomMutator());
+				put("constrainged", new ConstrainedMutator());
+				put("default", new RandomMutator());
 			}
-			if (mutator == null) {
-				System.err.println("Unknown mutator '" + value + "'.  Defaulting to RandomMutator.");
-				mutator = new RandomMutator();
-			}
-		}
-
-		// check for multicast
-		boolean multicast = Boolean.parseBoolean(properties.getProperty("multicast", "false"));
-		double factor = Double.parseDouble(properties.getProperty("multicast.factor", "0.75"));
-		if (multicast) {
-			return new MulticastSharedMutator(getRun(), mutator, factor);
-		} else {
-			return mutator;
-		}
+		});
 	}
 
 	/**
@@ -407,43 +359,15 @@ public class Simulation {
 	 * 
 	 * @return the configured ObjectiveFunction.
 	 */
+	@SuppressWarnings("serial")
 	public ObjectiveFunction getObjectiveFunction() {
-		String value = properties.getProperty("objective", "experimental");
-		int processors = Integer.parseInt(properties.getProperty("processors", "1"));
-
-		ObjectiveFunction objective = null;
-		if ("placement".equalsIgnoreCase(value)) {
-			objective = new PlacementPenalty();
-		} else if ("matrix".equalsIgnoreCase(value)) {
-			objective = new MatrixPenalty();
-		} else {
-			Class<?> clazz;
-			try {
-				clazz = Class.forName(value);
-				if (ObjectiveFunction.class.isAssignableFrom(clazz)) {
-					objective = (ObjectiveFunction) clazz.newInstance();
-				} else {
-					System.err.println("Class " + value + " does not implement the "
-							+ ObjectiveFunction.class.getName() + " interface");
-				}
-			} catch (ClassNotFoundException e) {
-				System.err.println("Unable to find class " + value + ".  Check your classpath.");
-			} catch (InstantiationException e) {
-				System.err.println("Unable to find class " + value + ".  Check your classpath.");
-			} catch (IllegalAccessException e) {
-				System.err.println("Unable to find class " + value + ".  Check your classpath.");
+		return lookup("objective", ObjectiveFunction.class, new HashMap<String, ObjectiveFunction>() {
+			{
+				put("placement", new PlacementPenalty());
+				put("matrix", new MatrixPenalty());
+				put("default", new PlacementPenalty());
 			}
-			if (objective == null) {
-				System.err.println("Unknown objective function '" + value + "'.  Defaulting to Placement.");
-				objective = new PlacementPenalty();
-			}
-		}
-
-		// check if it is parallel aware
-		if (objective instanceof Parallel) {
-			((Parallel) objective).setProcessors(processors);
-		}
-		return objective;
+		});
 	}
 
 	/**
@@ -488,47 +412,15 @@ public class Simulation {
 	 * 
 	 * @return the configured CoolingSchedule.
 	 */
+	@SuppressWarnings("serial")
 	public CoolingSchedule getSchedule() {
-		String value = properties.getProperty("schedule", "exponential");
-		double initial = Double.parseDouble(properties.getProperty("schedule.initial", "1000"));
-		double delta = Double.parseDouble(properties.getProperty("schedule.delta", "0.01"));
-		long stepsPer = Long.parseLong(properties.getProperty("schedule.stepsPer", "100"));
-
-		// figure out the no progress value
-		long noProgress;
-		String foo = properties.getProperty("schedule.noProgress");
-		if (foo == null) {
-			noProgress = Long.MAX_VALUE;
-		} else {
-			noProgress = Long.parseLong(foo);
-		}
-
-		// instance our schedule
-		if ("exponential".equalsIgnoreCase(value)) {
-			return new ExponentialSchedule(initial, delta, stepsPer, noProgress);
-		} else if ("linear".equalsIgnoreCase(value)) {
-			return new LinearSchedule(initial, stepsPer, delta);
-		} else {
-			Class<?> clazz;
-			try {
-				clazz = Class.forName(value);
-				if (CoolingSchedule.class.isAssignableFrom(clazz)) {
-					return (CoolingSchedule) clazz.newInstance();
-				} else {
-					System.err.println("Class " + value + " does not implement the " + CoolingSchedule.class.getName()
-							+ " interface");
-				}
-			} catch (ClassNotFoundException e) {
-				System.err.println("Unable to find class " + value + ".  Check your classpath.");
-			} catch (InstantiationException e) {
-				System.err.println("Unable to find class " + value + ".  Check your classpath.");
-			} catch (IllegalAccessException e) {
-				System.err.println("Unable to find class " + value + ".  Check your classpath.");
+		return lookup("schedule", CoolingSchedule.class, new HashMap<String, CoolingSchedule>() {
+			{
+				put("exponential", new ExponentialSchedule());
+				put("linear", new LinearSchedule());
+				put("default", new ExponentialSchedule());
 			}
-
-			System.err.println("Unknown cooling schedule '" + value + "'.  Defaulting to Exponential.");
-			return new ExponentialSchedule(initial, delta, stepsPer, noProgress);
-		}
+		});
 	}
 
 	/**
@@ -538,5 +430,40 @@ public class Simulation {
 	 */
 	public int getSerialRunCount() {
 		return Integer.parseInt(properties.getProperty("series", "1"));
+	}
+
+	protected <E> E instantiate(final String name, final Class<E> type) {
+		Class<?> clazz;
+		try {
+			clazz = Class.forName(name);
+			if (type.isAssignableFrom(clazz)) {
+				return type.cast(clazz.newInstance());
+			} else {
+				System.err.println("Class " + name + " does not implement the " + type.getName() + " interface");
+			}
+		} catch (ClassNotFoundException e) {
+			System.err.println("Unable to find class " + name + ".  Check your classpath.");
+		} catch (InstantiationException e) {
+			System.err.println("Unable to find class " + name + ".  Check your classpath.");
+		} catch (IllegalAccessException e) {
+			System.err.println("Unable to find class " + name + ".  Check your classpath.");
+		}
+		return null;
+	}
+
+	protected <E extends Configurable> E lookup(final String key, final Class<E> type, final Map<String, E> map) {
+		String name = properties.getProperty(key, "default");
+		E instance = null;
+		if (map.containsKey(name)) {
+			instance = map.get(name);
+		} else {
+			instance = instantiate(name, type);
+		}
+		if (instance == null) {
+			instance = map.get("default");
+			System.err.println("Unknown " + type.getName() + " '" + name + "', defaulting to " + instance);
+		}
+		instance.configure(properties);
+		return instance;
 	}
 }

@@ -1,5 +1,8 @@
 package org.andrill.conop.search.schedules;
 
+import java.util.Properties;
+
+import org.andrill.conop.search.AbstractConfigurable;
 import org.andrill.conop.search.Solution;
 
 /**
@@ -7,50 +10,37 @@ import org.andrill.conop.search.Solution;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class ExponentialSchedule implements CoolingSchedule {
+public class ExponentialSchedule extends AbstractConfigurable implements CoolingSchedule {
 	protected long count;
 	protected double current;
-	protected final double factor;
-	protected final double initial;
-	protected final long minStepsPer;
-	protected final long noProgress;
+	protected double factor;
+	protected double initial;
+	protected long minStepsPer;
+	protected long noProgress;
 	protected double score = -1;
 	protected long stop = 0;
 
 	/**
-	 * Create a new AdaptiveCooling.
-	 * 
-	 * @param initial
-	 *            the initial temp.
-	 * @param factor
-	 *            the factor.
-	 * @param minStepsPer
-	 *            the minimum number of steps before changing.
+	 * Create a new ExponentialSchedule.
 	 */
-	public ExponentialSchedule(final double initial, final double factor, final long minStepsPer) {
-		this(initial, factor, minStepsPer, Long.MAX_VALUE);
+	public ExponentialSchedule() {
+		initial = 1000;
+		factor = 0.01;
+		minStepsPer = 100;
+		noProgress = Long.MAX_VALUE;
 	}
 
-	/**
-	 * Create a new AdaptiveCooling.
-	 * 
-	 * @param initial
-	 *            the initial temp.
-	 * @param factor
-	 *            the factor.
-	 * @param minStepsPer
-	 *            the minimum number of steps before changing.
-	 * @param noProgress
-	 *            the maximum number of steps at the same score before stopping
-	 *            due to no progress.
-	 */
-	public ExponentialSchedule(final double initial, final double factor, final long minStepsPer, final long noProgress) {
-		this.initial = initial;
-		this.factor = factor;
-		this.minStepsPer = minStepsPer;
-		this.noProgress = noProgress;
-		current = initial;
-		count = 0;
+	@Override
+	public void configure(final Properties properties) {
+		this.initial = Double.parseDouble(properties.getProperty("schedule.initial", "1000"));
+		this.factor = Double.parseDouble(properties.getProperty("schedule.delta", "0.01"));
+		this.minStepsPer = Long.parseLong(properties.getProperty("schedule.stepsPer", "100"));
+		String value = properties.getProperty("schedule.noProgress");
+		if (value == null) {
+			this.noProgress = Long.MAX_VALUE;
+		} else {
+			this.noProgress = Long.parseLong(value);
+		}
 	}
 
 	@Override

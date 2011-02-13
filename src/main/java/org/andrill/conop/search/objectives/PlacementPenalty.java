@@ -2,6 +2,7 @@ package org.andrill.conop.search.objectives;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -9,6 +10,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import org.andrill.conop.search.AbstractConfigurable;
 import org.andrill.conop.search.Section;
 import org.andrill.conop.search.Solution;
 
@@ -22,10 +24,16 @@ import com.google.common.util.concurrent.MoreExecutors;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class PlacementPenalty implements ObjectiveFunction, Parallel {
+public class PlacementPenalty extends AbstractConfigurable implements ObjectiveFunction {
 	protected final Map<Section, SectionPlacement> placements = Maps.newHashMap();
 	protected ExecutorService pool;
 	protected int procs = 1;
+
+	@Override
+	public void configure(final Properties properties) {
+		this.procs = Integer.parseInt(properties.getProperty("processors", "1"));
+		pool = MoreExecutors.getExitingExecutorService((ThreadPoolExecutor) Executors.newFixedThreadPool(procs));
+	}
 
 	protected Future<Double> execute(final SectionPlacement placement, final Solution solution) {
 		if (pool == null) {
@@ -63,12 +71,6 @@ public class PlacementPenalty implements ObjectiveFunction, Parallel {
 			}
 		}
 		return penalty;
-	}
-
-	@Override
-	public void setProcessors(final int procs) {
-		this.procs = procs;
-		pool = MoreExecutors.getExitingExecutorService((ThreadPoolExecutor) Executors.newFixedThreadPool(procs));
 	}
 
 	@Override

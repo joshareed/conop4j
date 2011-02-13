@@ -3,6 +3,7 @@ package org.andrill.conop.search.mutators;
 import java.util.List;
 import java.util.Random;
 
+import org.andrill.conop.search.AbstractConfigurable;
 import org.andrill.conop.search.Event;
 import org.andrill.conop.search.Solution;
 
@@ -13,7 +14,8 @@ import com.google.common.collect.Lists;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class RandomMutator implements MutationStrategy {
+public class RandomMutator extends AbstractConfigurable implements
+		MutationStrategy {
 	protected Random random = new Random();
 
 	@Override
