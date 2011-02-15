@@ -97,6 +97,7 @@ public class AgeAndPlacements implements Summary {
 			Font font = sheet.getWorkbook().createFont();
 			font.setBoldweight(Font.BOLDWEIGHT_BOLD);
 			style.setFont(font);
+			style.setAlignment(CellStyle.ALIGN_CENTER);
 			style.setBorderBottom(CellStyle.BORDER_THIN);
 
 			// write out our header row
