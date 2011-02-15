@@ -3,7 +3,7 @@ apply plugin: 'eclipse'
 
 sourceCompatibility = 1.5
 targetCompatibility = 1.5
-version = '0.6.4'
+version = '0.7.0-SNAPSHOT'
 group = 'org.andrill.conop'
 
 manifest.mainAttributes(
@@ -41,5 +41,5 @@ task release(dependsOn: configurations.default.buildArtifacts) << {
 
 	// create our fatjar
 	mkdir("$buildDir/release")
-	ant.zip(destfile: "$buildDir/release/${project.name}-${version}.jar", basedir: dest)
+	ant.zip(destfile: "$buildDir/release/conop-tools-${version}.jar", basedir: dest)
 }
