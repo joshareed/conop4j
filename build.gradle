@@ -43,3 +43,8 @@ task release(dependsOn: configurations.default.buildArtifacts) << {
 	mkdir("$buildDir/release")
 	ant.zip(destfile: "$buildDir/release/conop-tools-${version}.jar", basedir: dest)
 }
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '0.9'
+	jarFile = 'wrapper/wrapper.jar'
+}
