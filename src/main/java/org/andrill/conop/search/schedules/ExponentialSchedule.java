@@ -28,6 +28,7 @@ public class ExponentialSchedule extends AbstractConfigurable implements Cooling
 		factor = 0.01;
 		minStepsPer = 100;
 		noProgress = Long.MAX_VALUE;
+		this.current = initial;
 	}
 
 	@Override
@@ -41,6 +42,7 @@ public class ExponentialSchedule extends AbstractConfigurable implements Cooling
 		} else {
 			this.noProgress = Long.parseLong(value);
 		}
+		this.current = initial;
 	}
 
 	@Override
