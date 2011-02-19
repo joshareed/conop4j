@@ -24,6 +24,7 @@ public class LinearSchedule extends AbstractConfigurable implements CoolingSched
 		this.initial = 1000;
 		this.delta = 0.01;
 		this.stepsPer = 100;
+		this.current = initial;
 	}
 
 	@Override
@@ -31,6 +32,7 @@ public class LinearSchedule extends AbstractConfigurable implements CoolingSched
 		this.initial = Double.parseDouble(properties.getProperty("schedule.initial", "1000"));
 		this.delta = Double.parseDouble(properties.getProperty("schedule.delta", "0.01"));
 		this.stepsPer = Long.parseLong(properties.getProperty("schedule.stepsPer", "100"));
+		this.current = initial;
 	}
 
 	@Override

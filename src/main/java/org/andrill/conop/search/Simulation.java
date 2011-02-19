@@ -341,7 +341,7 @@ public class Simulation {
 		return lookup("mutator", MutationStrategy.class, new HashMap<String, MutationStrategy>() {
 			{
 				put("random", new RandomMutator());
-				put("constrainged", new ConstrainedMutator());
+				put("constrained", new ConstrainedMutator());
 				put("default", new RandomMutator());
 			}
 		});
