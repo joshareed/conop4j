@@ -262,6 +262,10 @@ public class Simulation {
 	protected final File directory;
 	protected final Properties properties;
 	protected Run run;
+	protected MutationStrategy mutator;
+	protected ConstraintChecker constraints;
+	protected ObjectiveFunction objective;
+	protected CoolingSchedule schedule;
 
 	/**
 	 * Create a new Simulation.
@@ -299,13 +303,16 @@ public class Simulation {
 	 */
 	@SuppressWarnings("serial")
 	public ConstraintChecker getConstraints() {
-		return lookup("constraints", ConstraintChecker.class, new HashMap<String, ConstraintChecker>() {
-			{
-				put("null", new NullChecker());
-				put("event", new EventChecker());
-				put("default", new NullChecker());
-			}
-		});
+		if (constraints == null) {
+			constraints = lookup("constraints", ConstraintChecker.class, new HashMap<String, ConstraintChecker>() {
+				{
+					put("null", new NullChecker());
+					put("event", new EventChecker());
+					put("default", new NullChecker());
+				}
+			});
+		}
+		return constraints;
 	}
 
 	/**
@@ -338,13 +345,16 @@ public class Simulation {
 	 */
 	@SuppressWarnings("serial")
 	public MutationStrategy getMutator() {
-		return lookup("mutator", MutationStrategy.class, new HashMap<String, MutationStrategy>() {
-			{
-				put("random", new RandomMutator());
-				put("constrained", new ConstrainedMutator());
-				put("default", new RandomMutator());
-			}
-		});
+		if (mutator == null) {
+			mutator = lookup("mutator", MutationStrategy.class, new HashMap<String, MutationStrategy>() {
+				{
+					put("random", new RandomMutator());
+					put("constrained", new ConstrainedMutator());
+					put("default", new RandomMutator());
+				}
+			});
+		}
+		return mutator;
 	}
 
 	/**
@@ -361,13 +371,16 @@ public class Simulation {
 	 */
 	@SuppressWarnings("serial")
 	public ObjectiveFunction getObjectiveFunction() {
-		return lookup("objective", ObjectiveFunction.class, new HashMap<String, ObjectiveFunction>() {
-			{
-				put("placement", new PlacementPenalty());
-				put("matrix", new MatrixPenalty());
-				put("default", new PlacementPenalty());
-			}
-		});
+		if (objective == null) {
+			objective = lookup("objective", ObjectiveFunction.class, new HashMap<String, ObjectiveFunction>() {
+				{
+					put("placement", new PlacementPenalty());
+					put("matrix", new MatrixPenalty());
+					put("default", new PlacementPenalty());
+				}
+			});
+		}
+		return objective;
 	}
 
 	/**
@@ -414,13 +427,16 @@ public class Simulation {
 	 */
 	@SuppressWarnings("serial")
 	public CoolingSchedule getSchedule() {
-		return lookup("schedule", CoolingSchedule.class, new HashMap<String, CoolingSchedule>() {
-			{
-				put("exponential", new ExponentialSchedule());
-				put("linear", new LinearSchedule());
-				put("default", new ExponentialSchedule());
-			}
-		});
+		if (schedule == null) {
+			schedule = lookup("schedule", CoolingSchedule.class, new HashMap<String, CoolingSchedule>() {
+				{
+					put("exponential", new ExponentialSchedule());
+					put("linear", new LinearSchedule());
+					put("default", new ExponentialSchedule());
+				}
+			});
+		}
+		return schedule;
 	}
 
 	/**
