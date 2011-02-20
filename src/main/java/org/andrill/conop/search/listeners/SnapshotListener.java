@@ -40,9 +40,9 @@ public class SnapshotListener extends AbstractConfigurable implements Listener {
 	@Override
 	public void configure(final Properties properties) {
 		try {
-			file = new File(properties.getProperty("snapshot.solution", "solution.tmp"));
-			writer = new BufferedWriter(new FileWriter(Simulation.getFile(properties.getProperty("snapshot.file",
-					"snapshot.csv"))));
+			file = new File(properties.getProperty("snapshot.solution.file", "solution.tmp"));
+			writer = new BufferedWriter(new FileWriter(Simulation.getFile(properties.getProperty(
+					"snapshot.snapshot.file", "snapshot.csv"))));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
