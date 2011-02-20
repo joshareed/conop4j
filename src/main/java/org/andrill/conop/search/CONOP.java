@@ -22,29 +22,6 @@ import com.google.common.util.concurrent.MoreExecutors;
  * @author Josh Reed (jareed@andrill.org)
  */
 public class CONOP {
-
-	private static class NotifyListenersTask implements Runnable {
-		private final Solution best;
-		private final Solution current;
-		private final Set<Listener> listeners;
-		private final double temp;
-
-		private NotifyListenersTask(final Set<Listener> listeners, final double temp, final Solution current,
-				final Solution best) {
-			this.listeners = listeners;
-			this.current = current;
-			this.best = best;
-			this.temp = temp;
-		}
-
-		@Override
-		public void run() {
-			for (Listener l : listeners) {
-				l.tried(temp, current, best);
-			}
-		}
-	}
-
 	protected final ConstraintChecker constraints;
 	protected final ExecutorService executor;
 	protected final Set<Listener> listeners;
@@ -156,9 +133,9 @@ public class CONOP {
 					current = next;
 				}
 
-				// notify listeners asynchronously
-				if (listeners.size() > 0) {
-					executor.submit(new NotifyListenersTask(listeners, temp, current, best));
+				// notify listeners
+				for (Listener l : listeners) {
+					l.tried(temp, current, best);
 				}
 
 				// get our next temperature
