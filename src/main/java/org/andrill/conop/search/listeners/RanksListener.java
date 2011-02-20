@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.andrill.conop.search.AbstractConfigurable;
 import org.andrill.conop.search.Event;
 import org.andrill.conop.search.Solution;
 
@@ -20,7 +21,7 @@ import com.google.common.io.Closeables;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class RanksListener implements Listener {
+public class RanksListener extends AbstractConfigurable implements Listener {
 	private Map<Event, double[]> ranks;
 	private double score = -1;
 

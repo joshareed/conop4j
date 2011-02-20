@@ -2,6 +2,7 @@ package org.andrill.conop.search.listeners;
 
 import java.text.DecimalFormat;
 
+import org.andrill.conop.search.AbstractConfigurable;
 import org.andrill.conop.search.Solution;
 
 /**
@@ -9,7 +10,7 @@ import org.andrill.conop.search.Solution;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class ProgressListener implements Listener {
+public class ConsoleProgressListener extends AbstractConfigurable implements Listener {
 	private static final DecimalFormat DEC = new DecimalFormat("0.00");
 	private long iter = 0;
 	private double score = Double.MAX_VALUE;

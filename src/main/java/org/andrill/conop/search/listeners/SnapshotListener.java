@@ -6,18 +6,18 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.text.DecimalFormat;
+import java.util.Properties;
 
+import org.andrill.conop.search.AbstractConfigurable;
 import org.andrill.conop.search.Simulation;
 import org.andrill.conop.search.Solution;
-
-import com.google.common.io.Closeables;
 
 /**
  * Writes a log and current best solution to files every minute.
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class SnapshotListener implements Listener {
+public class SnapshotListener extends AbstractConfigurable implements Listener {
 	private static final DecimalFormat D = new DecimalFormat("0.00");
 	protected File file;
 	protected long iteration = 0;
@@ -35,15 +35,14 @@ public class SnapshotListener implements Listener {
 	 */
 	public SnapshotListener(final RanksListener ranks) {
 		this.ranks = ranks;
+	}
+
+	@Override
+	public void configure(final Properties properties) {
 		try {
-			file = new File("solution.tmp");
-			writer = new BufferedWriter(new FileWriter(Simulation.getFile("snapshot.csv")));
-			Runtime.getRuntime().addShutdownHook(new Thread() {
-				@Override
-				public void run() {
-					Closeables.closeQuietly(writer);
-				}
-			});
+			file = new File(properties.getProperty("snapshot.solution", "solution.tmp"));
+			writer = new BufferedWriter(new FileWriter(Simulation.getFile(properties.getProperty("snapshot.file",
+					"snapshot.csv"))));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
