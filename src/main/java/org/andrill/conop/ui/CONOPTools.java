@@ -5,6 +5,9 @@ import java.awt.BorderLayout;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 
+import org.andrill.conop.analysis.PostProcess;
+import org.andrill.conop.search.Simulation;
+
 /**
  * The CONOP tools main class.
  * 
@@ -29,7 +32,20 @@ public class CONOPTools {
 	}
 
 	protected static void cli(final String[] args) {
+		// get our command and args
+		String cmd = args[0];
+		String[] newargs = new String[args.length - 1];
+		if (newargs.length > 0) {
+			System.arraycopy(args, 1, newargs, 0, newargs.length);
+		}
 
+		if ("run".equals(cmd)) {
+			Simulation.main(newargs);
+		} else if ("process".equals(cmd)) {
+			PostProcess.main(newargs);
+		} else {
+			System.err.println("Unknown command: '" + cmd + "'");
+		}
 	}
 
 	protected static void gui() {
