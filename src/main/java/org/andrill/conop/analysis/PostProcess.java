@@ -17,7 +17,7 @@ import com.google.common.collect.Lists;
  */
 public class PostProcess {
 
-	public static void cli(final String[] args) {
+	public static void main(final String[] args) {
 		// define our option parser
 		OptionParser parser = new OptionParser() {
 			{
