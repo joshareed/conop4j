@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.andrill.conop.search.AbstractConfigurable;
 import org.andrill.conop.search.Event;
 import org.andrill.conop.search.Solution;
 
@@ -21,9 +20,21 @@ import com.google.common.io.Closeables;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class RanksListener extends AbstractConfigurable implements Listener {
+public class RanksListener extends AsyncListener {
 	private Map<Event, double[]> ranks;
 	private double score = -1;
+
+	@Override
+	protected void first(final double temp, final Solution current, final Solution best) {
+		ranks = Maps.newHashMap();
+		int size = current.getEvents().size();
+		for (Event e : current.getEvents()) {
+			double[] array = new double[size];
+			Arrays.fill(array, -1);
+			ranks.put(e, array);
+		}
+		score = best.getScore();
+	}
 
 	/**
 	 * Gets the max rank for the specified event.
@@ -75,25 +86,16 @@ public class RanksListener extends AbstractConfigurable implements Listener {
 	}
 
 	@Override
-	public void tried(final double temp, final Solution current, final Solution best) {
-		if (ranks == null) {
-			ranks = Maps.newHashMap();
-			int size = current.getEvents().size();
-			for (Event e : current.getEvents()) {
-				double[] array = new double[size];
-				Arrays.fill(array, -1);
-				ranks.put(e, array);
-			}
-			score = best.getScore();
+	protected void run(final double temp, final long iteration, final Solution current, final Solution best) {
+		score = current.getScore();
+		for (Event e : current.getEvents()) {
+			ranks.get(e)[current.getPosition(e)] = score;
 		}
+	}
 
-		// only update the ranks if the score is better
-		if (current.getScore() <= score) {
-			score = current.getScore();
-			for (Event e : current.getEvents()) {
-				ranks.get(e)[current.getPosition(e)] = score;
-			}
-		}
+	@Override
+	protected boolean test(final double temp, final long iteration, final Solution current, final Solution best) {
+		return current.getScore() <= score;
 	}
 
 	/**

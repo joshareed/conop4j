@@ -8,7 +8,6 @@ import java.io.Writer;
 import java.text.DecimalFormat;
 import java.util.Properties;
 
-import org.andrill.conop.search.AbstractConfigurable;
 import org.andrill.conop.search.Simulation;
 import org.andrill.conop.search.Solution;
 
@@ -17,10 +16,9 @@ import org.andrill.conop.search.Solution;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class SnapshotListener extends AbstractConfigurable implements Listener {
+public class SnapshotListener extends AsyncListener {
 	private static final DecimalFormat D = new DecimalFormat("0.00");
 	protected File file;
-	protected long iteration = 0;
 	protected long last = 0;
 	protected RanksListener ranks;
 	protected long start = -1;
@@ -49,23 +47,29 @@ public class SnapshotListener extends AbstractConfigurable implements Listener {
 	}
 
 	@Override
-	public void tried(final double temp, final Solution current, final Solution best) {
-		if (start == -1) {
-			start = System.currentTimeMillis();
-		}
-		iteration++;
+	protected void first(final double temp, final Solution current, final Solution best) {
+		start = System.currentTimeMillis();
+	}
 
-		// log a snapshot every minute
+	@Override
+	protected void run(final double temp, final long iteration, final Solution current, final Solution best) {
+		try {
+			Simulation.writeResults(file, best, ranks);
+			writer.write(last + "\t" + iteration + "\t" + D.format(temp) + "\t" + D.format(best.getScore()) + "\n");
+			writer.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	protected boolean test(final double temp, final long iteration, final Solution current, final Solution best) {
 		long min = (System.currentTimeMillis() - start) / 60000;
 		if (min > last) {
 			last = min;
-			try {
-				Simulation.writeResults(file, best, ranks);
-				writer.write(min + "\t" + iteration + "\t" + D.format(temp) + "\t" + D.format(best.getScore()) + "\n");
-				writer.flush();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			return true;
+		} else {
+			return false;
 		}
 	}
 }
