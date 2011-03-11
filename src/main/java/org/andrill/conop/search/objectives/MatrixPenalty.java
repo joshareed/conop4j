@@ -32,7 +32,8 @@ public class MatrixPenalty extends AbstractConfigurable implements ObjectiveFunc
 
 	@Override
 	public void configure(final Properties properties) {
-		this.procs = Integer.parseInt(properties.getProperty("processors", "1"));
+		this.procs = Integer.parseInt(properties.getProperty("processors", ""
+				+ Runtime.getRuntime().availableProcessors()));
 		pool = MoreExecutors.getExitingExecutorService((ThreadPoolExecutor) Executors.newFixedThreadPool(procs));
 	}
 
