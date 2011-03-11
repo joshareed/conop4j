@@ -21,7 +21,7 @@ dependencies {
 	compile 'org.apache.poi:poi:3.7'
 	compile 'org.apache.poi:poi-ooxml:3.7'
 	compile 'net.sf.jopt-simple:jopt-simple:3.2'
-	compile 'com.miglayout:miglayout:3.7.4'
+	compile 'com.miglayout:miglayout:3.7.4:swing@jar'
 	testCompile 'junit:junit:4.8.2'
 }
 
