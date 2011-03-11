@@ -18,9 +18,12 @@ public class StoppingListener extends AbstractConfigurable implements Listener {
 	protected long startTime = 0;
 
 	protected long stopIteration = -1;
-	protected long stopNoProgressIteration = -1;
-	protected long stopNoProgressTime = -1;
-	protected long stopTime = -1;
+	protected long stopProgressIteration = -1;
+	protected double stopProgressTime = -1;
+	protected double stopThreshold = -1;
+	protected long stopThresholdIteration = -1;
+	protected double stopThresholdTime = -1;
+	protected double stopTime = -1;
 
 	@Override
 	public void configure(final Properties properties) {
@@ -28,16 +31,25 @@ public class StoppingListener extends AbstractConfigurable implements Listener {
 
 		// parse stopping conditions
 		if (properties.containsKey("stop.time")) {
-			stopTime = Long.parseLong(properties.getProperty("stop.time", "-1")) * 1000 * 60;
+			stopTime = Double.parseDouble(properties.getProperty("stop.time", "-1")) * 1000 * 60;
 		}
 		if (properties.containsKey("stop.steps")) {
 			stopIteration = Long.parseLong(properties.getProperty("stop.steps", "-1"));
 		}
-		if (properties.containsKey("stop.noProgress.time")) {
-			stopNoProgressTime = Long.parseLong(properties.getProperty("stop.noProgress.time", "-1")) * 1000 * 60;
+		if (properties.containsKey("stop.progress.time")) {
+			stopProgressTime = Double.parseDouble(properties.getProperty("stop.progress.time", "-1")) * 1000 * 60;
 		}
-		if (properties.containsKey("stop.noProgress.steps")) {
-			stopNoProgressIteration = Long.parseLong(properties.getProperty("stop.noProgress.steps", "-1"));
+		if (properties.containsKey("stop.progress.steps")) {
+			stopProgressIteration = Long.parseLong(properties.getProperty("stop.progress.steps", "-1"));
+		}
+		if (properties.containsKey("stop.threshold")) {
+			stopThreshold = Double.parseDouble(properties.getProperty("stop.threshold", "-1"));
+		}
+		if (properties.containsKey("stop.threshold.time")) {
+			stopThresholdTime = Double.parseDouble(properties.getProperty("stop.threshold.time", "-1")) * 1000 * 60;
+		}
+		if (properties.containsKey("stop.threshold.steps")) {
+			stopThresholdIteration = Long.parseLong(properties.getProperty("stop.threshold.steps", "-1"));
 		}
 	}
 
@@ -59,19 +71,29 @@ public class StoppingListener extends AbstractConfigurable implements Listener {
 		}
 
 		// check our stopping conditions
-		if ((stopIteration > 0) && (stopIteration <= currentIteration)) {
+		if ((stopIteration > 0) && (currentIteration >= stopIteration)) {
 			throw new RuntimeException("Stopped because iteration " + stopIteration + " was reached");
 		}
-		if ((stopTime > 0) && (stopTime <= (time - startTime))) {
+		if ((stopTime > 0) && ((time - startTime) >= stopTime)) {
 			throw new RuntimeException("Stopped because run time of " + (stopTime / 60000) + " minute(s) was reached");
 		}
-		if ((stopNoProgressIteration > 0) && (stopNoProgressIteration <= (currentIteration - lastProgressIteration))) {
-			throw new RuntimeException("Stopped because no progress was made in " + stopNoProgressIteration
+		if ((stopProgressIteration > 0) && ((currentIteration - lastProgressIteration) >= stopProgressIteration)) {
+			throw new RuntimeException("Stopped because no progress was made in " + stopProgressIteration
 					+ " iterations");
 		}
-		if ((stopNoProgressTime > 0) && (stopNoProgressTime <= (time - lastProgressTime))) {
-			throw new RuntimeException("Stopped because no progress was made in " + (stopNoProgressTime / 60000)
+		if ((stopProgressTime > 0) && ((time - lastProgressTime) >= stopProgressTime)) {
+			throw new RuntimeException("Stopped because no progress was made in " + (stopProgressTime / 60000)
 					+ " minute(s)");
+		}
+		if ((stopThreshold > 0) && (best.getScore() > stopThreshold)) {
+			if ((stopThresholdIteration > 0) && (currentIteration >= stopThresholdIteration)) {
+				throw new RuntimeException("Stopped because simulation did not reach score threshold of "
+						+ stopThreshold + " in " + stopThresholdIteration + " iterations");
+			}
+			if ((stopThresholdTime > 0) && ((time - startTime) >= stopThresholdTime)) {
+				throw new RuntimeException("Stopped because simulation did not reach score threshold of "
+						+ stopThreshold + " in " + (stopThresholdTime / 60000) + " minute(s)");
+			}
 		}
 	}
 }
