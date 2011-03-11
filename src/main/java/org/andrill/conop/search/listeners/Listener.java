@@ -4,7 +4,12 @@ import org.andrill.conop.search.Configurable;
 import org.andrill.conop.search.Solution;
 
 /**
- * Notified when new solutions are tried.
+ * Defines the interface for a listener that is notified when new solutions are
+ * tried.
+ * 
+ * Note: Unless the listener specifically requires the ability to throw an
+ * exception and stop the simulation, it is recommended that listeners extend
+ * {@link AsyncListener} to run asynchonously.
  */
 public interface Listener extends Configurable {
 
