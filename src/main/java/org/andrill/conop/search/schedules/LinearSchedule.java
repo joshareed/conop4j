@@ -35,12 +35,10 @@ public class LinearSchedule extends AbstractConfigurable implements CoolingSched
 		this.current = initial;
 	}
 
-	@Override
 	public double getInitial() {
 		return initial;
 	}
 
-	@Override
 	public double next(final Solution solution) {
 		stepsLeft--;
 		if (stepsLeft == 0) {

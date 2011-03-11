@@ -39,7 +39,6 @@ public class SectionPlacement {
 		};
 	};
 	private static final Comparator<BigDecimal> REVERSE = new Comparator<BigDecimal>() {
-		@Override
 		public int compare(final BigDecimal o1, final BigDecimal o2) {
 			return -1 * o1.compareTo(o2);
 		}

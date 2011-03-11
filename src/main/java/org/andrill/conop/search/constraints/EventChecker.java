@@ -9,10 +9,8 @@ import org.andrill.conop.search.Solution;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class EventChecker extends AbstractConfigurable implements
-		ConstraintChecker {
+public class EventChecker extends AbstractConfigurable implements ConstraintChecker {
 
-	@Override
 	public boolean isValid(final Solution solution) {
 		for (Event e : solution.getEvents()) {
 			int position = solution.getPosition(e);

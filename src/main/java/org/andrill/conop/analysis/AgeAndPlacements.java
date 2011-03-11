@@ -39,7 +39,6 @@ public class AgeAndPlacements implements Summary {
 		return -1;
 	}
 
-	@Override
 	public void generate(final Workbook workbook, final RunInfo... runs) {
 		for (RunInfo run : runs) {
 			Sheet sheet = workbook.createSheet(run.getName());
@@ -47,7 +46,6 @@ public class AgeAndPlacements implements Summary {
 			// sort our sections
 			List<Map<String, String>> sections = run.getSections();
 			Collections.sort(sections, new Comparator<Map<String, String>>() {
-				@Override
 				public int compare(final Map<String, String> o1, final Map<String, String> o2) {
 					return new Integer(o1.get("id")).compareTo(new Integer(o2.get("id")));
 				}
@@ -56,7 +54,6 @@ public class AgeAndPlacements implements Summary {
 			// sort our events
 			List<Map<String, String>> events = run.getEvents();
 			Collections.sort(events, new Comparator<Map<String, String>>() {
-				@Override
 				public int compare(final Map<String, String> o1, final Map<String, String> o2) {
 					return new Integer(o2.get("solution")).compareTo(new Integer(o1.get("solution")));
 				}

@@ -146,7 +146,6 @@ public class Simulation {
 
 				// start a parallel process
 				tasks.add(pool.submit(new Callable<Solution>() {
-					@Override
 					public Solution call() throws Exception {
 						return conop.solve(run, new Solution(run, next.getEvents()));
 					}

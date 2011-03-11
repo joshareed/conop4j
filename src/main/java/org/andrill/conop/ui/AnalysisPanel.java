@@ -71,7 +71,6 @@ public class AnalysisPanel extends JPanel {
 		final DefaultListModel runs = new DefaultListModel();
 		final JList list = new JList(runs);
 		list.addListSelectionListener(new ListSelectionListener() {
-			@Override
 			public void valueChanged(final ListSelectionEvent e) {
 				if (list.getSelectedValue() != null) {
 
@@ -94,7 +93,6 @@ public class AnalysisPanel extends JPanel {
 		addButton.setAction(new AbstractAction("+") {
 			private static final long serialVersionUID = 1L;
 
-			@Override
 			public void actionPerformed(final ActionEvent arg0) {
 				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				fileChooser.setDialogTitle("Choose Run Directory");
@@ -111,7 +109,6 @@ public class AnalysisPanel extends JPanel {
 		removeButton.setAction(new AbstractAction("-") {
 			private static final long serialVersionUID = 1L;
 
-			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Object selected = list.getSelectedValue();
 				if (selected != null) {
@@ -131,7 +128,6 @@ public class AnalysisPanel extends JPanel {
 			checkbox.setAction(new AbstractAction(getLabelFor(summary)) {
 				private static final long serialVersionUID = 1L;
 
-				@Override
 				public void actionPerformed(final ActionEvent e) {
 					if (checkbox.isSelected()) {
 						summaries.add(summary);
@@ -147,7 +143,6 @@ public class AnalysisPanel extends JPanel {
 		processButton.setAction(new AbstractAction("Process") {
 			private static final long serialVersionUID = 1L;
 
-			@Override
 			public void actionPerformed(final ActionEvent e) {
 				fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				fileChooser.setDialogTitle("Save");

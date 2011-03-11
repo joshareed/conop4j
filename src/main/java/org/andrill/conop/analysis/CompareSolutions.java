@@ -30,7 +30,6 @@ public class CompareSolutions implements Summary {
 		return null;
 	}
 
-	@Override
 	public void generate(final Workbook workbook, final RunInfo... runs) {
 		// create our sheet
 		Sheet sheet = workbook.createSheet("Diff");
@@ -78,7 +77,6 @@ public class CompareSolutions implements Summary {
 		// get our events sorted in solution order
 		List<Map<String, String>> events = runs[0].getEvents();
 		Collections.sort(events, new Comparator<Map<String, String>>() {
-			@Override
 			public int compare(final Map<String, String> o1, final Map<String, String> o2) {
 				return new Integer(o2.get("solution")).compareTo(new Integer(o1.get("solution")));
 			}

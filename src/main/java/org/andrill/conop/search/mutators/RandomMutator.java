@@ -14,11 +14,9 @@ import com.google.common.collect.Lists;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class RandomMutator extends AbstractConfigurable implements
-		MutationStrategy {
+public class RandomMutator extends AbstractConfigurable implements MutationStrategy {
 	protected Random random = new Random();
 
-	@Override
 	public Solution mutate(final Solution solution) {
 		List<Event> events = Lists.newArrayList(solution.getEvents());
 

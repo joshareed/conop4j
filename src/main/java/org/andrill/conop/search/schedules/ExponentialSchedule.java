@@ -37,12 +37,10 @@ public class ExponentialSchedule extends AbstractConfigurable implements Cooling
 		this.current = initial;
 	}
 
-	@Override
 	public double getInitial() {
 		return initial;
 	}
 
-	@Override
 	public double next(final Solution solution) {
 		count++;
 		stop++;
