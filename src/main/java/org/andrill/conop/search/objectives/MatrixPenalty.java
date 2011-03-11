@@ -42,7 +42,6 @@ public class MatrixPenalty extends AbstractConfigurable implements ObjectiveFunc
 			return Futures.immediateFuture(matrix.score(solution));
 		} else {
 			return pool.submit(new Callable<Double>() {
-				@Override
 				public Double call() throws Exception {
 					return matrix.score(solution);
 				}
@@ -50,7 +49,6 @@ public class MatrixPenalty extends AbstractConfigurable implements ObjectiveFunc
 		}
 	}
 
-	@Override
 	public double score(final Solution solution) {
 		List<Future<Double>> results = Lists.newArrayList();
 		for (Section section : solution.getRun().getSections()) {

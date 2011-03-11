@@ -41,7 +41,6 @@ public class PlacementPenalty extends AbstractConfigurable implements ObjectiveF
 			return Futures.immediateFuture(placement.score(solution));
 		} else {
 			return pool.submit(new Callable<Double>() {
-				@Override
 				public Double call() throws Exception {
 					return placement.score(solution);
 				}
@@ -49,7 +48,6 @@ public class PlacementPenalty extends AbstractConfigurable implements ObjectiveF
 		}
 	}
 
-	@Override
 	public double score(final Solution solution) {
 		List<Future<Double>> results = Lists.newArrayList();
 		for (final Section section : solution.getRun().getSections()) {

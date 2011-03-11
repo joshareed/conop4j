@@ -91,7 +91,6 @@ public class Solution {
 	public static Solution initial(final Run run) {
 		final List<Event> events = Lists.newArrayList(run.getEvents());
 		Collections.sort(events, new Comparator<Event>() {
-			@Override
 			public int compare(final Event o1, final Event o2) {
 				return toInt(o1).compareTo(toInt(o2));
 			}

@@ -53,7 +53,6 @@ public class StoppingListener extends AbstractConfigurable implements Listener {
 		}
 	}
 
-	@Override
 	public void tried(final double temp, final Solution current, final Solution best) {
 		currentIteration++;
 		long time = System.currentTimeMillis();

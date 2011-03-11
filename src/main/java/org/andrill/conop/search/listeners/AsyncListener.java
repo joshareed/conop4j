@@ -19,7 +19,6 @@ public abstract class AsyncListener implements Listener {
 			.newFixedThreadPool(2));
 	protected long iteration = 0;
 
-	@Override
 	public void configure(final Properties properties) {
 		// do nothing
 	}
@@ -57,7 +56,6 @@ public abstract class AsyncListener implements Listener {
 	 */
 	protected abstract boolean test(final double temp, long iteration, final Solution current, final Solution best);
 
-	@Override
 	public final void tried(final double temp, final Solution current, final Solution best) {
 		iteration++;
 		if (iteration == 1) {
@@ -65,7 +63,6 @@ public abstract class AsyncListener implements Listener {
 		}
 		if (test(temp, iteration, current, best)) {
 			pool.submit(new Runnable() {
-				@Override
 				public void run() {
 					AsyncListener.this.run(temp, iteration, current, best);
 				}

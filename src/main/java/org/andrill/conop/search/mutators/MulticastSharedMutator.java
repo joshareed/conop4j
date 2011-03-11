@@ -27,8 +27,7 @@ import com.google.common.io.Closeables;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class MulticastSharedMutator extends AbstractConfigurable implements
-		MutationStrategy, Listener {
+public class MulticastSharedMutator extends AbstractConfigurable implements MutationStrategy, Listener {
 	private class MulticastThread extends Thread {
 		Map<Integer, Event> events = Maps.newHashMap();
 		InetAddress group;
@@ -123,17 +122,14 @@ public class MulticastSharedMutator extends AbstractConfigurable implements
 	 * @param factor
 	 *            the acceptance factor.
 	 */
-	public MulticastSharedMutator(final Run run,
-			final MutationStrategy mutator, final double factor) {
+	public MulticastSharedMutator(final Run run, final MutationStrategy mutator, final double factor) {
 		this.mutator = mutator;
 		this.factor = factor;
 		multicast = new MulticastThread(run);
 	}
 
-	@Override
 	public Solution mutate(final Solution solution) {
-		if ((remote != null)
-				&& (remote.getScore() < factor * solution.getScore())) {
+		if ((remote != null) && (remote.getScore() < factor * solution.getScore())) {
 			System.out.println("Teleported to " + remote.getScore());
 			Solution next = new Solution(remote.getRun(), remote.getEvents());
 			remote = null;
@@ -148,9 +144,7 @@ public class MulticastSharedMutator extends AbstractConfigurable implements
 		return "Multicast [" + mutator + "]";
 	}
 
-	@Override
-	public void tried(final double temp, final Solution current,
-			final Solution best) {
+	public void tried(final double temp, final Solution current, final Solution best) {
 		if (!started) {
 			started = true;
 			multicast.start();

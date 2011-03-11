@@ -21,8 +21,7 @@ import com.google.common.collect.Maps;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class CoexistenceChecker extends AbstractConfigurable implements
-		ConstraintChecker {
+public class CoexistenceChecker extends AbstractConfigurable implements ConstraintChecker {
 	protected Map<Event, Event> conjunct = Maps.newHashMap();
 
 	protected void init(final Run run) {
@@ -36,8 +35,7 @@ public class CoexistenceChecker extends AbstractConfigurable implements
 				}
 			}
 			if ((counter > 0.5 * run.getSections().size())
-					&& (((e.getBeforeConstraint() == null) && (e
-							.getAfterConstraint() == null)) || (e
+					&& (((e.getBeforeConstraint() == null) && (e.getAfterConstraint() == null)) || (e
 							.getBeforeConstraint() != null))) {
 				important.add(e);
 			}
@@ -56,7 +54,6 @@ public class CoexistenceChecker extends AbstractConfigurable implements
 		}
 	}
 
-	@Override
 	public boolean isValid(final Solution solution) {
 		if (conjunct.size() == 0) {
 			init(solution.getRun());
