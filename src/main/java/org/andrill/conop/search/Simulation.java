@@ -438,10 +438,14 @@ public class Simulation {
 	 */
 	public Run getRun() {
 		if (run == null) {
-			String data = properties.getProperty("data", ".");
 			boolean overrideWeights = !Boolean.getBoolean(properties.getProperty("weights", "true"));
-			File runDir = new File(directory, data);
-			run = Run.loadCONOP9Run(runDir, overrideWeights);
+			File runDir = new File(directory, properties.getProperty("data", "."));
+			String sectionFile = properties.getProperty("data.sectionFile", "sections.sct");
+			String eventFile = properties.getProperty("data.eventFile", "events.evt");
+			String loadFile = properties.getProperty("data.loadFile", "loadfile.dat");
+
+			run = Run.loadCONOP9Run(new File(runDir, sectionFile), new File(runDir, eventFile), new File(runDir,
+					loadFile), overrideWeights);
 		}
 		return run;
 	}
