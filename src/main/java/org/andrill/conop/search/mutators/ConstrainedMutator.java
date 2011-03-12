@@ -3,7 +3,6 @@ package org.andrill.conop.search.mutators;
 import java.util.List;
 import java.util.Random;
 
-import org.andrill.conop.search.AbstractConfigurable;
 import org.andrill.conop.search.Event;
 import org.andrill.conop.search.Solution;
 
@@ -14,10 +13,11 @@ import com.google.common.collect.Lists;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class ConstrainedMutator extends AbstractConfigurable implements MutationStrategy {
+public class ConstrainedMutator extends AbstractMutator {
 	protected Random random = new Random();
 
-	public Solution mutate(final Solution solution) {
+	@Override
+	public Solution internalMutate(final Solution solution) {
 		List<Event> events = Lists.newArrayList(solution.getEvents());
 
 		// pick a random event and calculate the valid position range
