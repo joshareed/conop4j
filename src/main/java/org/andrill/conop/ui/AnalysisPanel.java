@@ -1,12 +1,10 @@
 package org.andrill.conop.ui;
 
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.List;
 
 import javax.swing.AbstractAction;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -16,8 +14,6 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -56,7 +52,7 @@ public class AnalysisPanel extends JPanel {
 	}
 
 	private void initComponents() {
-		setLayout(new MigLayout("fill"));
+		setLayout(new MigLayout("fill", "", "[][grow][]"));
 
 		final JFileChooser fileChooser = new JFileChooser(new File("."));
 		fileChooser.setAcceptAllFileFilterUsed(false);
@@ -70,24 +66,6 @@ public class AnalysisPanel extends JPanel {
 		add(new JLabel("Runs:"), "wrap");
 		final DefaultListModel runs = new DefaultListModel();
 		final JList list = new JList(runs);
-		list.addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(final ListSelectionEvent e) {
-				if (list.getSelectedValue() != null) {
-
-				}
-			}
-		});
-		list.setCellRenderer(new DefaultListCellRenderer() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public Component getListCellRendererComponent(final JList list, final Object value, final int index,
-					final boolean isSelected, final boolean cellHasFocus) {
-				File file = (File) value;
-				setText(file.getName());
-				return this;
-			}
-		});
 		add(new JScrollPane(list), "grow, span, wrap");
 
 		addButton.setAction(new AbstractAction("+") {
