@@ -27,6 +27,7 @@ public class CONOPTools {
 		private void initComponents() {
 			tabs = new JTabbedPane();
 			tabs.addTab("Analysis", new AnalysisPanel());
+			tabs.addTab("Run", new RunPanel());
 			getContentPane().add(tabs, BorderLayout.CENTER);
 		}
 	}
@@ -51,7 +52,7 @@ public class CONOPTools {
 	protected static void gui() {
 		ToolFrame frame = new ToolFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.pack();
+		frame.setSize(400, 400);
 		frame.setVisible(true);
 	}
 
