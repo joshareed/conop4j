@@ -29,7 +29,6 @@ import org.andrill.conop.search.listeners.StoppingListener;
 import org.andrill.conop.search.mutators.ConstrainedMutator;
 import org.andrill.conop.search.mutators.MutationStrategy;
 import org.andrill.conop.search.mutators.RandomMutator;
-import org.andrill.conop.search.mutators.SharedMutator;
 import org.andrill.conop.search.objectives.MatrixPenalty;
 import org.andrill.conop.search.objectives.ObjectiveFunction;
 import org.andrill.conop.search.objectives.PlacementPenalty;
@@ -131,11 +130,10 @@ public class Simulation {
 			if (parallel > 1) {
 				System.out.println("Starting a swarm of " + parallel + " CONOP processes");
 			}
-			SharedMutator shared = new SharedMutator(simulation.getMutator());
 			for (int j = 0; j < parallel; j++) {
 				// create our CONOP process
-				final CONOP conop = new CONOP(simulation.getConstraints(), shared, simulation.getObjectiveFunction(),
-						simulation.getSchedule());
+				final CONOP conop = new CONOP(simulation.getConstraints(), simulation.getMutator(),
+						simulation.getObjectiveFunction(), simulation.getSchedule());
 
 				// add our listeners
 				for (Listener l : listeners) {
