@@ -47,28 +47,6 @@ public class Simulation {
 	private static final DecimalFormat D = new DecimalFormat("0.00");
 
 	/**
-	 * Gets a new file using the specified base filename.
-	 * 
-	 * @param file
-	 *            the base filename.
-	 * @return the file.
-	 */
-	public static File getFile(final String file) {
-		File f = new File(file);
-		int i = 0;
-		while (f.exists()) {
-			i++;
-			int j = file.indexOf('.');
-			if (j < 0) {
-				f = new File(file + i);
-			} else {
-				f = new File(file.substring(0, j) + i + file.substring(j));
-			}
-		}
-		return f;
-	}
-
-	/**
 	 * Runs a standard simulation.
 	 * 
 	 * @param args

@@ -14,7 +14,6 @@ import org.andrill.conop.search.Event;
 import org.andrill.conop.search.Observation;
 import org.andrill.conop.search.Run;
 import org.andrill.conop.search.Section;
-import org.andrill.conop.search.Simulation;
 import org.andrill.conop.search.Solution;
 import org.andrill.conop.search.objectives.SectionPlacement;
 
@@ -28,6 +27,22 @@ import com.google.common.io.Closeables;
  */
 public class SnapshotListener extends AsyncListener {
 	private static final DecimalFormat D = new DecimalFormat("0.00");
+
+	protected static File getFile(final String file) {
+		File f = new File(file);
+		int i = 0;
+		while (f.exists()) {
+			i++;
+			int j = file.indexOf('.');
+			if (j < 0) {
+				f = new File(file + i);
+			} else {
+				f = new File(file.substring(0, j) + i + file.substring(j));
+			}
+		}
+		return f;
+	}
+
 	protected long last = 0;
 	private Map<Event, double[]> ranks;
 	private double score = -1;
@@ -35,17 +50,11 @@ public class SnapshotListener extends AsyncListener {
 	protected File solutionFile;
 	protected Writer writer;
 
-	/**
-	 * Create a new SnapshotListener.
-	 */
-	public SnapshotListener() {
-	}
-
 	@Override
 	public void configure(final Properties properties) {
 		try {
 			solutionFile = new File(properties.getProperty("solution.file", "solution.tmp"));
-			snapshotFile = Simulation.getFile(properties.getProperty("snapshot.file", "snapshot.csv"));
+			snapshotFile = getFile(properties.getProperty("snapshot.file", "snapshot.csv"));
 			writer = new BufferedWriter(new FileWriter(snapshotFile));
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -103,11 +112,6 @@ public class SnapshotListener extends AsyncListener {
 
 	@Override
 	protected void run(final double temp, final long iteration, final Solution current, final Solution best) {
-		score = current.getScore();
-		for (Event e : current.getEvents()) {
-			ranks.get(e)[current.getPosition(e)] = score;
-		}
-
 		try {
 			writeResults(solutionFile, best);
 			writer.write(last + "\t" + iteration + "\t" + D.format(temp) + "\t" + D.format(best.getScore()) + "\n");
@@ -135,21 +139,31 @@ public class SnapshotListener extends AsyncListener {
 			solutionFile.delete();
 			snapshotFile.delete();
 		} else {
-
+			writeResults(getFile("solution.csv"), solution);
 		}
 	}
 
 	@Override
 	protected boolean test(final double temp, final long iteration, final Solution current, final Solution best) {
-		long min = (System.currentTimeMillis() - start) / 60000;
 		if (current.getScore() <= score) {
-			return true;
-		} else if (min > last) {
+			updateRanks(current);
+		}
+
+		long min = (System.currentTimeMillis() - start) / 60000;
+		if (min > last) {
 			last = min;
 			return true;
 		} else {
 			return false;
 		}
+	}
+
+	protected void updateRanks(final Solution current) {
+		score = current.getScore();
+		for (Event e : current.getEvents()) {
+			ranks.get(e)[current.getPosition(e)] = score;
+		}
+
 	}
 
 	protected void writeResults(final File file, final Solution solution) {
