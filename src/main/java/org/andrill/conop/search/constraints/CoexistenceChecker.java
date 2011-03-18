@@ -90,5 +90,4 @@ public class CoexistenceChecker extends AbstractConfigurable implements Constrai
 		}
 		return true;
 	}
-
 }

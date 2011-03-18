@@ -1,10 +1,8 @@
 package org.andrill.conop.search;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -23,7 +21,7 @@ import org.andrill.conop.search.constraints.EventChecker;
 import org.andrill.conop.search.constraints.NullChecker;
 import org.andrill.conop.search.listeners.ConsoleProgressListener;
 import org.andrill.conop.search.listeners.Listener;
-import org.andrill.conop.search.listeners.RanksListener;
+import org.andrill.conop.search.listeners.Listener.Mode;
 import org.andrill.conop.search.listeners.SnapshotListener;
 import org.andrill.conop.search.listeners.StoppingListener;
 import org.andrill.conop.search.mutators.ConstrainedMutator;
@@ -32,13 +30,11 @@ import org.andrill.conop.search.mutators.RandomMutator;
 import org.andrill.conop.search.objectives.MatrixPenalty;
 import org.andrill.conop.search.objectives.ObjectiveFunction;
 import org.andrill.conop.search.objectives.PlacementPenalty;
-import org.andrill.conop.search.objectives.SectionPlacement;
 import org.andrill.conop.search.schedules.CoolingSchedule;
 import org.andrill.conop.search.schedules.ExponentialSchedule;
 import org.andrill.conop.search.schedules.LinearSchedule;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
 import com.google.common.util.concurrent.MoreExecutors;
 
@@ -85,19 +81,11 @@ public class Simulation {
 
 		// find the optimal placement
 		long start = System.currentTimeMillis();
-		Solution solution = runSimulation(config, run, Solution.initial(run),
-				config.getListeners().toArray(new Listener[0]));
+		List<Listener> listeners = Lists.newArrayList(config.getListeners());
+
+		Solution solution = runSimulation(config, run, Solution.initial(run), listeners, Mode.TUI);
 		long elapsed = (System.currentTimeMillis() - start) / 60000;
 		System.out.println("Elapsed time: " + elapsed + " minutes.  Final score: " + D.format(solution.getScore()));
-
-		// write out the solution and ranks
-		RanksListener ranks = null;
-		for (Listener l : config.getListeners()) {
-			if (l instanceof RanksListener) {
-				ranks = (RanksListener) l;
-			}
-		}
-		writeResults(solution, ranks);
 	}
 
 	/**
@@ -114,7 +102,7 @@ public class Simulation {
 	 * @return the solution.
 	 */
 	public static Solution runSimulation(final Simulation simulation, final Run run, final Solution initial,
-			final Listener... listeners) {
+			final List<Listener> listeners, final Mode mode) {
 		int serial = simulation.getSerialRunCount();
 		int parallel = simulation.getParallelProcessCount();
 		ExecutorService pool = MoreExecutors.getExitingExecutorService((ThreadPoolExecutor) Executors
@@ -136,8 +124,8 @@ public class Simulation {
 						simulation.getObjectiveFunction(), simulation.getSchedule());
 
 				// add our listeners
-				for (Listener l : listeners) {
-					if ((j == 0) || (l instanceof RanksListener)) {
+				if (j == 0) {
+					for (Listener l : listeners) {
 						conop.addListener(l);
 					}
 				}
@@ -173,92 +161,8 @@ public class Simulation {
 			return solution;
 		} else {
 			System.out.println("Starting endgame scenario: " + endgame.getName());
-			return runSimulation(new Simulation(endgame), run, solution, listeners);
+			return runSimulation(new Simulation(endgame), run, solution, listeners, mode);
 		}
-	}
-
-	/**
-	 * Writes the results of a simulation.
-	 * 
-	 * @param file
-	 *            the file.
-	 * @param solution
-	 *            the solution.
-	 * @param ranks
-	 *            the ranks.
-	 */
-	public static void writeResults(final File file, final Solution solution, final RanksListener ranks) {
-		BufferedWriter writer = null;
-		try {
-			Run run = solution.getRun();
-			Map<Section, SectionPlacement> placements = Maps.newHashMap();
-
-			// open our writer
-			writer = new BufferedWriter(new FileWriter(file));
-			writer.write("Event\tRank");
-			if (ranks != null) {
-				writer.write("\tMin Rank\tMax Rank");
-			}
-			for (Section s : run.getSections()) {
-				writer.write("\t" + s.getName() + " (O)\t" + s.getName() + " (P)");
-				placements.put(s, new SectionPlacement(s));
-			}
-			writer.write("\n");
-
-			// build our placements
-			double score = 0;
-			for (final Section s : solution.getRun().getSections()) {
-				SectionPlacement placement = placements.get(s);
-				for (Event e : solution.getEvents()) {
-					placement.place(e);
-				}
-				score += placement.getPenalty();
-			}
-
-			int total = solution.getEvents().size();
-			for (int i = 0; i < total; i++) {
-				Event e = solution.getEvent(i);
-				writer.write("'" + e + "'\t" + (total - i));
-				if (ranks != null) {
-					writer.write("\t" + ranks.getMin(e) + "\t" + ranks.getMax(e));
-				}
-				for (Section s : run.getSections()) {
-					writer.write("\t");
-					Observation o = s.getObservation(e);
-					if (o != null) {
-						writer.write("" + o.getLevel());
-					}
-					writer.write("\t" + placements.get(s).getPlacement(e));
-				}
-				writer.write("\n");
-			}
-
-			writer.write("Total");
-			writer.write("\t" + D.format(score));
-			if (ranks != null) {
-				writer.write("\t\t");
-			}
-			for (Section s : run.getSections()) {
-				writer.write("\t\t" + D.format(placements.get(s).getPenalty()));
-			}
-			writer.write("\n");
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			Closeables.closeQuietly(writer);
-		}
-	}
-
-	/**
-	 * Writes the results to solution.csv.
-	 * 
-	 * @param solution
-	 *            the solution.
-	 * @param ranks
-	 *            the ranks.
-	 */
-	public static void writeResults(final Solution solution, final RanksListener ranks) {
-		writeResults(getFile("solution.csv"), solution, ranks);
 	}
 
 	protected ConstraintChecker constraints;
@@ -344,12 +248,10 @@ public class Simulation {
 	public List<Listener> getListeners() {
 		if (listeners == null) {
 			listeners = Lists.newArrayList();
-			final RanksListener ranks = new RanksListener();
 			Map<String, Listener> map = new HashMap<String, Listener>() {
 				{
 					put("console", new ConsoleProgressListener());
-					put("ranks", ranks);
-					put("snapshot", new SnapshotListener(ranks));
+					put("snapshot", new SnapshotListener());
 					put("stopping", new StoppingListener());
 				}
 			};

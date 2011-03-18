@@ -18,13 +18,14 @@ public abstract class AsyncListener implements Listener {
 	protected static ExecutorService pool = MoreExecutors.getExitingExecutorService((ThreadPoolExecutor) Executors
 			.newFixedThreadPool(2));
 	protected long iteration = 0;
+	protected long start = 0;
 
 	public void configure(final Properties properties) {
 		// do nothing
 	}
 
-	protected void first(final double temp, final Solution current, final Solution best) {
-		// do nothing
+	public Mode getMode() {
+		return Mode.ANY;
 	}
 
 	/**
@@ -40,6 +41,14 @@ public abstract class AsyncListener implements Listener {
 	 *            the best score.
 	 */
 	protected abstract void run(final double temp, long iteration, final Solution current, final Solution best);
+
+	public void started(final Solution initial) {
+		// do nothing
+	}
+
+	public void stopped(final Solution solution) {
+		// do nothing
+	}
 
 	/**
 	 * Tests whether this listener should be run.
@@ -59,7 +68,7 @@ public abstract class AsyncListener implements Listener {
 	public final void tried(final double temp, final Solution current, final Solution best) {
 		iteration++;
 		if (iteration == 1) {
-			first(temp, current, best);
+			start = System.currentTimeMillis();
 		}
 		if (test(temp, iteration, current, best)) {
 			pool.submit(new Runnable() {

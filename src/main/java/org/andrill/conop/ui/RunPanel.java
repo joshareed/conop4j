@@ -6,7 +6,6 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -20,9 +19,10 @@ import net.miginfocom.swing.MigLayout;
 import org.andrill.conop.search.Run;
 import org.andrill.conop.search.Simulation;
 import org.andrill.conop.search.Solution;
+import org.andrill.conop.search.listeners.AbstractListener;
 import org.andrill.conop.search.listeners.ConsoleProgressListener;
 import org.andrill.conop.search.listeners.Listener;
-import org.andrill.conop.search.listeners.RanksListener;
+import org.andrill.conop.search.listeners.Listener.Mode;
 
 import com.google.common.collect.Lists;
 
@@ -31,7 +31,7 @@ import com.google.common.collect.Lists;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class RunPanel extends JPanel implements Listener {
+public class RunPanel extends JPanel {
 	private static final DecimalFormat DEC = new DecimalFormat("0.00");
 	private static final long serialVersionUID = 1L;
 	private JFileChooser fileChooser;
@@ -49,10 +49,6 @@ public class RunPanel extends JPanel implements Listener {
 
 	public RunPanel() {
 		initComponents();
-	}
-
-	public void configure(final Properties properties) {
-		// do nothing
 	}
 
 	private void initComponents() {
@@ -144,47 +140,44 @@ public class RunPanel extends JPanel implements Listener {
 						iterator.remove();
 					}
 				}
-				listeners.add(RunPanel.this);
+				listeners.add(new AbstractListener() {
+
+					@Override
+					public Mode getMode() {
+						return Mode.GUI;
+					}
+
+					@Override
+					public void tried(final double temp, final Solution current, final Solution best) {
+						iteration++;
+						if (iteration == 1) {
+							initialTemp = Math.log(temp);
+							start = System.currentTimeMillis();
+							progress.setValue(5);
+						}
+						if (!running) {
+							throw new RuntimeException("user interrupt");
+						}
+						if (iteration % 500 == 0) {
+							int value = (int) ((initialTemp - Math.log(temp)) / initialTemp * 100) + 5;
+							progress.setValue(value);
+
+							iterLabel.setText(iteration + "");
+
+							tempLabel.setText(DEC.format(temp));
+
+							long elapsed = (System.currentTimeMillis() - start) / 60000;
+							timeLabel.setText(elapsed + " min");
+
+							scoreLabel.setText(DEC.format(current.getScore()) + " / " + DEC.format(best.getScore()));
+						}
+					}
+				});
 
 				// find the optimal placement
-				Solution solution = Simulation.runSimulation(config, run, Solution.initial(run),
-						listeners.toArray(new Listener[0]));
-
-				// write out the solution and ranks
-				RanksListener ranks = null;
-				for (Listener l : config.getListeners()) {
-					if (l instanceof RanksListener) {
-						ranks = (RanksListener) l;
-					}
-				}
-				Simulation.writeResults(solution, ranks);
+				Simulation.runSimulation(config, run, Solution.initial(run), listeners, Mode.GUI);
 			}
 		};
 		thread.start();
-	}
-
-	public void tried(final double temp, final Solution current, final Solution best) {
-		iteration++;
-		if (iteration == 1) {
-			initialTemp = Math.log10(temp);
-			start = System.currentTimeMillis();
-			progress.setValue(5);
-		}
-		if (!running) {
-			throw new RuntimeException("user interrupt");
-		}
-		if (iteration % 500 == 0) {
-			int value = (int) ((initialTemp - Math.log10(temp)) / initialTemp * 100) + 5;
-			progress.setValue(value);
-
-			iterLabel.setText(iteration + "");
-
-			tempLabel.setText(DEC.format(temp));
-
-			long elapsed = (System.currentTimeMillis() - start) / 60000;
-			timeLabel.setText(elapsed + " min");
-
-			scoreLabel.setText(DEC.format(current.getScore()) + " / " + DEC.format(best.getScore()));
-		}
 	}
 }

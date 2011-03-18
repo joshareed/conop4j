@@ -2,7 +2,7 @@ package org.andrill.conop.search.listeners;
 
 import java.util.Properties;
 
-import org.andrill.conop.search.AbstractConfigurable;
+import org.andrill.conop.search.AbortedException;
 import org.andrill.conop.search.Solution;
 
 /**
@@ -10,7 +10,7 @@ import org.andrill.conop.search.Solution;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class StoppingListener extends AbstractConfigurable implements Listener {
+public class StoppingListener extends AbstractListener {
 	protected double bestScore = Double.MAX_VALUE;
 	protected long currentIteration = 0;
 	protected long lastProgressIteration = 0;
@@ -24,6 +24,10 @@ public class StoppingListener extends AbstractConfigurable implements Listener {
 	protected long stopThresholdIteration = -1;
 	protected double stopThresholdTime = -1;
 	protected double stopTime = -1;
+
+	protected void abort(final String message) {
+		throw new AbortedException(message);
+	}
 
 	@Override
 	public void configure(final Properties properties) {
@@ -53,6 +57,15 @@ public class StoppingListener extends AbstractConfigurable implements Listener {
 		}
 	}
 
+	protected double minutes(final double millis) {
+		return millis / 60000;
+	}
+
+	protected void stop(final String message) {
+		throw new RuntimeException(message);
+	}
+
+	@Override
 	public void tried(final double temp, final Solution current, final Solution best) {
 		currentIteration++;
 		long time = System.currentTimeMillis();
@@ -71,27 +84,25 @@ public class StoppingListener extends AbstractConfigurable implements Listener {
 
 		// check our stopping conditions
 		if ((stopIteration > 0) && (currentIteration >= stopIteration)) {
-			throw new RuntimeException("Stopped because iteration " + stopIteration + " was reached");
+			stop("Stopped because iteration " + stopIteration + " was reached");
 		}
 		if ((stopTime > 0) && ((time - startTime) >= stopTime)) {
-			throw new RuntimeException("Stopped because run time of " + (stopTime / 60000) + " minute(s) was reached");
+			stop("Stopped because run time of " + minutes(stopTime) + " minute(s) was reached");
 		}
 		if ((stopProgressIteration > 0) && ((currentIteration - lastProgressIteration) >= stopProgressIteration)) {
-			throw new RuntimeException("Stopped because no progress was made in " + stopProgressIteration
-					+ " iterations");
+			stop("Stopped because no progress was made in " + stopProgressIteration + " iterations");
 		}
 		if ((stopProgressTime > 0) && ((time - lastProgressTime) >= stopProgressTime)) {
-			throw new RuntimeException("Stopped because no progress was made in " + (stopProgressTime / 60000)
-					+ " minute(s)");
+			stop("Stopped because no progress was made in " + minutes(stopProgressTime) + " minute(s)");
 		}
 		if ((stopThreshold > 0) && (best.getScore() > stopThreshold)) {
 			if ((stopThresholdIteration > 0) && (currentIteration >= stopThresholdIteration)) {
-				throw new RuntimeException("Stopped because simulation did not reach score threshold of "
-						+ stopThreshold + " in " + stopThresholdIteration + " iterations");
+				abort("Stopped because simulation did not reach score threshold of " + stopThreshold + " in "
+						+ stopThresholdIteration + " iterations");
 			}
 			if ((stopThresholdTime > 0) && ((time - startTime) >= stopThresholdTime)) {
-				throw new RuntimeException("Stopped because simulation did not reach score threshold of "
-						+ stopThreshold + " in " + (stopThresholdTime / 60000) + " minute(s)");
+				abort("Stopped because simulation did not reach score threshold of " + stopThreshold + " in "
+						+ minutes(stopThresholdTime) + " minute(s)");
 			}
 		}
 	}
