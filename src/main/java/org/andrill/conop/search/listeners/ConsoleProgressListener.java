@@ -12,11 +12,10 @@ import org.andrill.conop.search.Solution;
 public class ConsoleProgressListener extends AsyncListener {
 	private static final DecimalFormat DEC = new DecimalFormat("0.00");
 	private double score = Double.MAX_VALUE;
-	private long start = -1;
 
 	@Override
-	protected void first(final double temp, final Solution current, final Solution best) {
-		start = System.currentTimeMillis();
+	public Mode getMode() {
+		return Mode.TUI;
 	}
 
 	@Override

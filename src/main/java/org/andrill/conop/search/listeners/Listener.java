@@ -12,6 +12,35 @@ import org.andrill.conop.search.Solution;
  * {@link AsyncListener} to run asynchonously.
  */
 public interface Listener extends Configurable {
+	/**
+	 * The mode this listener operates in.
+	 */
+	enum Mode {
+		ANY, GUI, TUI
+	}
+
+	/**
+	 * Gets the mode of this listener.
+	 * 
+	 * @return the mode.
+	 */
+	Mode getMode();
+
+	/**
+	 * Called at the beginning of a simulation.
+	 * 
+	 * @param initial
+	 *            the initial solution.
+	 */
+	void started(Solution initial);
+
+	/**
+	 * Called at the end of a simulation.
+	 * 
+	 * @param solution
+	 *            the solution or null if the run was aborted.
+	 */
+	void stopped(Solution solution);
 
 	/**
 	 * Called when a solution is tried.

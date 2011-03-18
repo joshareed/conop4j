@@ -12,11 +12,9 @@ import java.net.MulticastSocket;
 import java.util.List;
 import java.util.Map;
 
-import org.andrill.conop.search.AbstractConfigurable;
 import org.andrill.conop.search.Event;
 import org.andrill.conop.search.Run;
 import org.andrill.conop.search.Solution;
-import org.andrill.conop.search.listeners.Listener;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -27,7 +25,7 @@ import com.google.common.io.Closeables;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class MulticastSharedMutator extends AbstractConfigurable implements MutationStrategy, Listener {
+public class MulticastSharedMutator extends AbstractMutator {
 	private class MulticastThread extends Thread {
 		Map<Integer, Event> events = Maps.newHashMap();
 		InetAddress group;
@@ -128,7 +126,8 @@ public class MulticastSharedMutator extends AbstractConfigurable implements Muta
 		multicast = new MulticastThread(run);
 	}
 
-	public Solution mutate(final Solution solution) {
+	@Override
+	public Solution internalMutate(final Solution solution) {
 		if ((remote != null) && (remote.getScore() < factor * solution.getScore())) {
 			System.out.println("Teleported to " + remote.getScore());
 			Solution next = new Solution(remote.getRun(), remote.getEvents());
@@ -144,6 +143,7 @@ public class MulticastSharedMutator extends AbstractConfigurable implements Muta
 		return "Multicast [" + mutator + "]";
 	}
 
+	@Override
 	public void tried(final double temp, final Solution current, final Solution best) {
 		if (!started) {
 			started = true;

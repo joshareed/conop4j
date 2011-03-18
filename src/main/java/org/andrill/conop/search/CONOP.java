@@ -1,5 +1,6 @@
 package org.andrill.conop.search;
 
+import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -10,6 +11,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import org.andrill.conop.search.constraints.ConstraintChecker;
 import org.andrill.conop.search.listeners.Listener;
+import org.andrill.conop.search.listeners.Listener.Mode;
 import org.andrill.conop.search.mutators.MutationStrategy;
 import org.andrill.conop.search.objectives.ObjectiveFunction;
 import org.andrill.conop.search.schedules.CoolingSchedule;
@@ -84,6 +86,22 @@ public class CONOP {
 	}
 
 	/**
+	 * Filters out any listeners that aren't declared as Listener.Mode.ANY or
+	 * the specified mode.
+	 * 
+	 * @param mode
+	 *            the mode.
+	 */
+	public void filterMode(final Mode mode) {
+		for (Iterator<Listener> iterator = listeners.iterator(); iterator.hasNext();) {
+			Listener l = iterator.next();
+			if ((l.getMode() != Mode.ANY) && (l.getMode() != mode)) {
+				iterator.remove();
+			}
+		}
+	}
+
+	/**
 	 * Remove a listener.
 	 * 
 	 * @param l
@@ -109,6 +127,9 @@ public class CONOP {
 		// get our initial temperature and score
 		double temp = schedule.getInitial();
 		initial.setScore(objective.score(initial));
+
+		// initialize the listeners
+		started(initial);
 
 		try {
 			// anneal
@@ -147,12 +168,28 @@ public class CONOP {
 		} catch (Exception e) {
 			if ((e instanceof InterruptedException) || (e instanceof RejectedExecutionException)) {
 				System.out.println("Halted: user interrupt");
+			} else if (e instanceof AbortedException) {
+				stopped(null);
+				return null;
 			} else {
 				System.out.println("Halted: " + e.getMessage());
-				e.printStackTrace();
 			}
 		}
 
+		// clean up
+		stopped(best);
 		return best;
+	}
+
+	protected void started(final Solution initial) {
+		for (Listener l : listeners) {
+			l.started(initial);
+		}
+	}
+
+	protected void stopped(final Solution solution) {
+		for (Listener l : listeners) {
+			l.stopped(solution);
+		}
 	}
 }
