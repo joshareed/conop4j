@@ -1,5 +1,9 @@
 package org.andrill.conop.analysis;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -8,11 +12,16 @@ import java.util.Map;
 import org.andrill.conop.analysis.SummarySpreadsheet.Summary;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.IOUtils;
 
 /**
  * Compares multiple solutions.
@@ -21,9 +30,9 @@ import org.apache.poi.ss.util.CellRangeAddress;
  */
 public class CompareSolutions implements Summary {
 
-	protected Map<String, String> findEvent(final String name, final List<Map<String, String>> events) {
+	protected Map<String, String> findEvent(final String name, final String type, final List<Map<String, String>> events) {
 		for (Map<String, String> e : events) {
-			if (e.get("name").equals(name)) {
+			if (e.get("name").equals(name) && e.get("type").equals(type)) {
 				return e;
 			}
 		}
@@ -93,13 +102,37 @@ public class CompareSolutions implements Summary {
 			// get our ranks
 			for (int j = 0; j < runs.length; j++) {
 				RunInfo run = runs[j];
-				Map<String, String> e = findEvent(name, run.getEvents());
+				Map<String, String> e = findEvent(name, event.get("type"), run.getEvents());
 				if (e != null) {
 					row.createCell(2 + (j * 3) + 0).setCellValue(Integer.parseInt(e.get("solution")));
 					row.createCell(2 + (j * 3) + 1).setCellValue(Integer.parseInt(e.get("rankmin")));
 					row.createCell(2 + (j * 3) + 2).setCellValue(Integer.parseInt(e.get("rankmax")));
 				}
 			}
+		}
+
+		// generate our diff picture
+		try {
+			File temp = File.createTempFile("compare", ".png");
+			SolutionImage image = new SolutionImage();
+			image.generate(temp, runs);
+
+			// add it to the spreadsheet
+			InputStream is = new FileInputStream(temp);
+			byte[] bytes = IOUtils.toByteArray(is);
+			int pictureIdx = workbook.addPicture(bytes, Workbook.PICTURE_TYPE_PNG);
+			is.close();
+
+			// anchor it in the spreadsheet
+			CreationHelper helper = workbook.getCreationHelper();
+			Drawing drawing = sheet.createDrawingPatriarch();
+			ClientAnchor anchor = helper.createClientAnchor();
+			anchor.setCol1(3 * runs.length + 3);
+			anchor.setRow1(1);
+			Picture pict = drawing.createPicture(anchor, pictureIdx);
+			pict.resize();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }
