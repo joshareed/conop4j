@@ -1,9 +1,5 @@
 package org.andrill.conop.analysis;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -12,16 +8,11 @@ import java.util.Map;
 import org.andrill.conop.analysis.SummarySpreadsheet.Summary;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.util.IOUtils;
 
 /**
  * Compares multiple solutions.
@@ -112,27 +103,28 @@ public class CompareSolutions implements Summary {
 		}
 
 		// generate our diff picture
-		try {
-			File temp = File.createTempFile("compare", ".png");
-			SolutionImage image = new SolutionImage();
-			image.generate(temp, runs);
-
-			// add it to the spreadsheet
-			InputStream is = new FileInputStream(temp);
-			byte[] bytes = IOUtils.toByteArray(is);
-			int pictureIdx = workbook.addPicture(bytes, Workbook.PICTURE_TYPE_PNG);
-			is.close();
-
-			// anchor it in the spreadsheet
-			CreationHelper helper = workbook.getCreationHelper();
-			Drawing drawing = sheet.createDrawingPatriarch();
-			ClientAnchor anchor = helper.createClientAnchor();
-			anchor.setCol1(3 * runs.length + 3);
-			anchor.setRow1(1);
-			Picture pict = drawing.createPicture(anchor, pictureIdx);
-			pict.resize();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		// try {
+		// File temp = File.createTempFile("compare", ".png");
+		// SolutionImage image = new SolutionImage();
+		// image.generate(temp, runs);
+		//
+		// // add it to the spreadsheet
+		// InputStream is = new FileInputStream(temp);
+		// byte[] bytes = IOUtils.toByteArray(is);
+		// int pictureIdx = workbook.addPicture(bytes,
+		// Workbook.PICTURE_TYPE_PNG);
+		// is.close();
+		//
+		// // anchor it in the spreadsheet
+		// CreationHelper helper = workbook.getCreationHelper();
+		// Drawing drawing = sheet.createDrawingPatriarch();
+		// ClientAnchor anchor = helper.createClientAnchor();
+		// anchor.setCol1(3 * runs.length + 3);
+		// anchor.setRow1(1);
+		// Picture pict = drawing.createPicture(anchor, pictureIdx);
+		// pict.resize();
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// }
 	}
 }
