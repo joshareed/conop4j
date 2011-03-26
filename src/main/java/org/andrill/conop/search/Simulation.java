@@ -63,7 +63,11 @@ public class Simulation {
 
 		Solution solution = runSimulation(config, run, Solution.initial(run), listeners, Mode.TUI);
 		long elapsed = (System.currentTimeMillis() - start) / 60000;
-		System.out.println("Elapsed time: " + elapsed + " minutes.  Final score: " + D.format(solution.getScore()));
+		if (solution == null) {
+			System.out.println("Simulation aborted after " + elapsed + " minutes");
+		} else {
+			System.out.println("Elapsed time: " + elapsed + " minutes.  Final score: " + D.format(solution.getScore()));
+		}
 	}
 
 	/**
@@ -121,14 +125,19 @@ public class Simulation {
 			for (Future<Solution> f : tasks) {
 				try {
 					Solution s = f.get();
-					if ((best == null) || (s.getScore() < best.getScore())) {
-						best = s;
+					if (s != null) {
+						if ((best == null) || (s.getScore() < best.getScore())) {
+							best = s;
+						}
 					}
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				} catch (ExecutionException e) {
 					e.printStackTrace();
 				}
+			}
+			if (best == null) {
+				throw new RuntimeException("All runs aborted");
 			}
 			solution = best;
 		}
