@@ -95,7 +95,7 @@ public class SnapshotListener extends AsyncListener {
 		}
 
 		int i = array.length - 1;
-		while ((array[i] != score) && (i >= 0)) {
+		while ((i >= 0) && (array[i] != score)) {
 			i--;
 		}
 		return array.length - i;
