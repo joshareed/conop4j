@@ -87,13 +87,13 @@ public class StoppingListener extends AbstractListener {
 			stop("Stopped because iteration " + stopIteration + " was reached");
 		}
 		if ((stopTime > 0) && ((time - startTime) >= stopTime)) {
-			stop("Stopped because run time of " + minutes(stopTime) + " minute(s) was reached");
+			stop("Stopped because run time of " + minutes(stopTime) + " minutes was reached");
 		}
 		if ((stopProgressIteration > 0) && ((currentIteration - lastProgressIteration) >= stopProgressIteration)) {
 			stop("Stopped because no progress was made in " + stopProgressIteration + " iterations");
 		}
 		if ((stopProgressTime > 0) && ((time - lastProgressTime) >= stopProgressTime)) {
-			stop("Stopped because no progress was made in " + minutes(stopProgressTime) + " minute(s)");
+			stop("Stopped because no progress was made in " + minutes(stopProgressTime) + " minutes");
 		}
 		if ((stopThreshold > 0) && (best.getScore() > stopThreshold)) {
 			if ((stopThresholdIteration > 0) && (currentIteration >= stopThresholdIteration)) {
@@ -102,7 +102,7 @@ public class StoppingListener extends AbstractListener {
 			}
 			if ((stopThresholdTime > 0) && ((time - startTime) >= stopThresholdTime)) {
 				abort("Stopped because simulation did not reach score threshold of " + stopThreshold + " in "
-						+ minutes(stopThresholdTime) + " minute(s)");
+						+ minutes(stopThresholdTime) + " minutes");
 			}
 		}
 	}
