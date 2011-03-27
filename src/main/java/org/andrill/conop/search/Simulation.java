@@ -61,12 +61,17 @@ public class Simulation {
 		long start = System.currentTimeMillis();
 		List<Listener> listeners = Lists.newArrayList(config.getListeners());
 
-		Solution solution = runSimulation(config, run, Solution.initial(run), listeners, Mode.TUI);
-		long elapsed = (System.currentTimeMillis() - start) / 60000;
-		if (solution == null) {
-			System.out.println("Simulation aborted after " + elapsed + " minutes");
-		} else {
+		try {
+			Solution solution = runSimulation(config, run, Solution.initial(run), listeners, Mode.TUI);
+			long elapsed = (System.currentTimeMillis() - start) / 60000;
 			System.out.println("Elapsed time: " + elapsed + " minutes.  Final score: " + D.format(solution.getScore()));
+		} catch (RuntimeException e) {
+			Throwable cause = e;
+			while (cause.getCause() != null) {
+				cause = cause.getCause();
+			}
+			long elapsed = (System.currentTimeMillis() - start) / 60000;
+			System.out.println("Simulation aborted after " + elapsed + " minutes: " + cause.getMessage());
 		}
 	}
 
@@ -114,7 +119,7 @@ public class Simulation {
 
 				// start a parallel process
 				tasks.add(pool.submit(new Callable<Solution>() {
-					public Solution call() throws Exception {
+					public Solution call() throws AbortedException {
 						return conop.solve(run, new Solution(run, next.getEvents()));
 					}
 				}));
@@ -122,22 +127,23 @@ public class Simulation {
 
 			// get our best solution from the parallel tasks
 			Solution best = null;
+			AbortedException cause = null;
 			for (Future<Solution> f : tasks) {
 				try {
 					Solution s = f.get();
-					if (s != null) {
-						if ((best == null) || (s.getScore() < best.getScore())) {
-							best = s;
-						}
+					if ((best == null) || (s.getScore() < best.getScore())) {
+						best = s;
 					}
+				} catch (AbortedException e) {
+					cause = e;
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					// do nothing
 				} catch (ExecutionException e) {
 					e.printStackTrace();
 				}
 			}
 			if (best == null) {
-				throw new RuntimeException("All runs aborted");
+				throw new RuntimeException("All runs aborted", cause);
 			}
 			solution = best;
 		}
