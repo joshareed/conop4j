@@ -120,7 +120,7 @@ public class CONOP {
 	 *            the initial solution.
 	 * @return the best solution.
 	 */
-	public Solution solve(final Run run, final Solution initial) {
+	public Solution solve(final Run run, final Solution initial) throws AbortedException {
 		Solution best = initial;
 		Solution current = initial;
 
@@ -165,12 +165,12 @@ public class CONOP {
 				}
 				temp = schedule.next(current);
 			}
+		} catch (AbortedException e) {
+			stopped(null);
+			throw e;
 		} catch (Exception e) {
 			if ((e instanceof InterruptedException) || (e instanceof RejectedExecutionException)) {
 				System.out.println("Halted: user interrupt");
-			} else if (e instanceof AbortedException) {
-				stopped(null);
-				return null;
 			} else {
 				System.out.println("Halted: " + e.getMessage());
 			}
