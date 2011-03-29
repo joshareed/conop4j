@@ -100,10 +100,11 @@ public class Run {
 					events.put(id + "_2", lad);
 				} else if (type.equals("3")) {
 					event = new Event(name + " MID", events.get(id + "_1"), events.get(id + "_2"));
-				} else if (type.equals("4") || type.equals("5")) {
-					event = new Event(name);
+				} else if (type.equals("4")) {
+					event = new Event(name + " ASH");
+				} else if (type.equals("5")) {
+					event = new Event(name + " AGE");
 				}
-				// TODO handle other event types
 				events.put(key, event);
 			}
 
