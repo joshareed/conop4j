@@ -118,7 +118,7 @@ public class AgeAndPlacements implements Summary {
 				Map<String, String> event = events.get(i);
 				Row row = sheet.createRow(i + 1);
 				row.createCell(0).setCellValue(event.get("name"));
-				row.createCell(1).setCellValue(event.get("typename"));
+				row.createCell(1).setCellValue(event.get("type"));
 				row.createCell(2).setCellValue(Integer.parseInt(event.get("solution")));
 				if (event.containsKey("rankmin")) {
 					row.createCell(3).setCellValue(Double.parseDouble(event.get("rankmin")));
@@ -151,12 +151,7 @@ public class AgeAndPlacements implements Summary {
 					row.createCell(6).setCellValue(a1 + ((a2 - a1) / (after - before)) * (i - before));
 				}
 				for (int j = 0; j < sections.size(); j++) {
-					for (Map<String, String> o : run.getObservations()) {
-						if (event.get("id").equals(o.get("event.id")) && event.get("type").equals(o.get("event.type"))
-								&& o.get("section.id").equals("" + (j + 1))) {
-							row.createCell(2 * j + 7).setCellValue(Double.parseDouble(o.get("level")));
-						}
-					}
+					row.createCell(2 * j + 7).setCellValue(Double.parseDouble(event.get("observed." + (j + 1))));
 					row.createCell(2 * j + 8).setCellValue(Double.parseDouble(event.get("placed." + (j + 1))));
 				}
 			}
