@@ -11,6 +11,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
 
+/**
+ * A solution from a CONOP4J run.
+ * 
+ * @author Josh Reed (jareed@andrill.org)
+ */
 public class CONOP4JSolution implements Solution {
 	public static void main(final String[] args) {
 		Solution solution = new CONOP4JSolution(new File("test/foo/keepers/solution1.csv"));

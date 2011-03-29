@@ -15,7 +15,7 @@ import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
 
 /**
- * Loads information about a CONOP run.
+ * A solution from a CONOP9 run.
  * 
  * @author Josh Reed (jareed@andrill.org)
  */

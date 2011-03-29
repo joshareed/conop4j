@@ -22,26 +22,26 @@ public class SolutionImage {
 	protected static int VPAD = 4;
 
 	public static void main(final String[] args) {
-		// parse our runs
-		Solution[] runs = new Solution[args.length - 1];
+		// parse our solutions
+		Solution[] solutions = new Solution[args.length - 1];
 		for (int i = 0; i < args.length - 1; i++) {
 			File file = new File(args[i]);
 			if (file.isDirectory()) {
-				runs[i] = new CONOP9Solution(new File(args[i]));
+				solutions[i] = new CONOP9Solution(new File(args[i]));
 			} else {
-				runs[i] = new CONOP4JSolution(new File(args[i]));
+				solutions[i] = new CONOP4JSolution(new File(args[i]));
 			}
 		}
 
 		SolutionImage image = new SolutionImage();
-		image.generate(new File(args[args.length - 1]), runs);
+		image.generate(new File(args[args.length - 1]), solutions);
 	}
 
+	protected int count = 0;
 	protected int firstWidth = 0;
 	protected Graphics2D graphics;
 	protected int otherWidth = 0;
 	protected int rowHeight = 0;
-	protected int runCount = 0;
 
 	protected int col(final int i) {
 		if (i == 0) {
@@ -55,7 +55,7 @@ public class SolutionImage {
 		Stroke oldStroke = graphics.getStroke();
 		Color oldColor = graphics.getColor();
 
-		int height = (rowHeight + VPAD) / runCount;
+		int height = (rowHeight + VPAD) / count;
 		graphics.setStroke(new BasicStroke(height));
 		graphics.setColor(COLORS[run]);
 		graphics.drawLine(col(start + 1) + height / 2, row(row - 1) + (run * height) + height / 2, col(end + 2)
@@ -85,11 +85,11 @@ public class SolutionImage {
 		return null;
 	}
 
-	public void generate(final File file, final Solution... runs) {
-		runCount = runs.length;
+	public void generate(final File file, final Solution... solutions) {
+		count = solutions.length;
 
 		// get our events sorted in solution order
-		List<Map<String, String>> events = runs[0].getEvents();
+		List<Map<String, String>> events = solutions[0].getEvents();
 		Collections.sort(events, new Comparator<Map<String, String>>() {
 			public int compare(final Map<String, String> o1, final Map<String, String> o2) {
 				return new Integer(o2.get("solution")).compareTo(new Integer(o1.get("solution")));
@@ -130,9 +130,9 @@ public class SolutionImage {
 			String type = events.get(i - 1).get("type");
 			drawString("" + i, 0, i);
 			drawString(name, i, 0);
-			for (int j = 0; j < runs.length; j++) {
-				Solution run = runs[j];
-				Map<String, String> e = findEvent(name, type, run.getEvents());
+			for (int j = 0; j < solutions.length; j++) {
+				Solution solution = solutions[j];
+				Map<String, String> e = findEvent(name, type, solution.getEvents());
 				if (e == null) {
 					System.out.println(name + ":" + type);
 				} else {

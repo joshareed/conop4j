@@ -39,12 +39,12 @@ public class AgeAndPlacements implements Summary {
 		return -1;
 	}
 
-	public void generate(final Workbook workbook, final Solution... runs) {
-		for (Solution run : runs) {
-			Sheet sheet = workbook.createSheet(run.getName());
+	public void generate(final Workbook workbook, final Solution... solutions) {
+		for (Solution solution : solutions) {
+			Sheet sheet = workbook.createSheet(solution.getName());
 
 			// sort our sections
-			List<Map<String, String>> sections = run.getSections();
+			List<Map<String, String>> sections = solution.getSections();
 			Collections.sort(sections, new Comparator<Map<String, String>>() {
 				public int compare(final Map<String, String> o1, final Map<String, String> o2) {
 					return new Integer(o1.get("id")).compareTo(new Integer(o2.get("id")));
@@ -52,7 +52,7 @@ public class AgeAndPlacements implements Summary {
 			});
 
 			// sort our events
-			List<Map<String, String>> events = run.getEvents();
+			List<Map<String, String>> events = solution.getEvents();
 			Collections.sort(events, new Comparator<Map<String, String>>() {
 				public int compare(final Map<String, String> o1, final Map<String, String> o2) {
 					return new Integer(o2.get("solution")).compareTo(new Integer(o1.get("solution")));
