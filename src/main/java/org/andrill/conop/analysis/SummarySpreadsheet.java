@@ -20,7 +20,7 @@ public class SummarySpreadsheet {
 	 * Generates one or more summary sheets for the specified run.
 	 */
 	public interface Summary {
-		void generate(Workbook workbook, RunInfo... run);
+		void generate(Workbook workbook, Solution... run);
 	}
 
 	protected final Summary[] summaries;
@@ -43,7 +43,7 @@ public class SummarySpreadsheet {
 	 * @param runs
 	 *            the runs.
 	 */
-	public void write(final File out, final RunInfo... runs) {
+	public void write(final File out, final Solution... runs) {
 		// build our summary workbook
 		Workbook workbook = new HSSFWorkbook();
 		for (Summary summary : summaries) {

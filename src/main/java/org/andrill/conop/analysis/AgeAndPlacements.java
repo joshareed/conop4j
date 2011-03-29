@@ -39,8 +39,8 @@ public class AgeAndPlacements implements Summary {
 		return -1;
 	}
 
-	public void generate(final Workbook workbook, final RunInfo... runs) {
-		for (RunInfo run : runs) {
+	public void generate(final Workbook workbook, final Solution... runs) {
+		for (Solution run : runs) {
 			Sheet sheet = workbook.createSheet(run.getName());
 
 			// sort our sections

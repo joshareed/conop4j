@@ -23,9 +23,14 @@ public class SolutionImage {
 
 	public static void main(final String[] args) {
 		// parse our runs
-		RunInfo[] runs = new RunInfo[args.length - 1];
+		Solution[] runs = new Solution[args.length - 1];
 		for (int i = 0; i < args.length - 1; i++) {
-			runs[i] = new RunInfo(new File(args[i]));
+			File file = new File(args[i]);
+			if (file.isDirectory()) {
+				runs[i] = new CONOP9Solution(new File(args[i]));
+			} else {
+				runs[i] = new CONOP4JSolution(new File(args[i]));
+			}
 		}
 
 		SolutionImage image = new SolutionImage();
@@ -80,7 +85,7 @@ public class SolutionImage {
 		return null;
 	}
 
-	public void generate(final File file, final RunInfo... runs) {
+	public void generate(final File file, final Solution... runs) {
 		runCount = runs.length;
 
 		// get our events sorted in solution order
@@ -126,11 +131,15 @@ public class SolutionImage {
 			drawString("" + i, 0, i);
 			drawString(name, i, 0);
 			for (int j = 0; j < runs.length; j++) {
-				RunInfo run = runs[j];
+				Solution run = runs[j];
 				Map<String, String> e = findEvent(name, type, run.getEvents());
-				int min = events.size() - Integer.parseInt(e.get("rankmin"));
-				int max = events.size() - Integer.parseInt(e.get("rankmax"));
-				drawBar(i, max, min, j);
+				if (e == null) {
+					System.out.println(name + ":" + type);
+				} else {
+					int min = events.size() - Integer.parseInt(e.get("rankmin"));
+					int max = events.size() - Integer.parseInt(e.get("rankmax"));
+					drawBar(i, max, min, j);
+				}
 			}
 		}
 

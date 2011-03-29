@@ -32,9 +32,9 @@ public class PostProcess {
 		OptionSet options = parser.parse(args);
 
 		// get our runs
-		List<RunInfo> runs = Lists.newArrayList();
+		List<CONOP9Solution> runs = Lists.newArrayList();
 		for (Object f : options.valuesOf("in")) {
-			runs.add(new RunInfo((File) f));
+			runs.add(new CONOP9Solution((File) f));
 		}
 
 		// get the output file
@@ -76,6 +76,6 @@ public class PostProcess {
 		}
 		System.out.println("Output going to: '" + out + "'");
 		SummarySpreadsheet spreadsheet = new SummarySpreadsheet(summaries.toArray(new Summary[summaries.size()]));
-		spreadsheet.write(out, runs.toArray(new RunInfo[0]));
+		spreadsheet.write(out, runs.toArray(new CONOP9Solution[0]));
 	}
 }
