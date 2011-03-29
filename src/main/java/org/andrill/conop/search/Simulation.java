@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -127,19 +126,15 @@ public class Simulation {
 
 			// get our best solution from the parallel tasks
 			Solution best = null;
-			AbortedException cause = null;
+			Exception cause = null;
 			for (Future<Solution> f : tasks) {
 				try {
 					Solution s = f.get();
 					if ((best == null) || (s.getScore() < best.getScore())) {
 						best = s;
 					}
-				} catch (AbortedException e) {
+				} catch (Exception e) {
 					cause = e;
-				} catch (InterruptedException e) {
-					// do nothing
-				} catch (ExecutionException e) {
-					e.printStackTrace();
 				}
 			}
 			if (best == null) {
