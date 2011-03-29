@@ -88,7 +88,7 @@ public class CompareSolutions implements Summary {
 			Row row = sheet.createRow(i + 2);
 			String name = event.get("name");
 			row.createCell(0).setCellValue(name);
-			row.createCell(1).setCellValue(event.get("typename"));
+			row.createCell(1).setCellValue(event.get("type"));
 
 			// get our ranks
 			for (int j = 0; j < runs.length; j++) {
