@@ -30,7 +30,7 @@ public class CompareSolutions implements Summary {
 		return null;
 	}
 
-	public void generate(final Workbook workbook, final RunInfo... runs) {
+	public void generate(final Workbook workbook, final Solution... runs) {
 		// create our sheet
 		Sheet sheet = workbook.createSheet("Diff");
 
@@ -92,7 +92,7 @@ public class CompareSolutions implements Summary {
 
 			// get our ranks
 			for (int j = 0; j < runs.length; j++) {
-				RunInfo run = runs[j];
+				Solution run = runs[j];
 				Map<String, String> e = findEvent(name, event.get("type"), run.getEvents());
 				if (e != null) {
 					row.createCell(2 + (j * 3) + 0).setCellValue(Integer.parseInt(e.get("solution")));

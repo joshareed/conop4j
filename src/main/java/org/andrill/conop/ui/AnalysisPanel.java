@@ -19,7 +19,7 @@ import net.miginfocom.swing.MigLayout;
 
 import org.andrill.conop.analysis.AgeAndPlacements;
 import org.andrill.conop.analysis.CompareSolutions;
-import org.andrill.conop.analysis.RunInfo;
+import org.andrill.conop.analysis.CONOP9Solution;
 import org.andrill.conop.analysis.SummarySpreadsheet;
 import org.andrill.conop.analysis.SummarySpreadsheet.Summary;
 
@@ -140,14 +140,14 @@ public class AnalysisPanel extends JPanel {
 					}
 
 					// create a list of runs
-					List<RunInfo> runInfo = Lists.newArrayList();
+					List<CONOP9Solution> runInfo = Lists.newArrayList();
 					for (int i = 0; i < runs.size(); i++) {
-						runInfo.add(new RunInfo((File) runs.getElementAt(i)));
+						runInfo.add(new CONOP9Solution((File) runs.getElementAt(i)));
 					}
 
 					// write our summary spreadsheet
 					SummarySpreadsheet spreadsheet = new SummarySpreadsheet(list.toArray(new Summary[list.size()]));
-					spreadsheet.write(out, runInfo.toArray(new RunInfo[0]));
+					spreadsheet.write(out, runInfo.toArray(new CONOP9Solution[0]));
 
 					JOptionPane.showMessageDialog(AnalysisPanel.this,
 							"Summary spreadsheet written to: " + out.getName());
