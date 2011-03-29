@@ -136,11 +136,11 @@ public class SnapshotListener extends AsyncListener {
 	@Override
 	public void stopped(final Solution solution) {
 		if (solution == null) {
-			solutionFile.delete();
 			snapshotFile.delete();
 		} else {
 			writeResults(getFile("solution.csv"), solution);
 		}
+		solutionFile.delete();
 	}
 
 	@Override
