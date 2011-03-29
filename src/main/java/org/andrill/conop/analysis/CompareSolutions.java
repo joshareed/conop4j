@@ -30,7 +30,7 @@ public class CompareSolutions implements Summary {
 		return null;
 	}
 
-	public void generate(final Workbook workbook, final Solution... runs) {
+	public void generate(final Workbook workbook, final Solution... solutions) {
 		// create our sheet
 		Sheet sheet = workbook.createSheet("Diff");
 
@@ -52,8 +52,8 @@ public class CompareSolutions implements Summary {
 		h1.createCell(0).setCellValue("Event");
 		sheet.addMergedRegion(new CellRangeAddress(0, 1, 0, 0));
 		h1.createCell(1).setCellValue("Type");
-		for (int i = 0; i < runs.length; i++) {
-			h1.createCell(2 + (i * 3)).setCellValue(runs[i].getName());
+		for (int i = 0; i < solutions.length; i++) {
+			h1.createCell(2 + (i * 3)).setCellValue(solutions[i].getName());
 			sheet.addMergedRegion(new CellRangeAddress(0, 0, 2 + (i * 3), 2 + (i * 3) + 2));
 		}
 		for (Cell c : h1) {
@@ -65,7 +65,7 @@ public class CompareSolutions implements Summary {
 		sheet.addMergedRegion(new CellRangeAddress(0, 1, 1, 1));
 		h2.createCell(0);
 		h2.createCell(1);
-		for (int i = 0; i < runs.length; i++) {
+		for (int i = 0; i < solutions.length; i++) {
 			h2.createCell(2 + (i * 3) + 0).setCellValue("Rank");
 			h2.createCell(2 + (i * 3) + 1).setCellValue("Min Rank");
 			h2.createCell(2 + (i * 3) + 2).setCellValue("Max Rank");
@@ -75,7 +75,7 @@ public class CompareSolutions implements Summary {
 		}
 
 		// get our events sorted in solution order
-		List<Map<String, String>> events = runs[0].getEvents();
+		List<Map<String, String>> events = solutions[0].getEvents();
 		Collections.sort(events, new Comparator<Map<String, String>>() {
 			public int compare(final Map<String, String> o1, final Map<String, String> o2) {
 				return new Integer(o2.get("solution")).compareTo(new Integer(o1.get("solution")));
@@ -91,9 +91,9 @@ public class CompareSolutions implements Summary {
 			row.createCell(1).setCellValue(event.get("type"));
 
 			// get our ranks
-			for (int j = 0; j < runs.length; j++) {
-				Solution run = runs[j];
-				Map<String, String> e = findEvent(name, event.get("type"), run.getEvents());
+			for (int j = 0; j < solutions.length; j++) {
+				Solution solution = solutions[j];
+				Map<String, String> e = findEvent(name, event.get("type"), solution.getEvents());
 				if (e != null) {
 					row.createCell(2 + (j * 3) + 0).setCellValue(Integer.parseInt(e.get("solution")));
 					row.createCell(2 + (j * 3) + 1).setCellValue(Integer.parseInt(e.get("rankmin")));

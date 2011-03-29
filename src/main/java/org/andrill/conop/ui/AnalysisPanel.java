@@ -18,8 +18,10 @@ import javax.swing.JScrollPane;
 import net.miginfocom.swing.MigLayout;
 
 import org.andrill.conop.analysis.AgeAndPlacements;
-import org.andrill.conop.analysis.CompareSolutions;
+import org.andrill.conop.analysis.CONOP4JSolution;
 import org.andrill.conop.analysis.CONOP9Solution;
+import org.andrill.conop.analysis.CompareSolutions;
+import org.andrill.conop.analysis.Solution;
 import org.andrill.conop.analysis.SummarySpreadsheet;
 import org.andrill.conop.analysis.SummarySpreadsheet.Summary;
 
@@ -72,8 +74,7 @@ public class AnalysisPanel extends JPanel {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(final ActionEvent arg0) {
-				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				fileChooser.setDialogTitle("Choose Run Directory");
+				fileChooser.setDialogTitle("Choose Run File or Directory");
 				if (fileChooser.showOpenDialog(AnalysisPanel.this) == JFileChooser.APPROVE_OPTION) {
 					runs.addElement(fileChooser.getSelectedFile());
 				}
@@ -140,14 +141,19 @@ public class AnalysisPanel extends JPanel {
 					}
 
 					// create a list of runs
-					List<CONOP9Solution> runInfo = Lists.newArrayList();
+					List<Solution> solutions = Lists.newArrayList();
 					for (int i = 0; i < runs.size(); i++) {
-						runInfo.add(new CONOP9Solution((File) runs.getElementAt(i)));
+						File file = (File) runs.getElementAt(i);
+						if (file.isDirectory()) {
+							solutions.add(new CONOP9Solution(file));
+						} else {
+							solutions.add(new CONOP4JSolution(file));
+						}
 					}
 
 					// write our summary spreadsheet
 					SummarySpreadsheet spreadsheet = new SummarySpreadsheet(list.toArray(new Summary[list.size()]));
-					spreadsheet.write(out, runInfo.toArray(new CONOP9Solution[0]));
+					spreadsheet.write(out, solutions.toArray(new CONOP9Solution[0]));
 
 					JOptionPane.showMessageDialog(AnalysisPanel.this,
 							"Summary spreadsheet written to: " + out.getName());
