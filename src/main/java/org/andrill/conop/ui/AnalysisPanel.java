@@ -2,6 +2,7 @@ package org.andrill.conop.ui;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -57,7 +58,7 @@ public class AnalysisPanel extends JPanel {
 		setLayout(new MigLayout("fill", "", "[][grow][]"));
 
 		final JFileChooser fileChooser = new JFileChooser(new File("."));
-		fileChooser.setAcceptAllFileFilterUsed(false);
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		final JButton processButton = new JButton();
 		processButton.setEnabled(false);
 		final JButton addButton = new JButton();
@@ -76,7 +77,11 @@ public class AnalysisPanel extends JPanel {
 			public void actionPerformed(final ActionEvent arg0) {
 				fileChooser.setDialogTitle("Choose Run File or Directory");
 				if (fileChooser.showOpenDialog(AnalysisPanel.this) == JFileChooser.APPROVE_OPTION) {
-					runs.addElement(fileChooser.getSelectedFile());
+					try {
+						runs.addElement(fileChooser.getSelectedFile().getCanonicalFile());
+					} catch (IOException e) {
+						runs.addElement(fileChooser.getSelectedFile());
+					}
 				}
 				processButton.setEnabled((runs.size() > 0) && (summaries.size() > 0));
 				removeButton.setEnabled(runs.size() > 0);
@@ -123,7 +128,6 @@ public class AnalysisPanel extends JPanel {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(final ActionEvent e) {
-				fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				fileChooser.setDialogTitle("Save");
 				if (fileChooser.showSaveDialog(AnalysisPanel.this) == JFileChooser.APPROVE_OPTION) {
 					File out = fileChooser.getSelectedFile();
@@ -153,7 +157,7 @@ public class AnalysisPanel extends JPanel {
 
 					// write our summary spreadsheet
 					SummarySpreadsheet spreadsheet = new SummarySpreadsheet(list.toArray(new Summary[list.size()]));
-					spreadsheet.write(out, solutions.toArray(new CONOP9Solution[0]));
+					spreadsheet.write(out, solutions.toArray(new Solution[0]));
 
 					JOptionPane.showMessageDialog(AnalysisPanel.this,
 							"Summary spreadsheet written to: " + out.getName());
