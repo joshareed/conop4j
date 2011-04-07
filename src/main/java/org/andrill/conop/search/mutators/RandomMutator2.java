@@ -10,14 +10,15 @@ import com.google.common.collect.Lists;
 
 public class RandomMutator2 extends AbstractMutator {
 	protected List<Event> first;
-	protected int ptr = -1;
+	protected boolean increment = true;
+	protected int ptr = 0;
 	protected Random random = new Random();
-	protected double temp;
+	protected double score = Double.MAX_VALUE;
+	protected boolean tried = false;
 
 	@Override
 	protected Solution internalMutate(final Solution solution) {
-		if (ptr == -1) {
-			ptr = 0;
+		if (first == null) {
 			first = solution.getEvents();
 		}
 
@@ -27,13 +28,18 @@ public class RandomMutator2 extends AbstractMutator {
 		// remove our event
 		int i = events.indexOf(first.get(ptr));
 		Event e = events.remove(i);
+		if (increment) {
+			i++;
+		} else {
+			i--;
+		}
+		if ((i < 0) || (i > events.size() - 1) || !tried) {
+			ptr = (ptr + 1) % first.size();
+			increment = random.nextBoolean();
+		}
+		events.add(Math.max(0, Math.min(events.size(), i)), e);
 
-		// figure out our range
-		int range = (int) Math.ceil(temp / 10) + 1;
-		int diff = random.nextInt(2 * range) - range;
-
-		// build a new solution
-		events.add(Math.min(events.size(), Math.max(0, i + diff)), e);
+		tried = false;
 		return new Solution(solution.getRun(), events);
 	}
 
@@ -45,7 +51,11 @@ public class RandomMutator2 extends AbstractMutator {
 	@Override
 	public void tried(final double temp, final Solution current, final Solution best) {
 		super.tried(temp, current, best);
-		this.temp = temp;
-		ptr = (ptr + 1) % first.size();
+		if (current.getScore() >= score) {
+			ptr = (ptr + 1) % first.size();
+			increment = random.nextBoolean();
+		}
+		score = current.getScore();
+		tried = true;
 	}
 }
