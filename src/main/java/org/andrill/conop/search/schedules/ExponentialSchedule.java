@@ -17,7 +17,6 @@ public class ExponentialSchedule extends AbstractConfigurable implements Cooling
 	protected double initial;
 	protected long minStepsPer;
 	protected double score = -1;
-	protected long stop = 0;
 
 	/**
 	 * Create a new ExponentialSchedule.
@@ -43,7 +42,6 @@ public class ExponentialSchedule extends AbstractConfigurable implements Cooling
 
 	public double next(final Solution solution) {
 		count++;
-		stop++;
 		if (current < 0.01) {
 			return 0;
 		} else if (score == -1) {
@@ -52,7 +50,6 @@ public class ExponentialSchedule extends AbstractConfigurable implements Cooling
 		} else if (solution.getScore() <= score) {
 			score = solution.getScore();
 			count = 0;
-			stop = 0;
 			return current;
 		} else if (count > minStepsPer) {
 			current = current / (1 + current * factor);
