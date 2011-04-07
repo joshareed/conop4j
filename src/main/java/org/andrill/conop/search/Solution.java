@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.IdentityHashMap;
@@ -19,6 +20,7 @@ import org.andrill.conop.search.objectives.PlacementPenalty;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
 
 /**
@@ -27,6 +29,9 @@ import com.google.common.io.Closeables;
  * @author Josh Reed (jareed@andrill.org)
  */
 public class Solution {
+
+	private static double best = Double.MAX_VALUE;
+	private static Map<Event, double[]> ranks;
 
 	private static Event find(final Run run, final String col1, final String col2) {
 		String name = col1;
@@ -173,6 +178,46 @@ public class Solution {
 	}
 
 	/**
+	 * Gets the max rank for the specified event.
+	 * 
+	 * @param e
+	 *            the event.
+	 * @return the max rank.
+	 */
+	public int getMax(final Event e) {
+		double[] array = ranks.get(e);
+		if (array == null) {
+			return -1;
+		}
+
+		int i = 0;
+		while ((i < array.length) && (array[i] != score)) {
+			i++;
+		}
+		return array.length - i;
+	}
+
+	/**
+	 * Gets the min rank for the specified event.
+	 * 
+	 * @param e
+	 *            the event.
+	 * @return the min rank.
+	 */
+	public int getMin(final Event e) {
+		double[] array = ranks.get(e);
+		if (array == null) {
+			return -1;
+		}
+
+		int i = array.length - 1;
+		while ((i >= 0) && (array[i] != score)) {
+			i--;
+		}
+		return array.length - i;
+	}
+
+	/**
 	 * Gets the position of the event in this solution.
 	 * 
 	 * @param event
@@ -181,6 +226,15 @@ public class Solution {
 	 */
 	public int getPosition(final Event event) {
 		return positions.get(event);
+	}
+
+	/**
+	 * Get the ranks array.
+	 * 
+	 * @return the ranks array.
+	 */
+	public Map<Event, double[]> getRanks() {
+		return ranks;
 	}
 
 	/**
@@ -209,5 +263,24 @@ public class Solution {
 	 */
 	public void setScore(final double score) {
 		this.score = score;
+
+		// create our ranks
+		if (ranks == null) {
+			ranks = Maps.newHashMap();
+			int size = events.size();
+			for (Event e : events) {
+				double[] array = new double[size];
+				Arrays.fill(array, -1);
+				ranks.put(e, array);
+			}
+		}
+
+		// update our ranks
+		if (score <= best) {
+			best = score;
+			for (Event e : events) {
+				ranks.get(e)[getPosition(e)] = score;
+			}
+		}
 	}
 }
