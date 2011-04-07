@@ -6,7 +6,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.text.DecimalFormat;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
 
@@ -44,8 +43,6 @@ public class SnapshotListener extends AsyncListener {
 	}
 
 	protected long last = 0;
-	private Map<Event, double[]> ranks;
-	private double score = -1;
 	protected File snapshotFile;
 	protected File solutionFile;
 	protected Writer writer;
@@ -61,55 +58,6 @@ public class SnapshotListener extends AsyncListener {
 		}
 	}
 
-	/**
-	 * Gets the max rank for the specified event.
-	 * 
-	 * @param e
-	 *            the event.
-	 * @return the max rank.
-	 */
-	public int getMax(final Event e) {
-		double[] array = ranks.get(e);
-		if (array == null) {
-			return -1;
-		}
-
-		int i = 0;
-		while ((array[i] != score) && (i < array.length)) {
-			i++;
-		}
-		return array.length - i;
-	}
-
-	/**
-	 * Gets the min rank for the specified event.
-	 * 
-	 * @param e
-	 *            the event.
-	 * @return the min rank.
-	 */
-	public int getMin(final Event e) {
-		double[] array = ranks.get(e);
-		if (array == null) {
-			return -1;
-		}
-
-		int i = array.length - 1;
-		while ((i >= 0) && (array[i] != score)) {
-			i--;
-		}
-		return array.length - i;
-	}
-
-	/**
-	 * Get the ranks array.
-	 * 
-	 * @return the ranks array.
-	 */
-	public Map<Event, double[]> getRanks() {
-		return ranks;
-	}
-
 	@Override
 	protected void run(final double temp, final long iteration, final Solution current, final Solution best) {
 		try {
@@ -119,18 +67,6 @@ public class SnapshotListener extends AsyncListener {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public void started(final Solution initial) {
-		ranks = Maps.newHashMap();
-		int size = initial.getEvents().size();
-		for (Event e : initial.getEvents()) {
-			double[] array = new double[size];
-			Arrays.fill(array, -1);
-			ranks.put(e, array);
-		}
-		score = initial.getScore();
 	}
 
 	@Override
@@ -145,10 +81,6 @@ public class SnapshotListener extends AsyncListener {
 
 	@Override
 	protected boolean test(final double temp, final long iteration, final Solution current, final Solution best) {
-		if (current.getScore() <= score) {
-			updateRanks(current);
-		}
-
 		long min = (System.currentTimeMillis() - start) / 60000;
 		if (min > last) {
 			last = min;
@@ -156,14 +88,6 @@ public class SnapshotListener extends AsyncListener {
 		} else {
 			return false;
 		}
-	}
-
-	protected void updateRanks(final Solution current) {
-		score = current.getScore();
-		for (Event e : current.getEvents()) {
-			ranks.get(e)[current.getPosition(e)] = score;
-		}
-
 	}
 
 	protected void writeResults(final File file, final Solution solution) {
@@ -174,10 +98,7 @@ public class SnapshotListener extends AsyncListener {
 
 			// open our writer
 			writer = new BufferedWriter(new FileWriter(file));
-			writer.write("Event\tRank");
-			if (ranks != null) {
-				writer.write("\tMin Rank\tMax Rank");
-			}
+			writer.write("Event\tRank\tMin Rank\tMax Rank");
 			for (Section s : run.getSections()) {
 				writer.write("\t" + s.getName() + " (O)\t" + s.getName() + " (P)");
 				placements.put(s, new SectionPlacement(s));
@@ -198,9 +119,7 @@ public class SnapshotListener extends AsyncListener {
 			for (int i = 0; i < total; i++) {
 				Event e = solution.getEvent(i);
 				writer.write("'" + e + "'\t" + (total - i));
-				if (ranks != null) {
-					writer.write("\t" + getMin(e) + "\t" + getMax(e));
-				}
+				writer.write("\t" + solution.getMin(e) + "\t" + solution.getMax(e));
 				for (Section s : run.getSections()) {
 					writer.write("\t");
 					Observation o = s.getObservation(e);
@@ -214,9 +133,7 @@ public class SnapshotListener extends AsyncListener {
 
 			writer.write("Total");
 			writer.write("\t" + D.format(score));
-			if (ranks != null) {
-				writer.write("\t\t");
-			}
+			writer.write("\t\t");
 			for (Section s : run.getSections()) {
 				writer.write("\t\t" + D.format(placements.get(s).getPenalty()));
 			}
