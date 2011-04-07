@@ -16,7 +16,7 @@ import com.google.common.util.concurrent.MoreExecutors;
  */
 public abstract class AsyncListener implements Listener {
 	protected static ExecutorService pool = MoreExecutors.getExitingExecutorService((ThreadPoolExecutor) Executors
-			.newFixedThreadPool(2));
+			.newFixedThreadPool(4));
 	protected long iteration = 0;
 	protected long start = 0;
 
