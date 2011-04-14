@@ -19,7 +19,7 @@ public class FooMutator extends AbstractMutator {
 		// pick a random event and calculate the valid position range
 		pos = (pos + 1) % events.size();
 		Event e = events.remove(pos);
-		int range = solution.getMin(e) - solution.getMax(e) + 5;
+		int range = Math.abs(solution.getMin(e) - solution.getMax(e)) + 5;
 		int newPos = Math.max(0, Math.min(events.size(), pos + (random.nextInt(range) - range / 2)));
 
 		// add in the event at a random valid position
