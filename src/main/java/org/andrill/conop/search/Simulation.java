@@ -15,6 +15,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import org.andrill.conop.search.constraints.CoexistenceChecker;
 import org.andrill.conop.search.constraints.ConstraintChecker;
 import org.andrill.conop.search.constraints.EventChecker;
 import org.andrill.conop.search.constraints.NullChecker;
@@ -106,8 +107,8 @@ public class Simulation {
 			}
 			for (int j = 0; j < parallel; j++) {
 				// create our CONOP process
-				final CONOP conop = new CONOP(simulation.getConstraints(), simulation.getMutator(),
-						simulation.getObjectiveFunction(), simulation.getSchedule());
+				final CONOP conop = new CONOP(simulation.getConstraints(), simulation.getMutator(), simulation
+						.getObjectiveFunction(), simulation.getSchedule());
 
 				// add our listeners
 				if (j == 0) {
@@ -204,6 +205,7 @@ public class Simulation {
 						{
 							put("null", new NullChecker());
 							put("event", new EventChecker());
+							put("coexistence", new CoexistenceChecker());
 							put("default", new NullChecker());
 						}
 					});
