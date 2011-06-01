@@ -12,10 +12,12 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.andrill.conop.search.constraints.CoexistenceChecker;
 import org.andrill.conop.search.constraints.ConstraintChecker;
 import org.andrill.conop.search.constraints.EventChecker;
 import org.andrill.conop.search.objectives.CoexistencePenalty;
 import org.andrill.conop.search.objectives.MatrixPenalty;
+import org.andrill.conop.search.objectives.ObjectiveFunction;
 import org.andrill.conop.search.objectives.PlacementPenalty;
 
 import com.google.common.collect.ImmutableList;
@@ -123,14 +125,19 @@ public class Solution {
 		Run run = Run.loadCONOP9Run(new File(args[0]));
 		Solution solution = fromCSV(run, new File(args[1]));
 		DecimalFormat pretty = new DecimalFormat("0.00");
-		ConstraintChecker constraints = new EventChecker();
-		System.out.println("Valid: " + constraints.isValid(solution));
-		PlacementPenalty penalty = new PlacementPenalty();
-		System.out.println("Score (" + penalty + "): " + pretty.format(penalty.score(solution)));
-		MatrixPenalty matrix = new MatrixPenalty();
-		System.out.println("Score (" + matrix + "): " + pretty.format(matrix.score(solution)));
-		CoexistencePenalty coex = new CoexistencePenalty();
-		System.out.println("Score (" + coex + "): " + pretty.format(coex.score(solution)));
+
+		ConstraintChecker[] constraints = new ConstraintChecker[] { new EventChecker(), new CoexistenceChecker() };
+		System.out.println("Constraints: ");
+		for (ConstraintChecker c : constraints) {
+			System.out.println("\t" + c + ": " + c.isValid(solution));
+		}
+
+		ObjectiveFunction[] objectives = new ObjectiveFunction[] { new PlacementPenalty(), new MatrixPenalty(),
+				new CoexistencePenalty() };
+		System.out.println("Objectives:");
+		for (ObjectiveFunction f : objectives) {
+			System.out.println("\t" + f + ": " + pretty.format(f.score(solution)));
+		}
 	}
 
 	protected final ImmutableList<Event> events;
