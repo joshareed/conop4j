@@ -1,6 +1,7 @@
 package org.andrill.conop.search;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +39,11 @@ public class Section {
 			events.put(o.getEvent(), o);
 			levelBuilder.put(o.getLevel(), o);
 		}
-		levels = levelBuilder.build();
+		levels = levelBuilder.orderKeysBy(new Comparator<BigDecimal>() {
+			public int compare(final BigDecimal bd1, final BigDecimal bd2) {
+				return bd1.compareTo(bd2);
+			}
+		}).build();
 	}
 
 	@Override
