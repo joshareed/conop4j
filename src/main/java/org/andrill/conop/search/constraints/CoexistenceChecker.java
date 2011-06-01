@@ -34,9 +34,7 @@ public class CoexistenceChecker extends AbstractConfigurable implements Constrai
 					counter++;
 				}
 			}
-			if ((counter > 0.5 * run.getSections().size())
-					&& (((e.getBeforeConstraint() == null) && (e.getAfterConstraint() == null)) || (e
-							.getBeforeConstraint() != null))) {
+			if (isAge(e) || ((counter > 0.5 * run.getSections().size()) && isLAD(e))) {
 				important.add(e);
 			}
 		}
@@ -54,11 +52,20 @@ public class CoexistenceChecker extends AbstractConfigurable implements Constrai
 		}
 	}
 
+	private boolean isAge(final Event e) {
+		return (e.getBeforeConstraint() == null) && (e.getAfterConstraint() == null);
+	}
+
+	private boolean isLAD(final Event e) {
+		return e.getBeforeConstraint() != null;
+	}
+
 	public boolean isValid(final Solution solution) {
 		if (conjunct.size() == 0) {
 			init(solution.getRun());
 		}
 
+		// verify event constraints
 		for (Event e : solution.getEvents()) {
 			int position = solution.getPosition(e);
 			Event before = e.getBeforeConstraint();
@@ -71,6 +78,7 @@ public class CoexistenceChecker extends AbstractConfigurable implements Constrai
 			}
 		}
 
+		// verify conjunct constraints
 		for (Entry<Event, Event> e : conjunct.entrySet()) {
 			Event e1 = e.getKey();
 			Event e2 = e.getValue();
@@ -89,5 +97,10 @@ public class CoexistenceChecker extends AbstractConfigurable implements Constrai
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Coexistence";
 	}
 }
