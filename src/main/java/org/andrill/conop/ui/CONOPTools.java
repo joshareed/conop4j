@@ -7,6 +7,7 @@ import javax.swing.JTabbedPane;
 
 import org.andrill.conop.analysis.PostProcess;
 import org.andrill.conop.search.Simulation;
+import org.andrill.conop.search.Solution;
 
 /**
  * The CONOP tools main class.
@@ -42,6 +43,8 @@ public class CONOPTools {
 
 		if ("run".equals(cmd)) {
 			Simulation.main(newargs);
+		} else if ("score".equals(cmd)) {
+			Solution.main(newargs);
 		} else if ("process".equals(cmd)) {
 			PostProcess.main(newargs);
 		} else {
