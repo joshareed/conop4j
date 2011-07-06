@@ -19,6 +19,7 @@ import org.andrill.conop.search.objectives.CoexistencePenalty;
 import org.andrill.conop.search.objectives.MatrixPenalty;
 import org.andrill.conop.search.objectives.ObjectiveFunction;
 import org.andrill.conop.search.objectives.PlacementPenalty;
+import org.andrill.conop.search.objectives.RulesPenalty;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -133,7 +134,7 @@ public class Solution {
 		}
 
 		ObjectiveFunction[] objectives = new ObjectiveFunction[] { new PlacementPenalty(), new MatrixPenalty(),
-				new CoexistencePenalty() };
+				new CoexistencePenalty(), new RulesPenalty() };
 		System.out.println("Objectives:");
 		for (ObjectiveFunction f : objectives) {
 			System.out.println("\t" + f + ": " + pretty.format(f.score(solution)));
