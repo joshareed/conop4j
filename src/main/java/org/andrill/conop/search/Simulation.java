@@ -27,6 +27,7 @@ import org.andrill.conop.search.listeners.StoppingListener;
 import org.andrill.conop.search.mutators.ConstrainedMutator;
 import org.andrill.conop.search.mutators.MutationStrategy;
 import org.andrill.conop.search.mutators.RandomMutator;
+import org.andrill.conop.search.objectives.CoexistencePenalty;
 import org.andrill.conop.search.objectives.MatrixPenalty;
 import org.andrill.conop.search.objectives.ObjectiveFunction;
 import org.andrill.conop.search.objectives.PlacementPenalty;
@@ -65,6 +66,24 @@ public class Simulation {
 			Solution solution = runSimulation(config, run, Solution.initial(run), listeners, Mode.TUI);
 			long elapsed = (System.currentTimeMillis() - start) / 60000;
 			System.out.println("Elapsed time: " + elapsed + " minutes.  Final score: " + D.format(solution.getScore()));
+			System.out.println("-------- Solution Report --------");
+			DecimalFormat pretty = new DecimalFormat("0.00");
+
+			ConstraintChecker[] constraints = new ConstraintChecker[] {
+					new EventChecker(), new CoexistenceChecker() };
+			System.out.println("Constraints: ");
+			for (ConstraintChecker c : constraints) {
+				System.out.println("\t" + c + ": " + c.isValid(solution));
+			}
+
+			ObjectiveFunction[] objectives = new ObjectiveFunction[] {
+					new PlacementPenalty(), new MatrixPenalty(),
+					new CoexistencePenalty() };
+			System.out.println("Objectives:");
+			for (ObjectiveFunction f : objectives) {
+				System.out.println("\t" + f + ": "
+						+ pretty.format(f.score(solution)));
+			}
 		} catch (RuntimeException e) {
 			Throwable cause = e;
 			while (cause.getCause() != null) {
