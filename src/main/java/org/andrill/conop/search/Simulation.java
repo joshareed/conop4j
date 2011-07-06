@@ -31,6 +31,7 @@ import org.andrill.conop.search.objectives.CoexistencePenalty;
 import org.andrill.conop.search.objectives.MatrixPenalty;
 import org.andrill.conop.search.objectives.ObjectiveFunction;
 import org.andrill.conop.search.objectives.PlacementPenalty;
+import org.andrill.conop.search.objectives.RulesPenalty;
 import org.andrill.conop.search.schedules.CoolingSchedule;
 import org.andrill.conop.search.schedules.ExponentialSchedule;
 import org.andrill.conop.search.schedules.LinearSchedule;
@@ -78,7 +79,7 @@ public class Simulation {
 
 			ObjectiveFunction[] objectives = new ObjectiveFunction[] {
 					new PlacementPenalty(), new MatrixPenalty(),
-					new CoexistencePenalty() };
+					new CoexistencePenalty(), new RulesPenalty() };
 			System.out.println("Objectives:");
 			for (ObjectiveFunction f : objectives) {
 				System.out.println("\t" + f + ": "
