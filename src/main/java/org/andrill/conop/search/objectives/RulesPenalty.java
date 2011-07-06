@@ -44,8 +44,13 @@ public class RulesPenalty extends AbstractConfigurable implements ObjectiveFunct
 	}
 
 	protected Future<Double> execute(final List<Rule> list, final Solution solution) {
+		if (pool == null) {
+			pool = MoreExecutors
+					.getExitingExecutorService((ThreadPoolExecutor) Executors
+							.newFixedThreadPool(procs));
+		}
 		return pool.submit(new Callable<Double>() {
-			public Double call() throws Exception {
+			public Double call() {
 				double penalty = 0.0;
 				for (Rule rule : list) {
 					int i1 = solution.getPosition(rule.first);
@@ -57,6 +62,7 @@ public class RulesPenalty extends AbstractConfigurable implements ObjectiveFunct
 				return penalty;
 			}
 		});
+
 	}
 
 	protected void generateRules(final Solution solution) {
