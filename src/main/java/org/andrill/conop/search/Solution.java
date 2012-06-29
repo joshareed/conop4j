@@ -264,6 +264,21 @@ public class Solution {
 	}
 
 	/**
+	 * Generates a hash representation of this solution. This hash is only
+	 * guaranteed to be unique for a single run.
+	 * 
+	 * @return the hash.
+	 */
+	public String hash() {
+		StringBuilder hash = new StringBuilder();
+		for (Event e : events) {
+			hash.append(e.id);
+			hash.append(':');
+		}
+		return hash.toString();
+	}
+
+	/**
 	 * Sets the score for this solution.
 	 * 
 	 * @param score
