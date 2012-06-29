@@ -1,6 +1,7 @@
 package org.andrill.conop.search;
 
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -16,6 +17,7 @@ import org.andrill.conop.search.mutators.MutationStrategy;
 import org.andrill.conop.search.objectives.ObjectiveFunction;
 import org.andrill.conop.search.schedules.CoolingSchedule;
 
+import com.google.common.collect.MapMaker;
 import com.google.common.util.concurrent.MoreExecutors;
 
 /**
@@ -121,6 +123,9 @@ public class CONOP {
 	 * @return the best solution.
 	 */
 	public Solution solve(final Run run, final Solution initial) throws AbortedException {
+		// cache for calculated scores
+		Map<String, Double> scoreCache = new MapMaker().maximumSize(10000).makeMap();
+
 		Solution best = initial;
 		Solution current = initial;
 
@@ -141,7 +146,16 @@ public class CONOP {
 				}
 
 				// score this solution
-				next.setScore(objective.score(next));
+				String hash = next.hash();
+				if (scoreCache.containsKey(hash)) {
+					// check the score cache
+					next.setScore(scoreCache.get(hash));
+				} else {
+					// score it directly and save
+					next.setScore(objective.score(next));
+					scoreCache.put(hash, next.getScore());
+				}
+
 				// save as best if the penalty is less
 				if (next.getScore() < best.getScore()) {
 					best = next;
