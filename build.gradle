@@ -25,7 +25,7 @@ dependencies {
 	testCompile 'junit:junit:4.8.2'
 }
 
-task release(dependsOn: configurations.default.buildArtifacts) << {
+task release(dependsOn: configurations.default.allArtifacts) << {
 	def dest = file("$buildDir/fatjar")
 	dest.mkdirs()
 
@@ -35,7 +35,7 @@ task release(dependsOn: configurations.default.buildArtifacts) << {
 	}
 
 	// expand our code
-	configurations.default.allArtifactFiles.each { jar ->
+	configurations.default.allArtifacts.files.each { jar ->
 		ant.unzip(src: jar, dest: dest, overwrite: true)
 	}
 
