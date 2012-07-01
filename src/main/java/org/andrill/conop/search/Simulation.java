@@ -70,20 +70,17 @@ public class Simulation {
 			System.out.println("-------- Solution Report --------");
 			DecimalFormat pretty = new DecimalFormat("0.00");
 
-			ConstraintChecker[] constraints = new ConstraintChecker[] {
-					new EventChecker(), new CoexistenceChecker() };
+			ConstraintChecker[] constraints = new ConstraintChecker[] { new EventChecker(), new CoexistenceChecker() };
 			System.out.println("Constraints: ");
 			for (ConstraintChecker c : constraints) {
 				System.out.println("\t" + c + ": " + c.isValid(solution));
 			}
 
-			ObjectiveFunction[] objectives = new ObjectiveFunction[] {
-					new PlacementPenalty(), new MatrixPenalty(),
+			ObjectiveFunction[] objectives = new ObjectiveFunction[] { new PlacementPenalty(), new MatrixPenalty(),
 					new CoexistencePenalty(), new RulesPenalty() };
 			System.out.println("Objectives:");
 			for (ObjectiveFunction f : objectives) {
-				System.out.println("\t" + f + ": "
-						+ pretty.format(f.score(solution)));
+				System.out.println("\t" + f + ": " + pretty.format(f.score(solution)));
 			}
 		} catch (RuntimeException e) {
 			Throwable cause = e;
@@ -174,14 +171,9 @@ public class Simulation {
 		}
 	}
 
-	protected ConstraintChecker constraints;
 	protected final File directory;
-	protected List<Listener> listeners;
-	protected MutationStrategy mutator;
-	protected ObjectiveFunction objective;
 	protected final Properties properties;
 	protected Run run;
-	protected CoolingSchedule schedule;
 
 	/**
 	 * Create a new Simulation.
@@ -219,18 +211,15 @@ public class Simulation {
 	 */
 	@SuppressWarnings("serial")
 	public ConstraintChecker getConstraints() {
-		if (constraints == null) {
-			constraints = lookup(properties.getProperty("constraints", "default"), ConstraintChecker.class,
-					new HashMap<String, ConstraintChecker>() {
-						{
-							put("null", new NullChecker());
-							put("event", new EventChecker());
-							put("coexistence", new CoexistenceChecker());
-							put("default", new NullChecker());
-						}
-					});
-		}
-		return constraints;
+		return lookup(properties.getProperty("constraints", "default"), ConstraintChecker.class,
+				new HashMap<String, ConstraintChecker>() {
+					{
+						put("null", new NullChecker());
+						put("event", new EventChecker());
+						put("coexistence", new CoexistenceChecker());
+						put("default", new NullChecker());
+					}
+				});
 	}
 
 	/**
@@ -256,22 +245,20 @@ public class Simulation {
 	 */
 	@SuppressWarnings("serial")
 	public List<Listener> getListeners() {
-		if (listeners == null) {
-			listeners = Lists.newArrayList();
-			Map<String, Listener> map = new HashMap<String, Listener>() {
-				{
-					put("console", new ConsoleProgressListener());
-					put("snapshot", new SnapshotListener());
-					put("stopping", new StoppingListener());
-				}
-			};
+		Map<String, Listener> map = new HashMap<String, Listener>() {
+			{
+				put("console", new ConsoleProgressListener());
+				put("snapshot", new SnapshotListener());
+				put("stopping", new StoppingListener());
+			}
+		};
 
-			// lookup our listeners
-			for (String name : properties.getProperty("listeners", "").split(",")) {
-				Listener l = lookup(name, Listener.class, map);
-				if (l != null) {
-					listeners.add(l);
-				}
+		// lookup our listeners
+		List<Listener> listeners = Lists.newArrayList();
+		for (String name : properties.getProperty("listeners", "").split(",")) {
+			Listener l = lookup(name, Listener.class, map);
+			if (l != null) {
+				listeners.add(l);
 			}
 		}
 		return listeners;
@@ -291,17 +278,14 @@ public class Simulation {
 	 */
 	@SuppressWarnings("serial")
 	public MutationStrategy getMutator() {
-		if (mutator == null) {
-			mutator = lookup(properties.getProperty("mutator", "default"), MutationStrategy.class,
-					new HashMap<String, MutationStrategy>() {
-						{
-							put("random", new RandomMutator());
-							put("constrained", new ConstrainedMutator());
-							put("default", new RandomMutator());
-						}
-					});
-		}
-		return mutator;
+		return lookup(properties.getProperty("mutator", "default"), MutationStrategy.class,
+				new HashMap<String, MutationStrategy>() {
+					{
+						put("random", new RandomMutator());
+						put("constrained", new ConstrainedMutator());
+						put("default", new RandomMutator());
+					}
+				});
 	}
 
 	/**
@@ -318,17 +302,14 @@ public class Simulation {
 	 */
 	@SuppressWarnings("serial")
 	public ObjectiveFunction getObjectiveFunction() {
-		if (objective == null) {
-			objective = lookup(properties.getProperty("objective", "default"), ObjectiveFunction.class,
-					new HashMap<String, ObjectiveFunction>() {
-						{
-							put("placement", new PlacementPenalty());
-							put("matrix", new MatrixPenalty());
-							put("default", new PlacementPenalty());
-						}
-					});
-		}
-		return objective;
+		return lookup(properties.getProperty("objective", "default"), ObjectiveFunction.class,
+				new HashMap<String, ObjectiveFunction>() {
+					{
+						put("placement", new PlacementPenalty());
+						put("matrix", new MatrixPenalty());
+						put("default", new PlacementPenalty());
+					}
+				});
 	}
 
 	/**
@@ -379,17 +360,14 @@ public class Simulation {
 	 */
 	@SuppressWarnings("serial")
 	public CoolingSchedule getSchedule() {
-		if (schedule == null) {
-			schedule = lookup(properties.getProperty("schedule", "default"), CoolingSchedule.class,
-					new HashMap<String, CoolingSchedule>() {
-						{
-							put("exponential", new ExponentialSchedule());
-							put("linear", new LinearSchedule());
-							put("default", new ExponentialSchedule());
-						}
-					});
-		}
-		return schedule;
+		return lookup(properties.getProperty("schedule", "default"), CoolingSchedule.class,
+				new HashMap<String, CoolingSchedule>() {
+					{
+						put("exponential", new ExponentialSchedule());
+						put("linear", new LinearSchedule());
+						put("default", new ExponentialSchedule());
+					}
+				});
 	}
 
 	/**
