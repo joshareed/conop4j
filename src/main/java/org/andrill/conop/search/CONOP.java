@@ -123,6 +123,7 @@ public class CONOP {
 	 * @return the best solution.
 	 */
 	public Solution solve(final Run run, final Solution initial) throws AbortedException {
+
 		// cache for calculated scores
 		Map<String, Double> scoreCache = new MapMaker().maximumSize(10000).makeMap();
 
@@ -187,7 +188,6 @@ public class CONOP {
 				System.out.println("Halted: user interrupt");
 			} else {
 				System.out.println("Halted: " + e.getMessage());
-				e.printStackTrace();
 			}
 		}
 

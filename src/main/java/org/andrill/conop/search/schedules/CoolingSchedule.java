@@ -28,4 +28,5 @@ public interface CoolingSchedule extends Configurable {
 	 * @return the next temperature.
 	 */
 	double next(Solution solution);
+
 }

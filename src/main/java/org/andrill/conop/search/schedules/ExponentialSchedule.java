@@ -52,7 +52,7 @@ public class ExponentialSchedule extends AbstractConfigurable implements Cooling
 			count = 0;
 			return current;
 		} else if (count > minStepsPer) {
-			current = current / (1 + current * factor);
+			current = current / (1 + (current * factor));
 			count = 0;
 			return current;
 		} else {
