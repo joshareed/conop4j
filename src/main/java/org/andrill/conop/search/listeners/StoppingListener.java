@@ -61,6 +61,14 @@ public class StoppingListener extends AbstractListener {
 		return millis / 60000;
 	}
 
+	@Override
+	public void started(final Solution solution) {
+		currentIteration = 0;
+		lastProgressIteration = 0;
+		lastProgressTime = 0;
+		startTime = 0;
+	}
+
 	protected void stop(final String message) {
 		throw new RuntimeException(message);
 	}
