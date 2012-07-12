@@ -19,6 +19,7 @@ import org.andrill.conop.search.constraints.CoexistenceChecker;
 import org.andrill.conop.search.constraints.ConstraintChecker;
 import org.andrill.conop.search.constraints.EventChecker;
 import org.andrill.conop.search.constraints.NullChecker;
+import org.andrill.conop.search.listeners.ConopWebProgressListener;
 import org.andrill.conop.search.listeners.ConsoleProgressListener;
 import org.andrill.conop.search.listeners.Listener;
 import org.andrill.conop.search.listeners.Listener.Mode;
@@ -250,6 +251,7 @@ public class Simulation {
 				put("console", new ConsoleProgressListener());
 				put("snapshot", new SnapshotListener());
 				put("stopping", new StoppingListener());
+				put("conopweb", new ConopWebProgressListener());
 			}
 		};
 
