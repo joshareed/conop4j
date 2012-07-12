@@ -15,6 +15,7 @@ import org.andrill.conop.search.Run;
 import org.andrill.conop.search.Section;
 import org.andrill.conop.search.Solution;
 import org.andrill.conop.search.objectives.SectionPlacement;
+import org.andrill.conop.search.util.TimerUtils;
 
 import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
@@ -42,7 +43,7 @@ public class SnapshotListener extends AsyncListener {
 		return f;
 	}
 
-	protected long last = 0;
+	protected int next = 60;
 	protected File snapshotFile;
 	protected File solutionFile;
 	protected Writer writer;
@@ -62,7 +63,8 @@ public class SnapshotListener extends AsyncListener {
 	protected void run(final double temp, final long iteration, final Solution current, final Solution best) {
 		try {
 			writeResults(solutionFile, best);
-			writer.write(last + "\t" + iteration + "\t" + D.format(temp) + "\t" + D.format(best.getScore()) + "\n");
+			writer.write(((next / 60) - 1) + "\t" + iteration + "\t" + D.format(temp) + "\t"
+					+ D.format(best.getScore()) + "\n");
 			writer.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -81,9 +83,8 @@ public class SnapshotListener extends AsyncListener {
 
 	@Override
 	protected boolean test(final double temp, final long iteration, final Solution current, final Solution best) {
-		long min = (System.currentTimeMillis() - start) / 60000;
-		if (min > last) {
-			last = min;
+		if (TimerUtils.getCounter() >= next) {
+			next += 60;
 			return true;
 		} else {
 			return false;
