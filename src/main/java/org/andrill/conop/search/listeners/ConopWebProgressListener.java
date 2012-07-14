@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
+import org.andrill.conop.search.Event;
 import org.andrill.conop.search.Solution;
 import org.andrill.conop.search.util.TimerUtils;
 
@@ -46,17 +47,18 @@ public class ConopWebProgressListener extends AsyncListener {
 		}
 
 		// set our run id
+		String date = new SimpleDateFormat("yyyy-MM-dd_HHmmss").format(new Date());
+		String user = System.getProperty("user.name");
+		String host;
+		try {
+			host = InetAddress.getLocalHost().getHostName();
+		} catch (UnknownHostException e) {
+			host = "unknown_host";
+		}
+
 		run = properties.getProperty("conopweb.run");
 		if ((run == null) || "".equals(run)) {
 			// generate a run id
-			String user = System.getProperty("user.name");
-			String host;
-			try {
-				host = InetAddress.getLocalHost().getHostName();
-			} catch (UnknownHostException e) {
-				host = "unknown_host";
-			}
-			String date = new SimpleDateFormat("yyyy-MM-dd_HHmmss").format(new Date());
 			run = user + ":" + host + ":" + date;
 		}
 
@@ -64,7 +66,7 @@ public class ConopWebProgressListener extends AsyncListener {
 		if (properties.containsKey("conopweb.name")) {
 			name = properties.getProperty("conopweb.name");
 		} else {
-			name = run + " run for dataset " + dataset;
+			name = user + " @ " + date;
 		}
 
 		// save our simulation
@@ -73,7 +75,7 @@ public class ConopWebProgressListener extends AsyncListener {
 		}
 	}
 
-	private String getProgressPayload(final double temp, final long iteration, final Solution best) {
+	private String getProgressPayload(final double temp, final long iteration, final Solution best, final Solution s) {
 		StringWriter out = new StringWriter();
 		JsonGenerator json;
 		try {
@@ -84,6 +86,10 @@ public class ConopWebProgressListener extends AsyncListener {
 			json.writeNumberField("temp", temp);
 			json.writeNumberField("score", best.getScore());
 			json.writeStringField("objective", simulation.get("objective"));
+			if (s != null) {
+				json.writeFieldName("solution");
+				json.writeRawValue(getSolutionPayload(s));
+			}
 			json.writeEndObject();
 			json.close();
 		} catch (IOException e) {
@@ -115,6 +121,31 @@ public class ConopWebProgressListener extends AsyncListener {
 		return out.toString();
 	}
 
+	private String getSolutionPayload(final Solution s) {
+		StringWriter out = new StringWriter();
+		JsonGenerator json;
+		try {
+			json = new JsonFactory().createJsonGenerator(out);
+			json.writeStartObject();
+			json.writeNumberField("score", s.getScore());
+			json.writeArrayFieldStart("events");
+			for (Event e : s.getEvents()) {
+				json.writeStartObject();
+				json.writeStringField("name", e.getName());
+				json.writeNumberField("rank", s.getPosition(e));
+				json.writeNumberField("max", s.getMax(e));
+				json.writeNumberField("min", s.getMin(e));
+				json.writeEndObject();
+			}
+			json.writeEndArray();
+			json.writeEndObject();
+			json.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return out.toString();
+	}
+
 	private String mangle(final String str) {
 		return str.replaceAll("\\.", "/");
 	}
@@ -124,7 +155,6 @@ public class ConopWebProgressListener extends AsyncListener {
 		OutputStream out = null;
 		try {
 			url = new URL(endpoint + fragment);
-			System.out.println(url);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setDoOutput(true);
 			conn.setRequestMethod("POST");
@@ -133,14 +163,15 @@ public class ConopWebProgressListener extends AsyncListener {
 			out.write(payload.getBytes());
 			out.flush();
 			out.close();
-			System.out.println(conn.getResponseCode());
+			if (conn.getResponseCode() >= 400) {
+				System.out.println("Error posting to ConopWeb: " + conn.getResponseMessage());
+			}
 			conn.disconnect();
 		} catch (MalformedURLException e) {
 			System.err.println("Invalid url: " + endpoint + fragment);
 			dataset = null; // don't try again
 		} catch (IOException e) {
-			System.err.println("Error posting to ConopWeb:" + e.getMessage());
-			e.printStackTrace();
+			System.err.println("Error posting to ConopWeb: " + e.getMessage());
 		} finally {
 			if (out != null) {
 				try {
@@ -155,7 +186,8 @@ public class ConopWebProgressListener extends AsyncListener {
 	@Override
 	protected void run(final double temp, final long iteration, final Solution current, final Solution best) {
 		// send temp, iteration, best score
-		post("runs/" + run + "/progress", getProgressPayload(temp, iteration, best));
+		post("runs/" + run + "/progress", getProgressPayload(temp, iteration, best,
+				(TimerUtils.getCounter() % 60) == 0 ? best : null));
 	}
 
 	@Override
@@ -167,11 +199,9 @@ public class ConopWebProgressListener extends AsyncListener {
 	@Override
 	public void stopped(final Solution solution) {
 		if (solution == null) {
-			// mark run as aborted
-			// post("runs/" + run + "/solution", "aborted");
+			post("runs/" + run + "/solution", "{\"score\":null}");
 		} else {
-			// mark run as complete and send final score
-			// post("runs/" + run + "/solution", "complete");
+			post("runs/" + run + "/solution", getSolutionPayload(solution));
 		}
 	}
 
