@@ -192,7 +192,7 @@ public class Solution {
 	 *            the event.
 	 * @return the max rank.
 	 */
-	public int getMax(final Event e) {
+	public int getMaxRank(final Event e) {
 		double[] array = ranks.get(e);
 		if (array == null) {
 			return -1;
@@ -212,7 +212,7 @@ public class Solution {
 	 *            the event.
 	 * @return the min rank.
 	 */
-	public int getMin(final Event e) {
+	public int getMinRank(final Event e) {
 		double[] array = ranks.get(e);
 		if (array == null) {
 			return -1;
@@ -234,6 +234,17 @@ public class Solution {
 	 */
 	public int getPosition(final Event event) {
 		return positions.get(event);
+	}
+
+	/**
+	 * Gets the rank for a specified event.
+	 * 
+	 * @param e
+	 *            the event.
+	 * @return the rank.
+	 */
+	public int getRank(final Event e) {
+		return events.size() - getPosition(e);
 	}
 
 	/**
