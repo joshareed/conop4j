@@ -26,6 +26,8 @@ import com.google.common.util.concurrent.MoreExecutors;
  * @author Josh Reed (jareed@andrill.org)
  */
 public class CONOP {
+	public static final String VERSION = "0.8.0";
+
 	protected final ConstraintChecker constraints;
 	protected final ExecutorService executor;
 	protected final Set<Listener> listeners;

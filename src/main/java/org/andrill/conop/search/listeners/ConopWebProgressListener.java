@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
+import org.andrill.conop.search.CONOP;
 import org.andrill.conop.search.Event;
 import org.andrill.conop.search.Solution;
 import org.andrill.conop.search.util.TimerUtils;
@@ -113,6 +114,7 @@ public class ConopWebProgressListener extends AsyncListener {
 				json.writeStringField(mangle(e.getKey()), e.getValue());
 			}
 			json.writeEndObject();
+			json.writeStringField("conop4j", CONOP.VERSION);
 			json.writeEndObject();
 			json.close();
 		} catch (IOException e) {
