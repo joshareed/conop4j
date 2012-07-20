@@ -120,7 +120,7 @@ public class SnapshotListener extends AsyncListener {
 			for (int i = 0; i < total; i++) {
 				Event e = solution.getEvent(i);
 				writer.write("'" + e + "'\t" + (total - i));
-				writer.write("\t" + solution.getMin(e) + "\t" + solution.getMax(e));
+				writer.write("\t" + solution.getMinRank(e) + "\t" + solution.getMaxRank(e));
 				for (Section s : run.getSections()) {
 					writer.write("\t");
 					Observation o = s.getObservation(e);

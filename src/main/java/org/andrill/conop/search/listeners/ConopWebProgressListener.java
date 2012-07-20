@@ -129,12 +129,13 @@ public class ConopWebProgressListener extends AsyncListener {
 			json.writeStartObject();
 			json.writeNumberField("score", s.getScore());
 			json.writeArrayFieldStart("events");
+
 			for (Event e : s.getEvents()) {
 				json.writeStartObject();
 				json.writeStringField("name", e.getName());
-				json.writeNumberField("rank", s.getPosition(e));
-				json.writeNumberField("max", s.getMax(e));
-				json.writeNumberField("min", s.getMin(e));
+				json.writeNumberField("rank", s.getRank(e));
+				json.writeNumberField("max", s.getMaxRank(e));
+				json.writeNumberField("min", s.getMinRank(e));
 				json.writeEndObject();
 			}
 			json.writeEndArray();
