@@ -25,7 +25,7 @@ import com.google.common.collect.Maps;
 
 public class ConopWebProgressListener extends AsyncListener {
 	private String dataset = null;
-	private String endpoint = "http://localhost:8080/conopweb/api/";
+	private String endpoint = "http://conop.io/api/";
 	private String name = null;
 	private int next = 15;
 	private String run = null;
