@@ -46,6 +46,6 @@ task release(dependsOn: configurations.default.allArtifacts) << {
 }
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '0.9'
+	gradleVersion = '1.7'
 	jarFile = 'wrapper/wrapper.jar'
 }
