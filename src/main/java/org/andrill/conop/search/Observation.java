@@ -1,7 +1,6 @@
 package org.andrill.conop.search;
 
 import java.math.BigDecimal;
-import java.util.IdentityHashMap;
 
 /**
  * Represents an observation of an event in a section.
@@ -9,35 +8,6 @@ import java.util.IdentityHashMap;
  * @author Josh Reed (jareed@andrill.org)
  */
 public class Observation {
-	private static final IdentityHashMap<BigDecimal, Double> doubleMap = new IdentityHashMap<BigDecimal, Double>() {
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public Double get(final Object key) {
-			Double value = super.get(key);
-			if (value == null) {
-				BigDecimal k = (BigDecimal) key;
-				value = k.doubleValue();
-				put(k, value);
-			}
-			return value;
-		};
-	};
-	private static final IdentityHashMap<BigDecimal, Integer> intMap = new IdentityHashMap<BigDecimal, Integer>() {
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public Integer get(final Object key) {
-			Integer value = super.get(key);
-			if (value == null) {
-				BigDecimal k = (BigDecimal) key;
-				value = k.multiply(THOUSAND).intValue();
-				put(k, value);
-			}
-			return value;
-		};
-	};
-	private static final BigDecimal THOUSAND = new BigDecimal(1000);
 	protected final Event event;
 	protected final BigDecimal level;
 	protected final double weightDown;
@@ -78,24 +48,6 @@ public class Observation {
 	 */
 	public BigDecimal getLevel() {
 		return level;
-	}
-
-	/**
-	 * Gets the level as a double.
-	 * 
-	 * @return the level.
-	 */
-	public double getLevelDouble() {
-		return doubleMap.get(level);
-	}
-
-	/**
-	 * Gets the level as an integer.
-	 * 
-	 * @return the level.
-	 */
-	public int getLevelInt() {
-		return intMap.get(level);
 	}
 
 	/**
