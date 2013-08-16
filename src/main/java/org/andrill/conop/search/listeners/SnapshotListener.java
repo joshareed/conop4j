@@ -14,7 +14,7 @@ import org.andrill.conop.search.Observation;
 import org.andrill.conop.search.Run;
 import org.andrill.conop.search.Section;
 import org.andrill.conop.search.Solution;
-import org.andrill.conop.search.objectives.SectionPlacement;
+import org.andrill.conop.search.objectives.PlacementPenalty.SectionPlacement;
 import org.andrill.conop.search.util.TimerUtils;
 
 import com.google.common.collect.Maps;
