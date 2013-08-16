@@ -1,9 +1,9 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
-version = '0.8.0'
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
+version = '0.8.1'
 group = 'org.andrill.conop'
 
 manifest.mainAttributes(
