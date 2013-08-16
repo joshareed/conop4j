@@ -67,8 +67,8 @@ public class AnalysisPanel extends JPanel {
 
 		// list of files
 		add(new JLabel("Runs:"), "wrap");
-		final DefaultListModel runs = new DefaultListModel();
-		final JList list = new JList(runs);
+		final DefaultListModel<File> runs = new DefaultListModel<File>();
+		final JList<File> list = new JList<File>(runs);
 		add(new JScrollPane(list), "grow, span, wrap");
 
 		addButton.setAction(new AbstractAction("+") {
@@ -147,7 +147,7 @@ public class AnalysisPanel extends JPanel {
 					// create a list of runs
 					List<Solution> solutions = Lists.newArrayList();
 					for (int i = 0; i < runs.size(); i++) {
-						File file = (File) runs.getElementAt(i);
+						File file = runs.getElementAt(i);
 						if (file.isDirectory()) {
 							solutions.add(new CONOP9Solution(file));
 						} else {
