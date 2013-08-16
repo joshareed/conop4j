@@ -26,7 +26,7 @@ public class ConstrainedMutator extends AbstractMutator {
 		int max = e.getBeforeConstraint() == null ? events.size() : solution.getPosition(e.getBeforeConstraint());
 
 		// add in the event at a random valid position
-		events.add(min + random.nextInt(max - min), e);
+		events.add(min + (max == min ? 0 : random.nextInt(max - min)), e);
 		return new Solution(solution.getRun(), events);
 	}
 
