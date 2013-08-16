@@ -9,7 +9,6 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.io.Closeables;
 
 /**
  * A solution from a CONOP4J run.
@@ -36,28 +35,33 @@ public class CONOP4JSolution implements Solution {
 		parse(csv);
 	}
 
+	@Override
 	public List<Map<String, String>> getEvents() {
 		return events;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public List<Map<String, String>> getSections() {
 		return sections;
 	}
 
 	protected void parse(final File csv) {
 		String line = null;
-		BufferedReader reader = null;
-		try {
-			reader = new BufferedReader(new FileReader(csv));
+		try (BufferedReader reader = new BufferedReader(new FileReader(csv))) {
 			// parse the header
-			String[] header = reader.readLine().split("\t");
+			line = reader.readLine();
+			if (line == null) {
+				return;
+			}
+			String[] header = line.split("\t");
 			for (int i = 4; i < header.length; i += 2) {
 				Map<String, String> section = Maps.newHashMap();
-				section.put("id", "" + ((i - 4) / 2 + 1));
+				section.put("id", "" + (((i - 4) / 2) + 1));
 				section.put("name", header[i].substring(0, header[i].length() - 4));
 				sections.add(section);
 			}
@@ -81,8 +85,6 @@ public class CONOP4JSolution implements Solution {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
-			Closeables.closeQuietly(reader);
 		}
 	}
 

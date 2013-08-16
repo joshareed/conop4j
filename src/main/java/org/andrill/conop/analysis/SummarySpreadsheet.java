@@ -7,8 +7,6 @@ import java.io.IOException;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
 
-import com.google.common.io.Closeables;
-
 /**
  * Generates a summary Excel workbook for a set of CONOP runs.
  * 
@@ -51,14 +49,10 @@ public class SummarySpreadsheet {
 		}
 
 		// write out our workbook
-		FileOutputStream fos = null;
-		try {
-			fos = new FileOutputStream(out);
+		try (FileOutputStream fos = new FileOutputStream(out)) {
 			workbook.write(fos);
 		} catch (IOException ioe) {
 			// do nothing
-		} finally {
-			Closeables.closeQuietly(fos);
 		}
 	}
 }

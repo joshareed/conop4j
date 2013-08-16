@@ -38,7 +38,6 @@ import org.andrill.conop.search.schedules.ExponentialSchedule;
 import org.andrill.conop.search.schedules.LinearSchedule;
 
 import com.google.common.collect.Lists;
-import com.google.common.io.Closeables;
 import com.google.common.util.concurrent.MoreExecutors;
 
 /**
@@ -137,6 +136,7 @@ public class Simulation {
 
 				// start a parallel process
 				tasks.add(pool.submit(new Callable<Solution>() {
+					@Override
 					public Solution call() throws AbortedException {
 						return conop.solve(run, new Solution(run, next.getEvents()));
 					}
@@ -185,16 +185,12 @@ public class Simulation {
 	public Simulation(final File file) {
 		properties = new Properties();
 		directory = file.getParentFile();
-		FileInputStream fis = null;
-		try {
-			fis = new FileInputStream(file);
+		try (FileInputStream fis = new FileInputStream(file)) {
 			properties.load(fis);
 		} catch (FileNotFoundException e) {
 			throw new RuntimeException(e);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
-		} finally {
-			Closeables.closeQuietly(fis);
 		}
 	}
 

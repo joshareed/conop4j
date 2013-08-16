@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.google.common.collect.Maps;
-import com.google.common.io.Closeables;
 
 /**
  * Compares two solutions and generates a difference spreadsheet.
@@ -61,10 +60,8 @@ public class Diff {
 	 */
 	public static Map<Event, Rank> fromCSV(final Run run, final File csv) {
 		String line = null;
-		BufferedReader reader = null;
 		Map<Event, Rank> map = Maps.newLinkedHashMap();
-		try {
-			reader = new BufferedReader(new FileReader(csv));
+		try (BufferedReader reader = new BufferedReader(new FileReader(csv))) {
 			reader.readLine(); // eat header line
 			while (((line = reader.readLine()) != null) && (map.size() < run.getEvents().size())) {
 				String[] split = line.split("\t");
@@ -82,8 +79,6 @@ public class Diff {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
-			Closeables.closeQuietly(reader);
 		}
 		return map;
 	}
@@ -105,9 +100,7 @@ public class Diff {
 		Map<Event, Rank> s2 = fromCSV(run, new File(args[2]));
 
 		// write out the
-		BufferedWriter writer = null;
-		try {
-			writer = new BufferedWriter(new FileWriter(args[3]));
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(args[3]))) {
 
 			// write out the difference sheet
 			writer.write("Event\tRank1\tMin1\tMax1\tRank2\tMin2\tMax2\tOverlap");
@@ -141,8 +134,6 @@ public class Diff {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
-			Closeables.closeQuietly(writer);
 		}
 	}
 }

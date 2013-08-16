@@ -24,7 +24,7 @@ public class TimerUtils {
 	 * 
 	 * @return the counter.
 	 */
-	public static int getCounter() {
+	public static synchronized int getCounter() {
 		if (thread == null) {
 			thread = new CounterThread();
 			thread.start();

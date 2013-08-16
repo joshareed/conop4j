@@ -15,7 +15,6 @@ import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.google.common.io.Closeables;
 
 /**
  * Represents a CONOP run.
@@ -154,9 +153,7 @@ public class Run {
 			throw new IllegalArgumentException(file.getAbsolutePath() + " does not exist!");
 		}
 		List<List<String>> parsed = Lists.newArrayList();
-		BufferedReader reader = null;
-		try {
-			reader = new BufferedReader(new FileReader(file));
+		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
 			String line = null;
 			while ((line = reader.readLine()) != null) {
 				List<String> row = parseLine(line.trim());
@@ -166,8 +163,6 @@ public class Run {
 			}
 		} catch (IOException e) {
 			// do nothing
-		} finally {
-			Closeables.closeQuietly(reader);
 		}
 		return parsed;
 	}

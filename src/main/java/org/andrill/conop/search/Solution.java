@@ -24,7 +24,6 @@ import org.andrill.conop.search.objectives.RulesPenalty;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.io.Closeables;
 
 /**
  * A solution contains a set of events in a particular order.
@@ -72,10 +71,8 @@ public class Solution {
 	 */
 	public static Solution fromCSV(final Run run, final File csv) {
 		String line = null;
-		BufferedReader reader = null;
 		List<Event> list = Lists.newArrayList();
-		try {
-			reader = new BufferedReader(new FileReader(csv));
+		try (BufferedReader reader = new BufferedReader(new FileReader(csv))) {
 			reader.readLine(); // eat header line
 			while (((line = reader.readLine()) != null) && (list.size() < run.getEvents().size())) {
 				String[] split = line.split("\t");
@@ -83,8 +80,6 @@ public class Solution {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
-			Closeables.closeQuietly(reader);
 		}
 		return new Solution(run, list);
 	}
@@ -99,6 +94,7 @@ public class Solution {
 	public static Solution initial(final Run run) {
 		final List<Event> events = Lists.newArrayList(run.getEvents());
 		Collections.sort(events, new Comparator<Event>() {
+			@Override
 			public int compare(final Event o1, final Event o2) {
 				return toInt(o1).compareTo(toInt(o2));
 			}
@@ -298,14 +294,16 @@ public class Solution {
 	public void setScore(final double score) {
 		this.score = score;
 
-		// create our ranks
-		if (ranks == null) {
-			ranks = Maps.newHashMap();
-			int size = events.size();
-			for (Event e : events) {
-				double[] array = new double[size];
-				Arrays.fill(array, -1);
-				ranks.put(e, array);
+		synchronized (Solution.class) {
+			// create our ranks
+			if (ranks == null) {
+				ranks = Maps.newHashMap();
+				int size = events.size();
+				for (Event e : events) {
+					double[] array = new double[size];
+					Arrays.fill(array, -1);
+					ranks.put(e, array);
+				}
 			}
 		}
 

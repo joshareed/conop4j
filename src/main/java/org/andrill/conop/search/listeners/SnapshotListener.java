@@ -18,7 +18,6 @@ import org.andrill.conop.search.objectives.SectionPlacement;
 import org.andrill.conop.search.util.TimerUtils;
 
 import com.google.common.collect.Maps;
-import com.google.common.io.Closeables;
 
 /**
  * Writes a log and current best solution to files every minute.
@@ -92,13 +91,11 @@ public class SnapshotListener extends AsyncListener {
 	}
 
 	protected void writeResults(final File file, final Solution solution) {
-		BufferedWriter writer = null;
-		try {
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
 			Run run = solution.getRun();
 			Map<Section, SectionPlacement> placements = Maps.newHashMap();
 
 			// open our writer
-			writer = new BufferedWriter(new FileWriter(file));
 			writer.write("Event\tRank\tMin Rank\tMax Rank");
 			for (Section s : run.getSections()) {
 				writer.write("\t" + s.getName() + " (O)\t" + s.getName() + " (P)");
@@ -141,8 +138,6 @@ public class SnapshotListener extends AsyncListener {
 			writer.write("\n");
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
-			Closeables.closeQuietly(writer);
 		}
 	}
 }

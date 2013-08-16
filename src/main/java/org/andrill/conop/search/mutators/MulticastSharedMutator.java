@@ -18,7 +18,6 @@ import org.andrill.conop.search.Solution;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.io.Closeables;
 
 /**
  * A shared mutator for multiple CONOP processes running on separate machines.
@@ -57,9 +56,7 @@ public class MulticastSharedMutator extends AbstractMutator {
 		public void broadcast(final Solution solution) {
 			lastBroadcast = 0;
 			ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-			DataOutputStream dos = null;
-			try {
-				dos = new DataOutputStream(buffer);
+			try (DataOutputStream dos = new DataOutputStream(buffer)) {
 				dos.writeDouble(solution.getScore());
 				for (int i = 0; i < events.size(); i++) {
 					dos.writeInt(solution.getEvent(i).getInternalId());
@@ -69,20 +66,16 @@ public class MulticastSharedMutator extends AbstractMutator {
 				socket.send(new DatagramPacket(bytes, bytes.length, group, 4499));
 			} catch (IOException e) {
 				e.printStackTrace();
-			} finally {
-				Closeables.closeQuietly(dos);
 			}
 		}
 
 		@Override
 		public void run() {
-			byte[] buffer = new byte[4 * run.getEvents().size() + 8];
+			byte[] buffer = new byte[(4 * run.getEvents().size()) + 8];
 			DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 			while (!stopped) {
-				DataInputStream dis = null;
-				try {
+				try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(buffer))) {
 					socket.receive(packet);
-					dis = new DataInputStream(new ByteArrayInputStream(buffer));
 					double score = dis.readDouble();
 					if (score < localBest) {
 						List<Event> list = Lists.newArrayList();
@@ -95,8 +88,6 @@ public class MulticastSharedMutator extends AbstractMutator {
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
-				} finally {
-					Closeables.closeQuietly(dis);
 				}
 			}
 		}
@@ -128,7 +119,7 @@ public class MulticastSharedMutator extends AbstractMutator {
 
 	@Override
 	public Solution internalMutate(final Solution solution) {
-		if ((remote != null) && (remote.getScore() < factor * solution.getScore())) {
+		if ((remote != null) && (remote.getScore() < (factor * solution.getScore()))) {
 			System.out.println("Teleported to " + remote.getScore());
 			Solution next = new Solution(remote.getRun(), remote.getEvents());
 			remote = null;

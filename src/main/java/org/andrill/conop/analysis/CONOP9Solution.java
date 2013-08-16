@@ -12,7 +12,6 @@ import java.util.regex.Pattern;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.io.Closeables;
 
 /**
  * A solution from a CONOP9 run.
@@ -41,9 +40,7 @@ public class CONOP9Solution implements Solution {
 	 */
 	public static List<List<String>> parse(final File file) {
 		List<List<String>> parsed = Lists.newArrayList();
-		BufferedReader reader = null;
-		try {
-			reader = new BufferedReader(new FileReader(file));
+		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
 			String line = null;
 			while ((line = reader.readLine()) != null) {
 				List<String> row = parseLine(line.trim());
@@ -53,8 +50,6 @@ public class CONOP9Solution implements Solution {
 			}
 		} catch (IOException e) {
 			// do nothing
-		} finally {
-			Closeables.closeQuietly(reader);
 		}
 		return parsed;
 	}
@@ -220,14 +215,17 @@ public class CONOP9Solution implements Solution {
 		return find(sections, key, value);
 	}
 
+	@Override
 	public List<Map<String, String>> getEvents() {
 		return events;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public List<Map<String, String>> getSections() {
 		return sections;
 	}
@@ -290,9 +288,7 @@ public class CONOP9Solution implements Solution {
 		Pattern regex = Pattern.compile("\\[(.*?)\\].*\\(fortran # (\\d+)\\)");
 
 		// read line by line and look for our regular expression
-		BufferedReader reader = null;
-		try {
-			reader = new BufferedReader(new FileReader(file));
+		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
 			String line = null;
 			while ((line = reader.readLine()) != null) {
 				Matcher matcher = regex.matcher(line);
@@ -312,8 +308,6 @@ public class CONOP9Solution implements Solution {
 			}
 		} catch (IOException e) {
 			// ignore
-		} finally {
-			Closeables.closeQuietly(reader);
 		}
 	}
 
@@ -415,18 +409,18 @@ public class CONOP9Solution implements Solution {
 
 	private String lookupType(final String type) {
 		switch (Integer.parseInt(type)) {
-		case 1:
-			return "FAD";
-		case 2:
-			return "LAD";
-		case 3:
-			return "MID";
-		case 4:
-			return "ASH";
-		case 5:
-			return "AGE";
-		default:
-			return null;
+			case 1:
+				return "FAD";
+			case 2:
+				return "LAD";
+			case 3:
+				return "MID";
+			case 4:
+				return "ASH";
+			case 5:
+				return "AGE";
+			default:
+				return null;
 		}
 	}
 }
