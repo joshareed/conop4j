@@ -16,14 +16,16 @@ import com.google.common.util.concurrent.MoreExecutors;
  */
 public abstract class AsyncListener implements Listener {
 	protected static ExecutorService pool = MoreExecutors.getExitingExecutorService((ThreadPoolExecutor) Executors
-			.newFixedThreadPool(4));
+			.newFixedThreadPool(2));
 	protected long iteration = 0;
 	protected long start = 0;
 
+	@Override
 	public void configure(final Properties properties) {
 		// do nothing
 	}
 
+	@Override
 	public Mode getMode() {
 		return Mode.ANY;
 	}
@@ -42,10 +44,12 @@ public abstract class AsyncListener implements Listener {
 	 */
 	protected abstract void run(final double temp, long iteration, final Solution current, final Solution best);
 
+	@Override
 	public void started(final Solution initial) {
 		// do nothing
 	}
 
+	@Override
 	public void stopped(final Solution solution) {
 		// do nothing
 	}
@@ -65,6 +69,7 @@ public abstract class AsyncListener implements Listener {
 	 */
 	protected abstract boolean test(final double temp, long iteration, final Solution current, final Solution best);
 
+	@Override
 	public final void tried(final double temp, final Solution current, final Solution best) {
 		iteration++;
 		if (iteration == 1) {
@@ -72,6 +77,7 @@ public abstract class AsyncListener implements Listener {
 		}
 		if (test(temp, iteration, current, best)) {
 			pool.submit(new Runnable() {
+				@Override
 				public void run() {
 					AsyncListener.this.run(temp, iteration, current, best);
 				}
