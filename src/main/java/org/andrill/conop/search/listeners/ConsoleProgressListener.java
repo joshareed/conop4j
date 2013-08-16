@@ -24,11 +24,11 @@ public class ConsoleProgressListener extends AsyncListener {
 		long elapsed = (System.currentTimeMillis() - start);
 		System.out.print("                                                                            \r");
 		System.out.print("CONOP4J: " + DEC.format(score) + " [ " + (elapsed / 60000) + "min | " + DEC.format(temp)
-				+ "C | " + iteration + " ]\r");
+				+ "C | " + iteration + " ] (" + (iteration / (elapsed / 1000)) + "/s)\r");
 	}
 
 	@Override
 	protected boolean test(final double temp, final long iteration, final Solution current, final Solution best) {
-		return (current.getScore() < score) || (iteration % 10000 == 0);
+		return (current.getScore() < score) || ((iteration % 10000) == 0);
 	}
 }
