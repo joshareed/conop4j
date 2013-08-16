@@ -4,10 +4,7 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import org.andrill.conop.search.constraints.ConstraintChecker;
 import org.andrill.conop.search.listeners.Listener;
@@ -15,8 +12,6 @@ import org.andrill.conop.search.listeners.Listener.Mode;
 import org.andrill.conop.search.mutators.MutationStrategy;
 import org.andrill.conop.search.objectives.ObjectiveFunction;
 import org.andrill.conop.search.schedules.CoolingSchedule;
-
-import com.google.common.util.concurrent.MoreExecutors;
 
 /**
  * A Java implementation of simulated annealing.
@@ -27,7 +22,6 @@ public class CONOP {
 	public static final String VERSION = "0.8.1";
 
 	protected final ConstraintChecker constraints;
-	protected final ExecutorService executor;
 	protected final Set<Listener> listeners;
 	protected final MutationStrategy mutator;
 	protected final ObjectiveFunction objective;
@@ -56,8 +50,6 @@ public class CONOP {
 		this.schedule = schedule;
 		random = new Random();
 		this.listeners = new CopyOnWriteArraySet<Listener>();
-		int size = Runtime.getRuntime().availableProcessors() + 1;
-		executor = MoreExecutors.getExitingExecutorService((ThreadPoolExecutor) Executors.newFixedThreadPool(size));
 
 		// check for listeners
 		if (constraints instanceof Listener) {
