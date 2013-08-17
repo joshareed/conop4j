@@ -29,6 +29,8 @@ public class CONOP {
 	protected final ObjectiveFunction objective;
 	protected final Random random;
 	protected final CoolingSchedule schedule;
+	protected Solution best = null;
+	protected boolean stopped = false;
 
 	/**
 	 * Create a new simulated annealing solver.
@@ -88,6 +90,16 @@ public class CONOP {
 		listeners.add(l);
 	}
 
+	private void addShutdownHook() {
+		// add our shutdown hook so we can make an effort to run stopped
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@Override
+			public void run() {
+				stopped(best);
+			}
+		});
+	}
+
 	/**
 	 * Filters out any listeners that aren't declared as Listener.Mode.ANY or
 	 * the specified mode.
@@ -125,8 +137,9 @@ public class CONOP {
 	 * @return the best solution.
 	 */
 	public Solution solve(final Run run, final Solution initial) throws AbortedException {
+		addShutdownHook();
 
-		Solution best = initial;
+		best = initial;
 		Solution current = initial;
 
 		// get our initial temperature and score
@@ -194,8 +207,11 @@ public class CONOP {
 	}
 
 	protected void stopped(final Solution solution) {
-		for (Listener l : listeners) {
-			l.stopped(solution);
+		if (!stopped) {
+			stopped = true;
+			for (Listener l : listeners) {
+				l.stopped(solution);
+			}
 		}
 	}
 }
