@@ -1,6 +1,6 @@
 package org.andrill.conop.search;
 
-import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -12,6 +12,8 @@ import org.andrill.conop.search.listeners.Listener.Mode;
 import org.andrill.conop.search.mutators.MutationStrategy;
 import org.andrill.conop.search.objectives.ObjectiveFunction;
 import org.andrill.conop.search.schedules.CoolingSchedule;
+
+import com.google.common.collect.Lists;
 
 /**
  * A Java implementation of simulated annealing.
@@ -43,7 +45,12 @@ public class CONOP {
 	 *            the listeners.
 	 */
 	public CONOP(final ConstraintChecker constraints, final MutationStrategy mutator,
-			final ObjectiveFunction objective, final CoolingSchedule schedule, final Listener... listeners) {
+			final ObjectiveFunction objective, final CoolingSchedule schedule) {
+		this(constraints, mutator, objective, schedule, null);
+	}
+
+	public CONOP(final ConstraintChecker constraints, final MutationStrategy mutator,
+			final ObjectiveFunction objective, final CoolingSchedule schedule, final List<Listener> listeners) {
 		this.constraints = constraints;
 		this.mutator = mutator;
 		this.objective = objective;
@@ -64,8 +71,10 @@ public class CONOP {
 		if (schedule instanceof Listener) {
 			this.listeners.add((Listener) schedule);
 		}
-		for (Listener l : listeners) {
-			this.listeners.add(l);
+		if (listeners != null) {
+			for (Listener l : listeners) {
+				this.listeners.add(l);
+			}
 		}
 	}
 

@@ -9,11 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import org.andrill.conop.search.constraints.CoexistenceChecker;
 import org.andrill.conop.search.constraints.ConstraintChecker;
@@ -40,7 +35,6 @@ import org.andrill.conop.search.schedules.LinearSchedule;
 import org.andrill.conop.search.schedules.TemperingSchedule;
 
 import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.MoreExecutors;
 
 /**
  * Reads a simulation configuration from a properties file.
@@ -63,10 +57,9 @@ public class Simulation {
 
 		// find the optimal placement
 		long start = System.currentTimeMillis();
-		List<Listener> listeners = Lists.newArrayList(config.getListeners());
 
 		try {
-			Solution solution = runSimulation(config, run, Solution.initial(run), listeners, Mode.TUI);
+			Solution solution = runSimulation(config, run, Solution.initial(run), Mode.TUI, null);
 			long elapsed = (System.currentTimeMillis() - start) / 60000;
 			System.out.println("Elapsed time: " + elapsed + " minutes.  Final score: " + D.format(solution.getScore()));
 			System.out.println("-------- Solution Report --------");
@@ -108,61 +101,19 @@ public class Simulation {
 	 * @return the solution.
 	 */
 	public static Solution runSimulation(final Simulation simulation, final Run run, final Solution initial,
-			final List<Listener> listeners, final Mode mode) {
-		int serial = simulation.getSerialRunCount();
-		int parallel = simulation.getParallelProcessCount();
-		ExecutorService pool = MoreExecutors.getExitingExecutorService((ThreadPoolExecutor) Executors
-				.newFixedThreadPool(parallel));
+			final Mode mode, final List<Listener> extra) {
 
+		// run the simulation
 		Solution solution = initial;
-		for (int i = 0; i < serial; i++) {
-			if (serial > 1) {
-				System.out.println("Starting iteration " + (i + 1) + "/" + serial);
+		final CONOP conop = new CONOP(simulation.getConstraints(), simulation.getMutator(), simulation
+				.getObjectiveFunction(), simulation.getSchedule(), simulation.getListeners());
+		conop.filterMode(mode);
+		if (extra != null) {
+			for (Listener l : extra) {
+				conop.addListener(l);
 			}
-			List<Future<Solution>> tasks = Lists.newArrayList();
-			final Solution next = new Solution(solution.getRun(), solution.getEvents());
-			if (parallel > 1) {
-				System.out.println("Starting a swarm of " + parallel + " CONOP processes");
-			}
-			for (int j = 0; j < parallel; j++) {
-				// create our CONOP process
-				final CONOP conop = new CONOP(simulation.getConstraints(), simulation.getMutator(), simulation
-						.getObjectiveFunction(), simulation.getSchedule());
-
-				// add our listeners
-				if (j == 0) {
-					for (Listener l : listeners) {
-						conop.addListener(l);
-					}
-				}
-
-				// start a parallel process
-				tasks.add(pool.submit(new Callable<Solution>() {
-					@Override
-					public Solution call() throws AbortedException {
-						return conop.solve(run, new Solution(run, next.getEvents()));
-					}
-				}));
-			}
-
-			// get our best solution from the parallel tasks
-			Solution best = null;
-			Exception cause = null;
-			for (Future<Solution> f : tasks) {
-				try {
-					Solution s = f.get();
-					if ((best == null) || (s.getScore() < best.getScore())) {
-						best = s;
-					}
-				} catch (Exception e) {
-					cause = e;
-				}
-			}
-			if (best == null) {
-				throw new RuntimeException("All runs aborted", cause);
-			}
-			solution = best;
 		}
+		solution = conop.solve(run, initial);
 
 		// run the endgame simulation
 		File endgame = simulation.getEndgame();
@@ -170,7 +121,7 @@ public class Simulation {
 			return solution;
 		} else {
 			System.out.println("Starting endgame scenario: " + endgame.getName());
-			return runSimulation(new Simulation(endgame), run, solution, listeners, mode);
+			return runSimulation(new Simulation(endgame), run, solution, mode, extra);
 		}
 	}
 
@@ -314,15 +265,6 @@ public class Simulation {
 	}
 
 	/**
-	 * Gets the parallel process count.
-	 * 
-	 * @return the parallel count.
-	 */
-	public int getParallelProcessCount() {
-		return Integer.parseInt(properties.getProperty("swarm", "1"));
-	}
-
-	/**
 	 * Gets the run for this simulation.
 	 * 
 	 * @return the run.
@@ -370,15 +312,6 @@ public class Simulation {
 						put("default", new ExponentialSchedule());
 					}
 				});
-	}
-
-	/**
-	 * Gets the serial run count.
-	 * 
-	 * @return the serial count.
-	 */
-	public int getSerialRunCount() {
-		return Integer.parseInt(properties.getProperty("series", "1"));
 	}
 
 	protected <E> E instantiate(final String name, final Class<E> type) {

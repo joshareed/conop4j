@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.text.DecimalFormat;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -20,7 +19,6 @@ import org.andrill.conop.search.Run;
 import org.andrill.conop.search.Simulation;
 import org.andrill.conop.search.Solution;
 import org.andrill.conop.search.listeners.AbstractListener;
-import org.andrill.conop.search.listeners.ConsoleProgressListener;
 import org.andrill.conop.search.listeners.Listener;
 import org.andrill.conop.search.listeners.Listener.Mode;
 
@@ -77,6 +75,7 @@ public class RunPanel extends JPanel {
 
 		runButton.setEnabled(false);
 		runButton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				if (!running) {
 					running = true;
@@ -89,6 +88,7 @@ public class RunPanel extends JPanel {
 
 		add(new JLabel("Simulation:"));
 		fileButton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				if (fileChooser.showOpenDialog(RunPanel.this) == JFileChooser.APPROVE_OPTION) {
 					simulationFile = fileChooser.getSelectedFile();
@@ -134,12 +134,7 @@ public class RunPanel extends JPanel {
 				Run run = config.getRun();
 
 				// clean up listeners
-				List<Listener> listeners = Lists.newArrayList(config.getListeners());
-				for (Iterator<Listener> iterator = listeners.iterator(); iterator.hasNext();) {
-					if (iterator.next() instanceof ConsoleProgressListener) {
-						iterator.remove();
-					}
-				}
+				List<Listener> listeners = Lists.newArrayList();
 				listeners.add(new AbstractListener() {
 
 					@Override
@@ -158,8 +153,8 @@ public class RunPanel extends JPanel {
 						if (!running) {
 							throw new RuntimeException("user interrupt");
 						}
-						if (iteration % 500 == 0) {
-							int value = (int) ((initialTemp - Math.log(temp)) / initialTemp * 100) + 5;
+						if ((iteration % 1000) == 0) {
+							int value = (int) (((initialTemp - Math.log(temp)) / initialTemp) * 100) + 5;
 							progress.setValue(value);
 
 							iterLabel.setText(iteration + "");
@@ -175,7 +170,7 @@ public class RunPanel extends JPanel {
 				});
 
 				// find the optimal placement
-				Simulation.runSimulation(config, run, Solution.initial(run), listeners, Mode.GUI);
+				Simulation.runSimulation(config, run, Solution.initial(run), Mode.GUI, listeners);
 			}
 		};
 		thread.start();
