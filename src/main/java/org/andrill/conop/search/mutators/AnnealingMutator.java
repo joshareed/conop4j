@@ -20,7 +20,6 @@ public class AnnealingMutator extends AbstractMutator implements Listener {
 	private int delta = 1;
 	protected Random random = new Random();
 	private double temp = 1000.0;
-	private boolean up = true;
 
 	@Override
 	protected Solution internalMutate(final Solution solution) {
@@ -29,7 +28,7 @@ public class AnnealingMutator extends AbstractMutator implements Listener {
 		// pick a random event and move it to a new position
 		int cur = random.nextInt(events.size());
 		int pos = random.nextInt(delta) + 1;
-		if (up) {
+		if (random.nextInt(2) == 1) {
 			pos = Math.min(events.size() - 1, cur + pos);
 		} else {
 			pos = Math.max(0, cur - pos);
@@ -47,6 +46,5 @@ public class AnnealingMutator extends AbstractMutator implements Listener {
 			this.temp = temp;
 			delta = (int) Math.max(1, Math.ceil(Math.log(temp)));
 		}
-		up = !up;
 	}
 }
