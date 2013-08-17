@@ -87,12 +87,13 @@ public class CONOP {
 	 *            the mode.
 	 */
 	public void filterMode(final Mode mode) {
-		for (Iterator<Listener> iterator = listeners.iterator(); iterator.hasNext();) {
-			Listener l = iterator.next();
+		List<Listener> remove = Lists.newArrayList();
+		for (Listener l : listeners) {
 			if ((l.getMode() != Mode.ANY) && (l.getMode() != mode)) {
-				iterator.remove();
+				remove.add(l);
 			}
 		}
+		listeners.removeAll(remove);
 	}
 
 	/**
