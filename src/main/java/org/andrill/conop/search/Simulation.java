@@ -25,6 +25,7 @@ import org.andrill.conop.search.listeners.Listener;
 import org.andrill.conop.search.listeners.Listener.Mode;
 import org.andrill.conop.search.listeners.SnapshotListener;
 import org.andrill.conop.search.listeners.StoppingListener;
+import org.andrill.conop.search.mutators.AnnealingMutator;
 import org.andrill.conop.search.mutators.ConstrainedMutator;
 import org.andrill.conop.search.mutators.MutationStrategy;
 import org.andrill.conop.search.mutators.RandomMutator;
@@ -36,6 +37,7 @@ import org.andrill.conop.search.objectives.RulesPenalty;
 import org.andrill.conop.search.schedules.CoolingSchedule;
 import org.andrill.conop.search.schedules.ExponentialSchedule;
 import org.andrill.conop.search.schedules.LinearSchedule;
+import org.andrill.conop.search.schedules.TemperingSchedule;
 
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.MoreExecutors;
@@ -281,6 +283,7 @@ public class Simulation {
 					{
 						put("random", new RandomMutator());
 						put("constrained", new ConstrainedMutator());
+						put("annealing", new AnnealingMutator());
 						put("default", new RandomMutator());
 					}
 				});
@@ -362,6 +365,7 @@ public class Simulation {
 				new HashMap<String, CoolingSchedule>() {
 					{
 						put("exponential", new ExponentialSchedule());
+						put("tempering", new TemperingSchedule());
 						put("linear", new LinearSchedule());
 						put("default", new ExponentialSchedule());
 					}
