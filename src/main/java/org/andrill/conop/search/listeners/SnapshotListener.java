@@ -4,20 +4,14 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.text.DecimalFormat;
-import java.util.Map;
 import java.util.Properties;
 
 import org.andrill.conop.search.Event;
-import org.andrill.conop.search.Observation;
-import org.andrill.conop.search.Run;
-import org.andrill.conop.search.Section;
 import org.andrill.conop.search.Solution;
-import org.andrill.conop.search.objectives.PlacementPenalty.SectionPlacement;
 import org.andrill.conop.search.util.TimerUtils;
 
-import com.google.common.collect.Maps;
+import au.com.bytecode.opencsv.CSVWriter;
 
 /**
  * Writes a log and current best solution to files every minute.
@@ -25,7 +19,9 @@ import com.google.common.collect.Maps;
  * @author Josh Reed (jareed@andrill.org)
  */
 public class SnapshotListener extends AsyncListener {
+	private static final DecimalFormat I = new DecimalFormat("0");
 	private static final DecimalFormat D = new DecimalFormat("0.00");
+	private static final String[] HEADER = new String[] { "Event", "Rank", "Min Rank", "Max Rank" };
 
 	protected static File getFile(final String file) {
 		File f = new File(file);
@@ -45,14 +41,14 @@ public class SnapshotListener extends AsyncListener {
 	protected int next = 60;
 	protected File snapshotFile;
 	protected File solutionFile;
-	protected Writer writer;
+	protected CSVWriter writer;
 
 	@Override
 	public void configure(final Properties properties) {
 		try {
-			solutionFile = new File(properties.getProperty("solution.file", "solution.tmp"));
+			solutionFile = getFile(properties.getProperty("solution.file", "solution.tmp"));
 			snapshotFile = getFile(properties.getProperty("snapshot.file", "snapshot.csv"));
-			writer = new BufferedWriter(new FileWriter(snapshotFile));
+			writer = new CSVWriter(new BufferedWriter(new FileWriter(snapshotFile)), '\t');
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -62,8 +58,12 @@ public class SnapshotListener extends AsyncListener {
 	protected void run(final double temp, final long iteration, final Solution current, final Solution best) {
 		try {
 			writeResults(solutionFile, best);
-			writer.write(((next / 60) - 1) + "\t" + iteration + "\t" + D.format(temp) + "\t"
-					+ D.format(best.getScore()) + "\n");
+			writer.writeNext(new String[] {
+					I.format((next / 60) - 1),
+					I.format(iteration),
+					D.format(temp),
+					D.format(best.getScore())
+			});
 			writer.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -91,51 +91,21 @@ public class SnapshotListener extends AsyncListener {
 	}
 
 	protected void writeResults(final File file, final Solution solution) {
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-			Run run = solution.getRun();
-			Map<Section, SectionPlacement> placements = Maps.newHashMap();
+		try (CSVWriter csv = new CSVWriter(new BufferedWriter(new FileWriter(file)), '\t')) {
+			// write the header
+			csv.writeNext(HEADER);
 
-			// open our writer
-			writer.write("Event\tRank\tMin Rank\tMax Rank");
-			for (Section s : run.getSections()) {
-				writer.write("\t" + s.getName() + " (O)\t" + s.getName() + " (P)");
-				placements.put(s, new SectionPlacement(s));
-			}
-			writer.write("\n");
-
-			// build our placements
-			double score = 0;
-			for (final Section s : solution.getRun().getSections()) {
-				SectionPlacement placement = placements.get(s);
-				for (Event e : solution.getEvents()) {
-					placement.place(e);
-				}
-				score += placement.getPenalty();
-			}
-
+			// write the events
 			int total = solution.getEvents().size();
+			String[] next = new String[4];
 			for (int i = 0; i < total; i++) {
 				Event e = solution.getEvent(i);
-				writer.write("'" + e + "'\t" + (total - i));
-				writer.write("\t" + solution.getMinRank(e) + "\t" + solution.getMaxRank(e));
-				for (Section s : run.getSections()) {
-					writer.write("\t");
-					Observation o = s.getObservation(e);
-					if (o != null) {
-						writer.write("" + o.getLevel());
-					}
-					writer.write("\t" + placements.get(s).getPlacement(e));
-				}
-				writer.write("\n");
+				next[0] = e.getName();
+				next[1] = I.format(total - i);
+				next[2] = I.format(solution.getMinRank(e));
+				next[3] = I.format(solution.getMaxRank(e));
+				csv.writeNext(next);
 			}
-
-			writer.write("Total");
-			writer.write("\t" + D.format(score));
-			writer.write("\t\t");
-			for (Section s : run.getSections()) {
-				writer.write("\t\t" + D.format(placements.get(s).getPenalty()));
-			}
-			writer.write("\n");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
