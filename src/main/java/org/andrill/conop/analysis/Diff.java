@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.andrill.conop.search.Event;
+import org.andrill.conop.search.Run;
+
 import com.google.common.collect.Maps;
 
 /**
