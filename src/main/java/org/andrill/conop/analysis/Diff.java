@@ -1,4 +1,4 @@
-package org.andrill.conop.search;
+package org.andrill.conop.analysis;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
