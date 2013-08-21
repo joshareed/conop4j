@@ -1,1 +1,5 @@
 language: groovy
+
+notifications:
+  email:
+    - jareed@andrill.org
