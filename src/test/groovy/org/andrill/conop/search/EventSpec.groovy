@@ -13,6 +13,7 @@ class EventSpec extends Specification {
 		event.toString() == 'Test'
 		!event.beforeConstraint
 		!event.afterConstraint
+		event.internalId >= 0
 
 		and: 'equals and hashCode work as expected'
 		def other = new Event('Test')
