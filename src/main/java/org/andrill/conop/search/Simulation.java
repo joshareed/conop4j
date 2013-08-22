@@ -14,12 +14,8 @@ import org.andrill.conop.search.constraints.CoexistenceChecker;
 import org.andrill.conop.search.constraints.ConstraintChecker;
 import org.andrill.conop.search.constraints.EventChecker;
 import org.andrill.conop.search.constraints.NullChecker;
-import org.andrill.conop.search.listeners.ConopWebProgressListener;
-import org.andrill.conop.search.listeners.ConsoleProgressListener;
-import org.andrill.conop.search.listeners.Listener;
+import org.andrill.conop.search.listeners.*;
 import org.andrill.conop.search.listeners.Listener.Mode;
-import org.andrill.conop.search.listeners.SnapshotListener;
-import org.andrill.conop.search.listeners.StoppingListener;
 import org.andrill.conop.search.mutators.AnnealingMutator;
 import org.andrill.conop.search.mutators.ConstrainedMutator;
 import org.andrill.conop.search.mutators.MutationStrategy;
@@ -317,7 +313,7 @@ public class Simulation {
 		return null;
 	}
 
-	protected <E extends Configurable> E lookup(final String key, final Class<E> type, final Map<String, E> map) {
+	protected <E> E lookup(final String key, final Class<E> type, final Map<String, E> map) {
 		String name = key.trim();
 		if ("".equals(name)) {
 			return null;
@@ -332,8 +328,8 @@ public class Simulation {
 			instance = map.get("default");
 			System.err.println("Unknown " + type.getName() + " '" + name + "', defaulting to " + instance);
 		}
-		if (instance != null) {
-			instance.configure(properties);
+		if ((instance != null) && (instance instanceof Configurable)) {
+			((Configurable) instance).configure(properties);
 		}
 		return instance;
 	}

@@ -1,6 +1,5 @@
 package org.andrill.conop.search.listeners;
 
-import org.andrill.conop.search.Configurable;
 import org.andrill.conop.search.Solution;
 
 /**
@@ -11,7 +10,7 @@ import org.andrill.conop.search.Solution;
  * exception and stop the simulation, it is recommended that listeners extend
  * {@link AsyncListener} to run asynchonously.
  */
-public interface Listener extends Configurable {
+public interface Listener {
 	/**
 	 * The mode this listener operates in.
 	 */

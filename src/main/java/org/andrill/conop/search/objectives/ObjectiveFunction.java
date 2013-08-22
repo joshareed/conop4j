@@ -1,6 +1,5 @@
 package org.andrill.conop.search.objectives;
 
-import org.andrill.conop.search.Configurable;
 import org.andrill.conop.search.Solution;
 
 /**
@@ -8,7 +7,7 @@ import org.andrill.conop.search.Solution;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public interface ObjectiveFunction extends Configurable {
+public interface ObjectiveFunction {
 
 	/**
 	 * Calculate the score.

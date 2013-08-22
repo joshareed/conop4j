@@ -1,10 +1,10 @@
 package org.andrill.conop.search.listeners;
 
-import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import org.andrill.conop.search.AbstractConfigurable;
 import org.andrill.conop.search.Solution;
 
 import com.google.common.util.concurrent.MoreExecutors;
@@ -14,16 +14,11 @@ import com.google.common.util.concurrent.MoreExecutors;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public abstract class AsyncListener implements Listener {
+public abstract class AsyncListener extends AbstractConfigurable implements Listener {
 	protected static ExecutorService pool = MoreExecutors.getExitingExecutorService((ThreadPoolExecutor) Executors
 			.newFixedThreadPool(4));
 	protected long iteration = 0;
 	protected long start = 0;
-
-	@Override
-	public void configure(final Properties properties) {
-		// do nothing
-	}
 
 	@Override
 	public Mode getMode() {
