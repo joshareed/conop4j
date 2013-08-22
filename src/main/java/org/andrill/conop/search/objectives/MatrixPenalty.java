@@ -5,15 +5,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.ThreadPoolExecutor;
 
-import org.andrill.conop.search.AbstractConfigurable;
 import org.andrill.conop.search.Event;
 import org.andrill.conop.search.Observation;
 import org.andrill.conop.search.Section;
@@ -21,8 +15,6 @@ import org.andrill.conop.search.Solution;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.MoreExecutors;
 
 /**
  * An {@link ObjectiveFunction} implementation that places events using
@@ -30,8 +22,8 @@ import com.google.common.util.concurrent.MoreExecutors;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class MatrixPenalty extends AbstractConfigurable implements ObjectiveFunction {
-	public static class SectionMatrix {
+public class MatrixPenalty extends AbstractParallelObjective {
+	public static class SectionMatrix implements ObjectiveFunction {
 		private static final Comparator<BigDecimal> REVERSE = new Comparator<BigDecimal>() {
 			@Override
 			public int compare(final BigDecimal o1, final BigDecimal o2) {
@@ -64,6 +56,7 @@ public class MatrixPenalty extends AbstractConfigurable implements ObjectiveFunc
 		 *            the solution.
 		 * @return the penalty.
 		 */
+		@Override
 		public double score(final Solution solution) {
 			int eventCount = solution.getEvents().size();
 			int levelCount = levels.size();
@@ -120,28 +113,6 @@ public class MatrixPenalty extends AbstractConfigurable implements ObjectiveFunc
 	}
 
 	protected Map<Section, SectionMatrix> matrices = Maps.newHashMap();
-	protected ExecutorService pool;
-	protected int procs = 1;
-
-	@Override
-	public void configure(final Properties properties) {
-		this.procs = Integer.parseInt(properties.getProperty("processors", ""
-				+ Runtime.getRuntime().availableProcessors()));
-		pool = MoreExecutors.getExitingExecutorService((ThreadPoolExecutor) Executors.newFixedThreadPool(procs));
-	}
-
-	protected Future<Double> execute(final SectionMatrix matrix, final Solution solution) {
-		if (pool == null) {
-			return Futures.immediateFuture(matrix.score(solution));
-		} else {
-			return pool.submit(new Callable<Double>() {
-				@Override
-				public Double call() throws Exception {
-					return matrix.score(solution);
-				}
-			});
-		}
-	}
 
 	@Override
 	public double score(final Solution solution) {
