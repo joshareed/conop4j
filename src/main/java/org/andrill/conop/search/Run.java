@@ -9,12 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.*;
 import com.google.common.collect.ImmutableSet.Builder;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 
 /**
  * Represents a CONOP run.
@@ -108,13 +104,15 @@ public class Run {
 			}
 
 			// override weights
-			if (overrideWeights && "1".equals(type)) {
-				weightUp = 1000000;
-			} else if (overrideWeights && "2".equals(type)) {
-				weightDn = 1000000;
-			} else if ("4".equals(type) || "5".equals(type)) {
-				weightUp = 1000000;
-				weightDn = 1000000;
+			if (overrideWeights) {
+				if ("1".equals(type)) {
+					weightUp = 1000000;
+				} else if ("2".equals(type)) {
+					weightDn = 1000000;
+				} else if ("4".equals(type) || "5".equals(type)) {
+					weightUp = 1000000;
+					weightDn = 1000000;
+				}
 			}
 
 			// check for uniqueness
