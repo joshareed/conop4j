@@ -23,6 +23,7 @@ public abstract class AbstractMutator extends AbstractListener implements Mutati
 
 	protected abstract Solution internalMutate(final Solution solution);
 
+	@Override
 	public final Solution mutate(final Solution solution) {
 		if ((reset > 0) && (counter > reset)) {
 			counter = 0;

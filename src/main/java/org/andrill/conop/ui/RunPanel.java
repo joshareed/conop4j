@@ -6,11 +6,7 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.util.List;
 
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 
 import net.miginfocom.swing.MigLayout;
