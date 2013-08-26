@@ -1,10 +1,6 @@
 package org.andrill.conop.analysis;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
-import java.awt.Stroke;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +20,7 @@ public class SolutionImage {
 	public static void main(final String[] args) {
 		// parse our solutions
 		Solution[] solutions = new Solution[args.length - 1];
-		for (int i = 0; i < args.length - 1; i++) {
+		for (int i = 0; i < (args.length - 1); i++) {
 			File file = new File(args[i]);
 			if (file.isDirectory()) {
 				solutions[i] = new CONOP9Solution(new File(args[i]));
@@ -52,14 +48,15 @@ public class SolutionImage {
 	}
 
 	protected void drawBar(final int row, final int start, final int end, final int run) {
+		System.out.println(row + ": " + start + "-" + end);
 		Stroke oldStroke = graphics.getStroke();
 		Color oldColor = graphics.getColor();
 
 		int height = (rowHeight + VPAD) / count;
 		graphics.setStroke(new BasicStroke(height));
 		graphics.setColor(COLORS[run]);
-		graphics.drawLine(col(start + 1) + height / 2, row(row - 1) + (run * height) + height / 2, col(end + 2)
-				- height / 2, row(row - 1) + (run * height) + height / 2);
+		graphics.drawLine(col(start + 1) + (height / 2), row(row - 1) + (run * height) + (height / 2), col(end + 2)
+				- (height / 2), row(row - 1) + (run * height) + (height / 2));
 
 		graphics.setStroke(oldStroke);
 		graphics.setColor(oldColor);
@@ -68,9 +65,9 @@ public class SolutionImage {
 	protected void drawString(final String str, final int row, final int col) {
 		int x = col(col);
 		if (col == 0) {
-			x += (firstWidth + HPAD - graphics.getFontMetrics().stringWidth(str.trim())) - (HPAD / 2);
+			x += ((firstWidth + HPAD) - graphics.getFontMetrics().stringWidth(str.trim())) - (HPAD / 2);
 		} else {
-			x += (otherWidth + HPAD - graphics.getFontMetrics().stringWidth(str.trim())) / 2;
+			x += ((otherWidth + HPAD) - graphics.getFontMetrics().stringWidth(str.trim())) / 2;
 		}
 		int y = row(row) - VPAD;
 		graphics.drawString(str.trim(), x, y);
@@ -91,6 +88,7 @@ public class SolutionImage {
 		// get our events sorted in solution order
 		List<Map<String, String>> events = solutions[0].getEvents();
 		Collections.sort(events, new Comparator<Map<String, String>>() {
+			@Override
 			public int compare(final Map<String, String> o1, final Map<String, String> o2) {
 				return new Integer(o2.get("solution")).compareTo(new Integer(o1.get("solution")));
 			}
@@ -136,8 +134,8 @@ public class SolutionImage {
 				if (e == null) {
 					System.out.println(name + ":" + type);
 				} else {
-					int min = events.size() - Integer.parseInt(e.get("rankmin"));
-					int max = events.size() - Integer.parseInt(e.get("rankmax"));
+					int min = (events.size() - Integer.parseInt(e.get("rankmin"))) + 1;
+					int max = (events.size() - Integer.parseInt(e.get("rankmax"))) + 1;
 					drawBar(i, max, min, j);
 				}
 			}
