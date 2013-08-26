@@ -56,15 +56,17 @@ public class Simulation {
 			Solution solution = runSimulation(config, run, Solution.initial(run), Mode.TUI, null);
 			long elapsed = (System.currentTimeMillis() - start) / 60000;
 			System.out.println("Simulation completed after " + elapsed + " minutes.  Final score: "
-					+ D.format(solution.getScore()));
+					+ D.format(solution.getScore()) + "                                ");
 		} catch (RuntimeException e) {
 			Throwable cause = e;
 			while (cause.getCause() != null) {
 				cause = cause.getCause();
 			}
 			long elapsed = (System.currentTimeMillis() - start) / 60000;
-			System.out.println("Simulation aborted after " + elapsed + " minutes: " + cause.getMessage());
+			System.out.println("Simulation aborted after " + elapsed + " minutes: " + cause.getMessage()
+					+ "                                ");
 		}
+		System.exit(0);
 	}
 
 	/**
