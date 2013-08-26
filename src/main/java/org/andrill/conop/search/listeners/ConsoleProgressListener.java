@@ -23,7 +23,9 @@ public class ConsoleProgressListener extends AsyncListener {
 		score = current.getScore();
 		long elapsed = (System.currentTimeMillis() - start);
 		System.out.print("                                                                            \r");
-		System.out.print("CONOP4J: " + DEC.format(score) + " [ " + (elapsed / 60000) + "min | " + DEC.format(temp)
+		System.out.print("CONOP4J: " + DEC.format(score) + "/" + DEC.format(best.getScore()) + " [ "
+				+ (elapsed / 60000)
+				+ "min | " + DEC.format(temp)
 				+ "C | " + iteration + " ] (" + (iteration / (elapsed / 1000)) + "/s)\r");
 	}
 
