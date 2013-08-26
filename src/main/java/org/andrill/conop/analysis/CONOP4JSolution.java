@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import au.com.bytecode.opencsv.CSVReader;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -16,13 +18,6 @@ import com.google.common.collect.Maps;
  * @author Josh Reed (jareed@andrill.org)
  */
 public class CONOP4JSolution implements Solution {
-	public static void main(final String[] args) {
-		Solution solution = new CONOP4JSolution(new File("test/foo/keepers/solution1.csv"));
-		for (Map<String, String> e : solution.getEvents()) {
-			System.out.println(e);
-		}
-	}
-
 	protected final List<Map<String, String>> events;
 	protected final String name;
 
@@ -50,35 +45,37 @@ public class CONOP4JSolution implements Solution {
 		return sections;
 	}
 
-	protected void parse(final File csv) {
-		String line = null;
-		try (BufferedReader reader = new BufferedReader(new FileReader(csv))) {
+	protected void parse(final File file) {
+		try (CSVReader csv = new CSVReader(new BufferedReader(new FileReader(file)), '\t')) {
 			// parse the header
-			line = reader.readLine();
-			if (line == null) {
-				return;
-			}
-			String[] header = line.split("\t");
+			String[] header = csv.readNext();
 			for (int i = 4; i < header.length; i += 2) {
 				Map<String, String> section = Maps.newHashMap();
 				section.put("id", "" + (((i - 4) / 2) + 1));
 				section.put("name", header[i].substring(0, header[i].length() - 4));
 				sections.add(section);
 			}
-			while (((line = reader.readLine()) != null)) {
-				String[] split = line.split("\t");
-				if (!"Total".equals(split[0])) {
+			String[] row;
+			while (((row = csv.readNext()) != null)) {
+				if (!"Total".equals(row[0])) {
 					Map<String, String> event = Maps.newHashMap();
-					String name = strip(split[0]);
+					String name = strip(row[0]);
 					event.put("name", name.substring(0, name.length() - 4));
 					event.put("type", name.substring(name.length() - 3));
-					event.put("solution", split[1]);
-					event.put("rank", split[1]);
-					event.put("rankmin", split[2]);
-					event.put("rankmax", split[3]);
-					for (int i = 4; i < split.length; i += 2) {
-						event.put("observed." + (((i - 4) / 2) + 1), split[i]);
-						event.put("placed." + (((i - 4) / 2) + 1), split[i + 1]);
+					event.put("solution", row[1]);
+					event.put("rank", row[1]);
+
+					if (row.length >= 4) {
+						event.put("rankmin", row[2]);
+						event.put("rankmax", row[3]);
+					} else {
+						event.put("rankmin", row[1]);
+						event.put("rankmax", row[1]);
+					}
+
+					for (int i = 4; i < row.length; i += 2) {
+						event.put("observed." + (((i - 4) / 2) + 1), row[i]);
+						event.put("placed." + (((i - 4) / 2) + 1), row[i + 1]);
 					}
 					events.add(event);
 				}
