@@ -21,6 +21,7 @@ import org.andrill.conop.search.mutators.RandomMutator;
 import org.andrill.conop.search.objectives.MatrixPenalty;
 import org.andrill.conop.search.objectives.ObjectiveFunction;
 import org.andrill.conop.search.objectives.PlacementPenalty;
+import org.andrill.conop.search.objectives.RelativeOrderingPenalty;
 import org.andrill.conop.search.schedules.CoolingSchedule;
 import org.andrill.conop.search.schedules.ExponentialSchedule;
 import org.andrill.conop.search.schedules.LinearSchedule;
@@ -97,9 +98,23 @@ public class Simulation {
 		return null;
 	}
 
+	/**
+	 * Gets the initial solution specified by this simulation.
+	 * 
+	 * @return the initial solution.
+	 */
 	public Solution getInitialSolution() {
 		// support loading from a file
-		return Solution.initial(getRun());
+		String path = properties.getProperty("initial");
+		Solution initial = null;
+		if (path != null) {
+			initial = Solution.parse(run, new File(directory, path));
+		}
+		if (initial != null) {
+			return initial;
+		} else {
+			return Solution.initial(run);
+		}
 	}
 
 	/**

@@ -1,25 +1,9 @@
 package org.andrill.conop.search;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.text.DecimalFormat;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
-import org.andrill.conop.search.constraints.CoexistenceChecker;
-import org.andrill.conop.search.constraints.ConstraintChecker;
-import org.andrill.conop.search.constraints.EventChecker;
-import org.andrill.conop.search.objectives.CoexistencePenalty;
-import org.andrill.conop.search.objectives.MatrixPenalty;
-import org.andrill.conop.search.objectives.ObjectiveFunction;
-import org.andrill.conop.search.objectives.PlacementPenalty;
-import org.andrill.conop.search.objectives.RulesPenalty;
+import au.com.bytecode.opencsv.CSVReader;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -31,58 +15,8 @@ import com.google.common.collect.Maps;
  * @author Josh Reed (jareed@andrill.org)
  */
 public class Solution {
-
 	private static double best = Double.MAX_VALUE;
 	private static Map<Event, double[]> ranks;
-
-	private static Event find(final Run run, final String col1, final String col2) {
-		String name = col1;
-		if (col1.startsWith("'") || col1.startsWith("\"")) {
-			name = name.substring(1, name.length() - 1);
-		}
-		try {
-			Integer.parseInt(col2);
-		} catch (NumberFormatException e) {
-			String type = col2;
-			if (col2.startsWith("'") || col2.startsWith("\"")) {
-				type = col2.substring(1, col2.length() - 1);
-			}
-			if ("LAD".equals(type) || "FAD".equals(type) || "MID".equals(type)) {
-				name = name + " " + type;
-			}
-		}
-		for (Event e : run.getEvents().asList()) {
-			if (name.equalsIgnoreCase(e.getName())) {
-				return e;
-			}
-		}
-		System.out.println("No match for " + name);
-		return null;
-	}
-
-	/**
-	 * Load a solution from a CSV file.
-	 * 
-	 * @param run
-	 *            the run.
-	 * @param csv
-	 *            the CSV file.
-	 * @return the solution.
-	 */
-	public static Solution fromCSV(final Run run, final File csv) {
-		String line = null;
-		List<Event> list = Lists.newArrayList();
-		try (BufferedReader reader = new BufferedReader(new FileReader(csv))) {
-			reader.readLine(); // eat header line
-			while (((line = reader.readLine()) != null) && (list.size() < run.getEvents().size())) {
-				String[] split = line.split("\t");
-				list.add(find(run, split[0], split[1]));
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return new Solution(run, list);
-	}
 
 	/**
 	 * Creates an initial solution with events sorted by type.
@@ -113,28 +47,40 @@ public class Solution {
 	}
 
 	/**
-	 * Score a solution.
+	 * Parse a solution from a file.
 	 * 
-	 * @param args
-	 *            the arguments.
+	 * @param run the run data.
+	 * @param file the solution file.
+	 * @return the solution or null if an error occurs.
 	 */
-	public static void main(final String[] args) {
-		Run run = Run.loadCONOP9Run(new File(args[0]));
-		Solution solution = fromCSV(run, new File(args[1]));
-		DecimalFormat pretty = new DecimalFormat("0.00");
+	public static Solution parse(final Run run, final File file) {
+		Solution initial = null;
+		try (CSVReader csv = new CSVReader(new BufferedReader(new FileReader(file)), '\t')) {
+			// build a quick map of our eligible events
+			Map<String, Event> lookup = Maps.newHashMap();
+			for (Event e : run.getEvents()) {
+				lookup.put(e.getName(), e);
+			}
 
-		ConstraintChecker[] constraints = new ConstraintChecker[] { new EventChecker(), new CoexistenceChecker() };
-		System.out.println("Constraints: ");
-		for (ConstraintChecker c : constraints) {
-			System.out.println("\t" + c + ": " + c.isValid(solution));
+			// parse the CSV
+			final List<Event> events = Lists.newArrayList();
+			String[] row = csv.readNext();
+			while ((row = csv.readNext()) != null) {
+				Event e = lookup.get(row[0]);
+				if (e == null) {
+					System.err.println("No event with name '" + row[0] + "'");
+					return null;
+				} else {
+					events.add(e);
+				}
+			}
+			initial = new Solution(run, events);
+		} catch (FileNotFoundException e) {
+			System.err.println("Invalid solution file: " + file.getAbsolutePath());
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-
-		ObjectiveFunction[] objectives = new ObjectiveFunction[] { new PlacementPenalty(), new MatrixPenalty(),
-				new CoexistencePenalty(), new RulesPenalty() };
-		System.out.println("Objectives:");
-		for (ObjectiveFunction f : objectives) {
-			System.out.println("\t" + f + ": " + pretty.format(f.score(solution)));
-		}
+		return initial;
 	}
 
 	protected final ImmutableList<Event> events;
