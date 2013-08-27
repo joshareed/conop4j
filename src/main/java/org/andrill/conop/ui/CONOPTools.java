@@ -8,7 +8,6 @@ import javax.swing.JTabbedPane;
 import org.andrill.conop.analysis.PostProcess;
 import org.andrill.conop.search.CONOP;
 import org.andrill.conop.search.QNOP;
-import org.andrill.conop.search.Solution;
 
 /**
  * The CONOP tools main class.
@@ -46,8 +45,8 @@ public class CONOPTools {
 			CONOP.main(newargs);
 		} else if ("qnop".equals(cmd)) {
 			QNOP.main(newargs);
-		} else if ("score".equals(cmd)) {
-			Solution.main(newargs);
+			//		} else if ("score".equals(cmd)) {
+			//			Solution.main(newargs);
 		} else if ("process".equals(cmd)) {
 			PostProcess.main(newargs);
 		} else {
