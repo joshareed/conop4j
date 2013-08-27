@@ -173,6 +173,7 @@ public class Simulation {
 					{
 						put("placement", new PlacementPenalty());
 						put("matrix", new MatrixPenalty());
+						put("ordering", new RelativeOrderingPenalty());
 						put("default", new PlacementPenalty());
 					}
 				});
