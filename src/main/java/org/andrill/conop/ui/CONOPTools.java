@@ -6,7 +6,8 @@ import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 
 import org.andrill.conop.analysis.PostProcess;
-import org.andrill.conop.search.Simulation;
+import org.andrill.conop.search.CONOP;
+import org.andrill.conop.search.QNOP;
 import org.andrill.conop.search.Solution;
 
 /**
@@ -41,8 +42,10 @@ public class CONOPTools {
 			System.arraycopy(args, 1, newargs, 0, newargs.length);
 		}
 
-		if ("run".equals(cmd)) {
-			Simulation.main(newargs);
+		if ("run".equals(cmd) || "conop".equals(cmd)) {
+			CONOP.main(newargs);
+		} else if ("qnop".equals(cmd)) {
+			QNOP.main(newargs);
 		} else if ("score".equals(cmd)) {
 			Solution.main(newargs);
 		} else if ("process".equals(cmd)) {
