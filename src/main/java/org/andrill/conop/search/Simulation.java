@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +14,6 @@ import org.andrill.conop.search.constraints.ConstraintChecker;
 import org.andrill.conop.search.constraints.EventChecker;
 import org.andrill.conop.search.constraints.NullChecker;
 import org.andrill.conop.search.listeners.*;
-import org.andrill.conop.search.listeners.Listener.Mode;
 import org.andrill.conop.search.mutators.AnnealingMutator;
 import org.andrill.conop.search.mutators.ConstrainedMutator;
 import org.andrill.conop.search.mutators.MutationStrategy;
@@ -36,77 +34,6 @@ import com.google.common.collect.Lists;
  * @author Josh Reed (jareed@andrill.org)
  */
 public class Simulation {
-	private static final DecimalFormat D = new DecimalFormat("0.00");
-
-	/**
-	 * Runs a standard simulation.
-	 * 
-	 * @param args
-	 *            the arguments.
-	 */
-	public static void main(final String[] args) {
-		// load the simulation configuration
-		Simulation config = new Simulation(new File(args[0]));
-		Run run = config.getRun();
-
-		// find the optimal placement
-		long start = System.currentTimeMillis();
-
-		try {
-			Solution solution = runSimulation(config, run, Solution.initial(run), Mode.TUI, null);
-			long elapsed = (System.currentTimeMillis() - start) / 60000;
-			System.out.println("Simulation completed after " + elapsed + " minutes.  Final score: "
-					+ D.format(solution.getScore()) + "                                ");
-		} catch (RuntimeException e) {
-			Throwable cause = e;
-			while (cause.getCause() != null) {
-				cause = cause.getCause();
-			}
-			long elapsed = (System.currentTimeMillis() - start) / 60000;
-			System.out.println("Simulation aborted after " + elapsed + " minutes: " + cause.getMessage()
-					+ "                                ");
-		}
-		System.exit(0);
-	}
-
-	/**
-	 * Runs a simulation.
-	 * 
-	 * @param simulation
-	 *            the simulation.
-	 * @param run
-	 *            the run.
-	 * @param initial
-	 *            the initial solution.
-	 * @param listeners
-	 *            the listeners.
-	 * @return the solution.
-	 */
-	public static Solution runSimulation(final Simulation simulation, final Run run, final Solution initial,
-			final Mode mode, final List<Listener> extra) {
-
-		// run the simulation
-		Solution solution = initial;
-		final CONOP conop = new CONOP(simulation.getConstraints(), simulation.getMutator(), simulation
-				.getObjectiveFunction(), simulation.getSchedule(), simulation.getListeners());
-		conop.filterMode(mode);
-		if (extra != null) {
-			for (Listener l : extra) {
-				conop.addListener(l);
-			}
-		}
-		solution = conop.solve(run, initial);
-
-		// run the endgame simulation
-		File endgame = simulation.getEndgame();
-		if (endgame == null) {
-			return solution;
-		} else {
-			System.out.println("Starting endgame scenario: " + endgame.getName());
-			return runSimulation(new Simulation(endgame), run, solution, mode, extra);
-		}
-	}
-
 	protected final File directory;
 	protected final Properties properties;
 	protected Run run;
@@ -168,6 +95,11 @@ public class Simulation {
 			}
 		}
 		return null;
+	}
+
+	public Solution getInitialSolution() {
+		// support loading from a file
+		return Solution.initial(getRun());
 	}
 
 	/**

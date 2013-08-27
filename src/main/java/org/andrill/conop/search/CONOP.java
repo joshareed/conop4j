@@ -1,5 +1,7 @@
 package org.andrill.conop.search;
 
+import java.io.File;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -21,43 +23,73 @@ import com.google.common.collect.Lists;
  * @author Josh Reed (jareed@andrill.org)
  */
 public class CONOP {
+	private static final DecimalFormat D = new DecimalFormat("0.00");
 	public static final String VERSION = "0.8.1";
+
+	public static void main(final String[] args) {
+		// load the simulation configuration
+		Simulation simulation = new Simulation(new File(args[0]));
+		Run run = simulation.getRun();
+
+		// find the optimal placement
+		long start = System.currentTimeMillis();
+
+		try {
+			// run the simulation
+			final CONOP conop = new CONOP(simulation.getConstraints(), simulation.getMutator(), simulation
+					.getObjectiveFunction(), simulation.getSchedule(), simulation.getListeners());
+			conop.filterMode(Mode.TUI);
+			Solution solution = conop.solve(run, simulation.getInitialSolution());
+
+			// run the endgame simulation
+			/*
+			File endgame = simulation.getEndgame();
+			if (endgame == null) {
+				return solution;
+			} else {
+				System.out.println("Starting endgame scenario: " + endgame.getName());
+				return runSimulation(new Simulation(endgame), run, solution, mode, extra);
+			}
+			*/
+			long elapsed = (System.currentTimeMillis() - start) / 60000;
+			System.out.println("Simulation completed after " + elapsed + " minutes.  Final score: "
+					+ D.format(solution.getScore()) + "                                ");
+		} catch (RuntimeException e) {
+			Throwable cause = e;
+			while (cause.getCause() != null) {
+				cause = cause.getCause();
+			}
+			long elapsed = (System.currentTimeMillis() - start) / 60000;
+			System.out.println("Simulation aborted after " + elapsed + " minutes: " + cause.getMessage()
+					+ "                                ");
+		}
+		System.exit(0);
+	}
 
 	protected final ConstraintChecker constraints;
 	protected final Set<Listener> listeners;
 	protected final MutationStrategy mutator;
 	protected final ObjectiveFunction objective;
-	protected final Random random;
+	protected final Random random = new Random();
 	protected final CoolingSchedule schedule;
 	protected Solution best = null;
 	protected boolean stopped = false;
 
 	/**
-	 * Create a new simulated annealing solver.
+	 * Create a new Constrained Optimization (CONOP) solver.
 	 * 
-	 * @param constraints
-	 *            the constraints.
-	 * @param mutator
-	 *            the mutation strategy.
-	 * @param objective
-	 *            the objective function.
-	 * @param schedule
-	 *            the cooling schedule.
-	 * @param listeners
-	 *            the listeners.
+	 * @param constraints the constraints checker.
+	 * @param mutator the mutation strategy.
+	 * @param objective the objective function.
+	 * @param schedule the cooling schedule.
+	 * @param listeners the list of listeners or null.
 	 */
-	public CONOP(final ConstraintChecker constraints, final MutationStrategy mutator,
-			final ObjectiveFunction objective, final CoolingSchedule schedule) {
-		this(constraints, mutator, objective, schedule, null);
-	}
-
 	public CONOP(final ConstraintChecker constraints, final MutationStrategy mutator,
 			final ObjectiveFunction objective, final CoolingSchedule schedule, final List<Listener> listeners) {
 		this.constraints = constraints;
 		this.mutator = mutator;
 		this.objective = objective;
 		this.schedule = schedule;
-		random = new Random();
 		this.listeners = new CopyOnWriteArraySet<Listener>();
 
 		// check for listeners
@@ -78,6 +110,16 @@ public class CONOP {
 				this.listeners.add(l);
 			}
 		}
+	}
+
+	/**
+	 * Create a new Constrained Optimization (CONOP) solver.
+	 * 
+	 * @param simulation the simulation.
+	 */
+	public CONOP(final Simulation simulation) {
+		this(simulation.getConstraints(), simulation.getMutator(), simulation.getObjectiveFunction(), simulation
+				.getSchedule(), simulation.getListeners());
 	}
 
 	/**
