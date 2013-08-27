@@ -69,14 +69,18 @@ public class QNOP {
 	protected final Set<Listener> listeners;
 	protected final MutationStrategy mutator;
 	protected final Set<ScorerThread> scorers;
-	protected final Random random;
+	protected final Random random = new Random();
 	protected final CoolingSchedule schedule;
 
+	/**
+	 * Create a new queue-based Constrained Optimization (CONOP) solver.
+	 * 
+	 * @param simulation the simulation.
+	 */
 	public QNOP(final Simulation simulation) {
 		int procs = Runtime.getRuntime().availableProcessors();
 		work = new LinkedBlockingQueue<>(procs * 2);
 		complete = new LinkedBlockingQueue<>(procs * 2);
-		random = new Random();
 
 		// setup our listeners
 		this.listeners = new CopyOnWriteArraySet<Listener>();
@@ -179,10 +183,12 @@ public class QNOP {
 					l.tried(temp, current, best);
 				}
 
+				// check if done
+				if (best.getScore() == 0) {
+					throw new RuntimeException("Score reached 0");
+				}
+
 				// get our next temperature
-				//				if (best.getScore() == 0) {
-				//					throw new RuntimeException("Score reached 0");
-				//				}
 				temp = schedule.next(current);
 
 				// get a new solution that satisfies the constraints

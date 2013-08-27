@@ -69,7 +69,7 @@ public class PostProcess {
 		StringBuilder names = new StringBuilder("(");
 		for (int i = 0; i < runs.size(); i++) {
 			names.append(runs.get(i).getName());
-			if (i < runs.size() - 1) {
+			if (i < (runs.size() - 1)) {
 				names.append(", ");
 			}
 		}
