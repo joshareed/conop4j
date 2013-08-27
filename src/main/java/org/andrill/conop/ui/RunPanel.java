@@ -4,21 +4,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.text.DecimalFormat;
-import java.util.List;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 
 import net.miginfocom.swing.MigLayout;
 
-import org.andrill.conop.search.Run;
+import org.andrill.conop.search.CONOP;
 import org.andrill.conop.search.Simulation;
 import org.andrill.conop.search.Solution;
 import org.andrill.conop.search.listeners.AbstractListener;
-import org.andrill.conop.search.listeners.Listener;
 import org.andrill.conop.search.listeners.Listener.Mode;
-
-import com.google.common.collect.Lists;
 
 /**
  * A simple GUI for running a simulation.
@@ -127,11 +123,10 @@ public class RunPanel extends JPanel {
 			public void run() {
 				// get our simulation config
 				Simulation config = new Simulation(simulationFile);
-				Run run = config.getRun();
 
-				// clean up listeners
-				List<Listener> listeners = Lists.newArrayList();
-				listeners.add(new AbstractListener() {
+				// setup CONOP
+				CONOP conop = new CONOP(config);
+				conop.addListener(new AbstractListener() {
 
 					@Override
 					public Mode getMode() {
@@ -164,9 +159,8 @@ public class RunPanel extends JPanel {
 						}
 					}
 				});
-
-				// find the optimal placement
-				Simulation.runSimulation(config, run, Solution.initial(run), Mode.GUI, listeners);
+				conop.filterMode(Mode.GUI);
+				conop.solve(config.getRun(), config.getInitialSolution());
 			}
 		};
 		thread.start();
