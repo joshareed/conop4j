@@ -28,8 +28,7 @@ public class Run {
 	 * @return the run.
 	 */
 	public static Run loadCONOP9Run(final File dir) {
-		return loadCONOP9Run(new File(dir, "sections.sct"), new File(dir, "events.evt"), new File(dir, "loadfile.dat"),
-				false);
+		return loadCONOP9Run(dir, false);
 	}
 
 	/**

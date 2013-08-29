@@ -1,11 +1,6 @@
 package org.andrill.conop.analysis;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -94,7 +89,7 @@ public class Diff {
 	 */
 	public static void main(final String[] args) {
 		// load our run
-		Run run = Run.loadCONOP9Run(new File(args[0]));
+		Run run = Run.loadCONOP9Run(new File(args[0]), false);
 
 		// load our first solution
 		Map<Event, Rank> s1 = fromCSV(run, new File(args[1]));

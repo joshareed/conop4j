@@ -1,10 +1,9 @@
 package org.andrill.conop.search;
 
-import java.util.List;
-import java.util.Map.Entry;
+import java.math.BigDecimal;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Models coexistence relationships among events.
@@ -34,10 +33,29 @@ public class CoexistenceMatrix {
 		/**
 		 * The events overlap in some sections and do not overlap in others.
 		 */
-		MIXED
+		MIXED;
+
+		public Coexistence and(final Coexistence that) {
+			if ((this == that) || (that == ABSENT)) {
+				return this;
+			} else {
+				return MIXED;
+			}
+		}
 	}
 
-	protected final ImmutableMap<Event, Integer> events;
+	protected static Coexistence computeCoexistence(final Number start1, final Number end1, final Number start2,
+			final Number end2) {
+		if ((start1 == null) || (start2 == null) || (end1 == null) || (end2 == null)) {
+			return Coexistence.ABSENT;
+		} else if ((start1.doubleValue() <= end2.doubleValue())
+				&& (start2.doubleValue() <= end1.doubleValue())) {
+			return Coexistence.CONJUNCT;
+		} else {
+			return Coexistence.DISJUNCT;
+		}
+	}
+
 	protected final Coexistence[][] matrix;
 
 	/**
@@ -47,44 +65,12 @@ public class CoexistenceMatrix {
 	 *            the run.
 	 */
 	public CoexistenceMatrix(final Run run) {
-		// index our events
-		int i = 0;
-		Builder<Event, Integer> eventBuilder = ImmutableMap.builder();
-		for (Event e : run.getEvents()) {
-			eventBuilder.put(e, i++);
-		}
-		events = eventBuilder.build();
-
 		// create our matrix
-		matrix = new Coexistence[events.size()][events.size()];
+		int events = run.events.size();
+		matrix = new Coexistence[events][events];
 
 		// populate the matrix
 		populateMatrix(run);
-	}
-
-	/**
-	 * Create a new coexistence matrix for the specified section and list of all
-	 * events.
-	 * 
-	 * @param section
-	 *            the section.
-	 * @param allEvents
-	 *            the list of all events.
-	 */
-	public CoexistenceMatrix(final Section section, final List<Event> allEvents) {
-		// index our events
-		int i = 0;
-		Builder<Event, Integer> eventBuilder = ImmutableMap.builder();
-		for (Event e : allEvents) {
-			eventBuilder.put(e, i++);
-		}
-		events = eventBuilder.build();
-
-		// create our matrix
-		matrix = new Coexistence[events.size()][events.size()];
-
-		// populate the matrix
-		populateMatrix(section);
 	}
 
 	/**
@@ -94,48 +80,28 @@ public class CoexistenceMatrix {
 	 *            the solution.
 	 */
 	public CoexistenceMatrix(final Solution solution) {
-		// index our events
-		int i = 0;
-		Builder<Event, Integer> eventBuilder = ImmutableMap.builder();
-		for (Event e : solution.getRun().getEvents()) {
-			eventBuilder.put(e, i++);
-		}
-		events = eventBuilder.build();
-
 		// create our matrix
-		matrix = new Coexistence[events.size()][events.size()];
+		int events = solution.events.size();
+		matrix = new Coexistence[events][events];
 
 		// populate the matrix
 		populateMatrix(solution);
 	}
 
-	private Coexistence computeCoexistence(final Event e1, final Event e2, final Section s) {
-		Observation start1 = s.getObservation(e1.getAfterConstraint() == null ? e1 : e1.getAfterConstraint());
-		Observation start2 = s.getObservation(e2.getAfterConstraint() == null ? e2 : e2.getAfterConstraint());
-		Observation end1 = s.getObservation(e1.getBeforeConstraint() == null ? e1 : e1.getBeforeConstraint());
-		Observation end2 = s.getObservation(e2.getBeforeConstraint() == null ? e2 : e2.getBeforeConstraint());
-		if ((start1 == null) || (start2 == null) || (end1 == null) || (end2 == null)) {
-			return Coexistence.ABSENT;
-		} else if ((start1.getLevel().compareTo(end2.getLevel()) >= 0)
-				&& (start2.getLevel().compareTo(end1.getLevel()) >= 0)) {
-			return Coexistence.CONJUNCT;
-		} else {
-			return Coexistence.DISJUNCT;
-		}
+	protected Coexistence computeCoexistence(final Event e1, final Event e2, final Section s) {
+		BigDecimal start1 = unwrap(s.getObservation(e1.getAfterConstraint() == null ? e1 : e1.getAfterConstraint()));
+		BigDecimal start2 = unwrap(s.getObservation(e2.getAfterConstraint() == null ? e2 : e2.getAfterConstraint()));
+		BigDecimal end1 = unwrap(s.getObservation(e1.getBeforeConstraint() == null ? e1 : e1.getBeforeConstraint()));
+		BigDecimal end2 = unwrap(s.getObservation(e2.getBeforeConstraint() == null ? e2 : e2.getBeforeConstraint()));
+		return computeCoexistence(start1, end1, start2, end2);
 	}
 
-	private Coexistence computeCoexistence(final Event e1, final Event e2, final Solution s) {
+	protected Coexistence computeCoexistence(final Event e1, final Event e2, final Solution s) {
 		int start1 = s.getPosition(e1.getAfterConstraint() == null ? e1 : e1.getAfterConstraint());
 		int start2 = s.getPosition(e2.getAfterConstraint() == null ? e2 : e2.getAfterConstraint());
 		int end1 = s.getPosition(e1.getBeforeConstraint() == null ? e1 : e1.getBeforeConstraint());
 		int end2 = s.getPosition(e2.getBeforeConstraint() == null ? e2 : e2.getBeforeConstraint());
-		if ((start1 == -1) || (start2 == -1) || (end1 == -1) || (end2 == -1)) {
-			return Coexistence.ABSENT;
-		} else if ((start1 < end2) && (start2 < end1)) {
-			return Coexistence.CONJUNCT;
-		} else {
-			return Coexistence.DISJUNCT;
-		}
+		return computeCoexistence(start1, end1, start2, end2);
 	}
 
 	/**
@@ -148,42 +114,43 @@ public class CoexistenceMatrix {
 	 * @return the coexistence value.
 	 */
 	public Coexistence getCoexistence(final Event e1, final Event e2) {
-		return matrix[events.get(e1)][events.get(e2)];
+		return matrix[e1.getInternalId()][e2.getInternalId()];
 	}
 
 	protected void populateMatrix(final Run run) {
-		for (Entry<Event, Integer> e1 : events.entrySet()) {
-			for (Entry<Event, Integer> e2 : events.entrySet()) {
-				boolean first = true;
+		ImmutableSet<Event> events = run.getEvents();
+		for (Event e1 : events) {
+			for (Event e2 : events) {
 				for (Section s : run.getSections()) {
-					Coexistence coex = computeCoexistence(e1.getKey(), e2.getKey(), s);
-					if (first) {
-						first = false;
-						matrix[e1.getValue()][e2.getValue()] = coex;
-					} else if ((coex != Coexistence.ABSENT) && (matrix[e1.getValue()][e2.getValue()] != coex)) {
-						matrix[e1.getValue()][e2.getValue()] = Coexistence.MIXED;
+					Coexistence computed = computeCoexistence(e1, e2, s);
+					Coexistence existing = matrix[e1.getInternalId()][e2.getInternalId()];
+					if (existing == null) {
+						// only set if not absent
+						if (computed != Coexistence.ABSENT) {
+							matrix[e1.getInternalId()][e2.getInternalId()] = computed;
+						}
+					} else {
+						matrix[e1.getInternalId()][e2.getInternalId()] = existing.and(computed);
 					}
-					if (matrix[e1.getValue()][e2.getValue()] == Coexistence.MIXED) {
-						break;
-					}
+				}
+				// if still null then assume ABSENT
+				if (matrix[e1.getInternalId()][e2.getInternalId()] == null) {
+					matrix[e1.getInternalId()][e2.getInternalId()] = Coexistence.ABSENT;
 				}
 			}
 		}
 	}
 
-	protected void populateMatrix(final Section section) {
-		for (Entry<Event, Integer> e1 : events.entrySet()) {
-			for (Entry<Event, Integer> e2 : events.entrySet()) {
-				matrix[e1.getValue()][e2.getValue()] = computeCoexistence(e1.getKey(), e2.getKey(), section);
+	protected void populateMatrix(final Solution solution) {
+		ImmutableList<Event> events = solution.getEvents();
+		for (Event e1 : events) {
+			for (Event e2 : events) {
+				matrix[e1.getInternalId()][e2.getInternalId()] = computeCoexistence(e1, e2, solution);
 			}
 		}
 	}
 
-	protected void populateMatrix(final Solution solution) {
-		for (Entry<Event, Integer> e1 : events.entrySet()) {
-			for (Entry<Event, Integer> e2 : events.entrySet()) {
-				matrix[e1.getValue()][e2.getValue()] = computeCoexistence(e1.getKey(), e2.getKey(), solution);
-			}
-		}
+	protected BigDecimal unwrap(final Observation o) {
+		return o == null ? null : o.getLevel();
 	}
 }
