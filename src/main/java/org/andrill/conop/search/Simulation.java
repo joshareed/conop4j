@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.andrill.conop.search.constraints.CoexistenceChecker;
 import org.andrill.conop.search.constraints.ConstraintChecker;
 import org.andrill.conop.search.constraints.EventChecker;
 import org.andrill.conop.search.constraints.NullChecker;
@@ -76,7 +75,6 @@ public class Simulation {
 					{
 						put("null", new NullChecker());
 						put("event", new EventChecker());
-						put("coexistence", new CoexistenceChecker());
 						put("default", new NullChecker());
 					}
 				});

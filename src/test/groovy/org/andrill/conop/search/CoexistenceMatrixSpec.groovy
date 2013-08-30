@@ -1,6 +1,6 @@
 package org.andrill.conop.search
 
-import static org.andrill.conop.search.CoexistenceMatrix.Coexistence.*
+import static org.andrill.conop.search.CoexistenceMatrix.*
 import spock.lang.Specification
 
 class CoexistenceMatrixSpec extends Specification {
@@ -18,29 +18,33 @@ class CoexistenceMatrixSpec extends Specification {
 
 		where:
 		start1 | end1 | start2 | end2 | expected
-		null   | null | null   | null | ABSENT
-		0      | 10   | 5      | 10   | CONJUNCT
-		0      | 5    | 10     | 15   | DISJUNCT
-		0      | 10   | 0      | 0    | CONJUNCT
-		10     | 10   | 10     | 10   | CONJUNCT
+		null   | null | null   | null | MASK
+		0      | 5    | 10     | 15   | (DISJUNCT + DISJUNCT_BEFORE)
+		10     | 15   | 0      | 5    | (DISJUNCT + DISJUNCT_AFTER)
+		0      | 10   | 5      | 15   | (CONJUNCT + CONJUNCT_BEFORE)
+		10     | 25   | 5      | 15   | (CONJUNCT + CONJUNCT_AFTER)
+		0      | 20   | 5      | 15   | (CONJUNCT + CONJUNCT_CONTAINS)
+		5      | 15   | 0      | 20   | (CONJUNCT + CONJUNCT_CONTAINED)
 	}
+
 
 	def "Coexistence & Coexistence is computed correctly"() {
 		expect:
-		existing.and(computed) == expected
+		(existing & computed) == expected
 
 		where:
-		existing | computed | expected
-		ABSENT   | ABSENT   | ABSENT
-		ABSENT   | CONJUNCT | MIXED
-		ABSENT   | DISJUNCT | MIXED
-		CONJUNCT | ABSENT   | CONJUNCT
-		CONJUNCT | CONJUNCT | CONJUNCT
-		CONJUNCT | DISJUNCT | MIXED
-		DISJUNCT | ABSENT   | DISJUNCT
-		DISJUNCT | DISJUNCT | DISJUNCT
-		DISJUNCT | CONJUNCT | MIXED
+		existing                       | computed                    | expected
+		MASK                           | MASK                        | MASK
+		CONJUNCT                       | MASK                        | CONJUNCT
+		MASK                           | DISJUNCT                    | DISJUNCT
+		CONJUNCT                       | CONJUNCT                    | CONJUNCT
+		DISJUNCT                       | DISJUNCT                    | DISJUNCT
+		CONJUNCT                       | DISJUNCT                    | NONE
+		(DISJUNCT + DISJUNCT_BEFORE)   | (DISJUNCT + DISJUNCT_AFTER) | DISJUNCT
+		(CONJUNCT + CONJUNCT_BEFORE)   | (CONJUNCT + CONJUNCT_AFTER) | CONJUNCT
+		(CONJUNCT + CONJUNCT_CONTAINS) | (CONJUNCT + CONJUNCT_AFTER) | CONJUNCT
 	}
+
 
 	def "can create a coexistence matrix from a run"() {
 		given: 'a matrix'
@@ -54,13 +58,13 @@ class CoexistenceMatrixSpec extends Specification {
 		def e4 = run.events.find { it.name == 'Sponge spicule C LAD' }
 
 		then:
-		matrix.getCoexistence(e1, e2) == CONJUNCT
+		matrix.getCoexistence(e1, e2) == CONJUNCT + CONJUNCT_CONTAINS
 
 		and:
-		matrix.getCoexistence(e1, e3) == DISJUNCT
+		matrix.getCoexistence(e1, e3) == DISJUNCT + DISJUNCT_AFTER
 
 		and:
-		matrix.getCoexistence(e1, e4) == ABSENT
+		matrix.getCoexistence(e1, e4) == NONE
 	}
 
 	def "can create a coexistence matrix from a solution"() {
@@ -75,9 +79,9 @@ class CoexistenceMatrixSpec extends Specification {
 		def e3 = run.events.find { it.name == 'Llanoaspis peculiaris FAD' }
 
 		then:
-		matrix.getCoexistence(e1, e2) == CONJUNCT
+		matrix.getCoexistence(e1, e2) == CONJUNCT + CONJUNCT_BEFORE
 
 		and:
-		matrix.getCoexistence(e1, e3) == DISJUNCT
+		matrix.getCoexistence(e1, e3) == DISJUNCT + DISJUNCT_BEFORE
 	}
 }

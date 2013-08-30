@@ -11,52 +11,55 @@ import com.google.common.collect.ImmutableSet;
  * @author Josh Reed (jareed@andrill.org)
  */
 public class CoexistenceMatrix {
-	/**
-	 * The Coexistence level.
-	 */
-	public enum Coexistence {
-		/**
-		 * One or both of the events are absent.
-		 */
-		ABSENT,
+	public static final int NONE = 0;
+	public static final int DISJUNCT = 1;
+	public static final int DISJUNCT_BEFORE = (1 << 1);
+	public static final int DISJUNCT_AFTER = (1 << 2);
+	public static final int CONJUNCT = (1 << 3);
+	public static final int CONJUNCT_BEFORE = (1 << 4);
+	public static final int CONJUNCT_AFTER = (1 << 5);
+	public static final int CONJUNCT_CONTAINS = (1 << 6);
+	public static final int CONJUNCT_CONTAINED = (1 << 7);
+	public static final int MASK = (1 << 8) - 1;
 
-		/**
-		 * The events overlap.
-		 */
-		CONJUNCT,
+	protected static int computeCoexistence(final Number start1, final Number end1, final Number start2,
+			final Number end2) {
 
-		/**
-		 * The events do not overlap.
-		 */
-		DISJUNCT,
+		// handle one or the other not present
+		if ((start1 == null) || (start2 == null) || (end1 == null) || (end2 == null)) {
+			return MASK; // should this be 0?
+		}
 
-		/**
-		 * The events overlap in some sections and do not overlap in others.
-		 */
-		MIXED;
+		// convert to doubles
+		double s1 = start1.doubleValue();
+		double e1 = end1.doubleValue();
+		double s2 = start2.doubleValue();
+		double e2 = end2.doubleValue();
 
-		public Coexistence and(final Coexistence that) {
-			if ((this == that) || (that == ABSENT)) {
-				return this;
+		int result = 0;
+		if ((s1 <= e2) && (s2 <= e1)) {
+			result |= CONJUNCT;
+			if ((s1 <= s2) && (e1 >= e2)) {
+				result |= CONJUNCT_CONTAINS;
+			} else if ((s1 >= s2) && (e1 <= e2)) {
+				result |= CONJUNCT_CONTAINED;
+			} else if ((s1 <= s2) && (e1 <= e2)) {
+				result |= CONJUNCT_BEFORE;
+			} else if ((s1 >= s2) && (e1 >= e2)) {
+				result |= CONJUNCT_AFTER;
+			}
+		} else {
+			result |= DISJUNCT;
+			if (s1 < s2) {
+				result |= DISJUNCT_BEFORE;
 			} else {
-				return MIXED;
+				result |= DISJUNCT_AFTER;
 			}
 		}
+		return result;
 	}
 
-	protected static Coexistence computeCoexistence(final Number start1, final Number end1, final Number start2,
-			final Number end2) {
-		if ((start1 == null) || (start2 == null) || (end1 == null) || (end2 == null)) {
-			return Coexistence.ABSENT;
-		} else if ((start1.doubleValue() <= end2.doubleValue())
-				&& (start2.doubleValue() <= end1.doubleValue())) {
-			return Coexistence.CONJUNCT;
-		} else {
-			return Coexistence.DISJUNCT;
-		}
-	}
-
-	protected final Coexistence[][] matrix;
+	protected final int[][] matrix;
 
 	/**
 	 * Creates a new coexistence matrix for the specified run.
@@ -66,8 +69,7 @@ public class CoexistenceMatrix {
 	 */
 	public CoexistenceMatrix(final Run run) {
 		// create our matrix
-		int events = run.events.size();
-		matrix = new Coexistence[events][events];
+		matrix = initMatrix(run.events.size());
 
 		// populate the matrix
 		populateMatrix(run);
@@ -81,14 +83,13 @@ public class CoexistenceMatrix {
 	 */
 	public CoexistenceMatrix(final Solution solution) {
 		// create our matrix
-		int events = solution.events.size();
-		matrix = new Coexistence[events][events];
+		matrix = initMatrix(solution.events.size());
 
 		// populate the matrix
 		populateMatrix(solution);
 	}
 
-	protected Coexistence computeCoexistence(final Event e1, final Event e2, final Section s) {
+	protected int computeCoexistence(final Event e1, final Event e2, final Section s) {
 		BigDecimal start1 = unwrap(s.getObservation(e1.getAfterConstraint() == null ? e1 : e1.getAfterConstraint()));
 		BigDecimal start2 = unwrap(s.getObservation(e2.getAfterConstraint() == null ? e2 : e2.getAfterConstraint()));
 		BigDecimal end1 = unwrap(s.getObservation(e1.getBeforeConstraint() == null ? e1 : e1.getBeforeConstraint()));
@@ -96,7 +97,7 @@ public class CoexistenceMatrix {
 		return computeCoexistence(start1, end1, start2, end2);
 	}
 
-	protected Coexistence computeCoexistence(final Event e1, final Event e2, final Solution s) {
+	protected int computeCoexistence(final Event e1, final Event e2, final Solution s) {
 		int start1 = s.getPosition(e1.getAfterConstraint() == null ? e1 : e1.getAfterConstraint());
 		int start2 = s.getPosition(e2.getAfterConstraint() == null ? e2 : e2.getAfterConstraint());
 		int end1 = s.getPosition(e1.getBeforeConstraint() == null ? e1 : e1.getBeforeConstraint());
@@ -113,8 +114,18 @@ public class CoexistenceMatrix {
 	 *            the second event.
 	 * @return the coexistence value.
 	 */
-	public Coexistence getCoexistence(final Event e1, final Event e2) {
+	public int getCoexistence(final Event e1, final Event e2) {
 		return matrix[e1.getInternalId()][e2.getInternalId()];
+	}
+
+	private int[][] initMatrix(final int size) {
+		int[][] matrix = new int[size][size];
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				matrix[i][j] = MASK;
+			}
+		}
+		return matrix;
 	}
 
 	protected void populateMatrix(final Run run) {
@@ -122,20 +133,11 @@ public class CoexistenceMatrix {
 		for (Event e1 : events) {
 			for (Event e2 : events) {
 				for (Section s : run.getSections()) {
-					Coexistence computed = computeCoexistence(e1, e2, s);
-					Coexistence existing = matrix[e1.getInternalId()][e2.getInternalId()];
-					if (existing == null) {
-						// only set if not absent
-						if (computed != Coexistence.ABSENT) {
-							matrix[e1.getInternalId()][e2.getInternalId()] = computed;
-						}
-					} else {
-						matrix[e1.getInternalId()][e2.getInternalId()] = existing.and(computed);
-					}
+					matrix[e1.getInternalId()][e2.getInternalId()] &= computeCoexistence(e1, e2, s);
 				}
 				// if still null then assume ABSENT
-				if (matrix[e1.getInternalId()][e2.getInternalId()] == null) {
-					matrix[e1.getInternalId()][e2.getInternalId()] = Coexistence.ABSENT;
+				if (matrix[e1.getInternalId()][e2.getInternalId()] == MASK) {
+					matrix[e1.getInternalId()][e2.getInternalId()] = 0;
 				}
 			}
 		}
