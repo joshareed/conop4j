@@ -41,13 +41,27 @@ public class QNOP {
 
 	public static void main(final String[] args) {
 		// load the simulation configuration
-		Simulation config = new Simulation(new File(args[0]));
-		Run run = config.getRun();
+		Simulation simulation = new Simulation(new File(args[0]));
+
+		// set/override the processors set on the config
+		simulation.setProperty("processors", "1");
+
+		// set/overried the initial solution on the config
+		if (args.length > 1) {
+			simulation.setProperty("initial", args[1]);
+		}
+
+		Run run = simulation.getRun();
+		Solution initial = simulation.getInitialSolution();
+
+		// create our QNOP object
+		QNOP qnop = new QNOP(simulation);
 
 		long start = System.currentTimeMillis();
 		try {
-			QNOP qnop = new QNOP(config);
-			Solution solution = qnop.solve(run, Solution.initial(run));
+			// run the simulation
+			Solution solution = qnop.solve(run, initial);
+
 			long elapsed = (System.currentTimeMillis() - start) / 60000;
 			System.out.println("Simulation completed after " + elapsed + " minutes.  Final score: "
 					+ D.format(solution.getScore()));
@@ -79,8 +93,8 @@ public class QNOP {
 	 */
 	public QNOP(final Simulation simulation) {
 		int procs = Runtime.getRuntime().availableProcessors();
-		work = new LinkedBlockingQueue<>(procs * 2);
-		complete = new LinkedBlockingQueue<>(procs * 2);
+		work = new LinkedBlockingQueue<>(procs + 1);
+		complete = new LinkedBlockingQueue<>(procs + 1);
 
 		// setup our listeners
 		this.listeners = new CopyOnWriteArraySet<Listener>();
