@@ -193,6 +193,27 @@ public class Simulation {
 	}
 
 	/**
+	 * Get an arbitrary property defined on the simulation.
+	 * 
+	 * @param key the key.
+	 * @return the value or null if not set.
+	 */
+	public String getProperty(final String key) {
+		return properties.getProperty(key);
+	}
+
+	/**
+	 * Get an arbitrary property defined on the simulation.
+	 * 
+	 * @param key the key.
+	 * @param defaultValue the default value if not set.
+	 * @return the value or the defaultValue.
+	 */
+	public String getProperty(final String key, final String defaultValue) {
+		return properties.getProperty(key, defaultValue);
+	}
+
+	/**
 	 * Gets the run for this simulation.
 	 * 
 	 * @return the run.
@@ -280,5 +301,15 @@ public class Simulation {
 			((Configurable) instance).configure(properties);
 		}
 		return instance;
+	}
+
+	/**
+	 * Set a property on the simulation.
+	 * 
+	 * @param key the key.
+	 * @param value the value.
+	 */
+	public void setProperty(final String key, final String value) {
+		properties.setProperty(key, value);
 	}
 }
