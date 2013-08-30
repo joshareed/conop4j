@@ -29,17 +29,26 @@ public class CONOP {
 	public static void main(final String[] args) {
 		// load the simulation configuration
 		Simulation simulation = new Simulation(new File(args[0]));
+
+		// set/overried the initial solution on the config
+		if (args.length > 1) {
+			simulation.setProperty("initial", args[1]);
+		}
+
 		Run run = simulation.getRun();
+		Solution initial = simulation.getInitialSolution();
+
+		// create our CONOP object
+		final CONOP conop = new CONOP(simulation.getConstraints(), simulation.getMutator(), simulation
+				.getObjectiveFunction(), simulation.getSchedule(), simulation.getListeners());
+		conop.filterMode(Mode.TUI);
 
 		// find the optimal placement
 		long start = System.currentTimeMillis();
 
 		try {
 			// run the simulation
-			final CONOP conop = new CONOP(simulation.getConstraints(), simulation.getMutator(), simulation
-					.getObjectiveFunction(), simulation.getSchedule(), simulation.getListeners());
-			conop.filterMode(Mode.TUI);
-			Solution solution = conop.solve(run, simulation.getInitialSolution());
+			Solution solution = conop.solve(run, initial);
 
 			// run the endgame simulation
 			/*
