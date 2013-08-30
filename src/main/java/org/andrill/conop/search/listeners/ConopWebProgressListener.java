@@ -3,11 +3,7 @@ package org.andrill.conop.search.listeners;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
-import java.net.HttpURLConnection;
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
@@ -16,6 +12,7 @@ import java.util.Properties;
 
 import org.andrill.conop.search.CONOP;
 import org.andrill.conop.search.Event;
+import org.andrill.conop.search.Run;
 import org.andrill.conop.search.Solution;
 import org.andrill.conop.search.util.TimerUtils;
 
@@ -32,8 +29,8 @@ public class ConopWebProgressListener extends AsyncListener {
 	private Map<String, String> simulation = Maps.newHashMap();
 
 	@Override
-	public void configure(final Properties properties) {
-		super.configure(properties);
+	public void configure(final Properties properties, final Run r) {
+		super.configure(properties, r);
 
 		// require a dataset id
 		dataset = properties.getProperty("conopweb.dataset");

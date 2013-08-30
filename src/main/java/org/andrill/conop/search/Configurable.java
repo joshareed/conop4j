@@ -14,6 +14,8 @@ public interface Configurable {
 	 * 
 	 * @param properties
 	 *            the properties.
+	 * @param run
+	 *            the run.
 	 */
-	public void configure(Properties properties);
+	public void configure(Properties properties, Run run);
 }

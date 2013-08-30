@@ -10,7 +10,7 @@ import java.util.Properties;
 public abstract class AbstractConfigurable implements Configurable {
 
 	@Override
-	public void configure(final Properties properties) {
+	public void configure(final Properties properties, final Run run) {
 		// override
 	}
 }

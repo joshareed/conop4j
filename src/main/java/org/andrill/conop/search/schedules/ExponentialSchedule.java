@@ -3,6 +3,7 @@ package org.andrill.conop.search.schedules;
 import java.util.Properties;
 
 import org.andrill.conop.search.AbstractConfigurable;
+import org.andrill.conop.search.Run;
 import org.andrill.conop.search.Solution;
 
 /**
@@ -29,17 +30,19 @@ public class ExponentialSchedule extends AbstractConfigurable implements Cooling
 	}
 
 	@Override
-	public void configure(final Properties properties) {
+	public void configure(final Properties properties, final Run run) {
 		this.initial = Double.parseDouble(properties.getProperty("schedule.initial", "1000"));
 		this.factor = Double.parseDouble(properties.getProperty("schedule.delta", "0.01"));
 		this.minStepsPer = Long.parseLong(properties.getProperty("schedule.stepsPer", "100"));
 		this.current = initial;
 	}
 
+	@Override
 	public double getInitial() {
 		return initial;
 	}
 
+	@Override
 	public double next(final Solution solution) {
 		count++;
 		if (current < 0.01) {

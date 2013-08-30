@@ -8,6 +8,7 @@ import java.text.DecimalFormat;
 import java.util.Properties;
 
 import org.andrill.conop.search.Event;
+import org.andrill.conop.search.Run;
 import org.andrill.conop.search.Solution;
 import org.andrill.conop.search.util.TimerUtils;
 
@@ -44,7 +45,8 @@ public class SnapshotListener extends AsyncListener {
 	protected CSVWriter writer;
 
 	@Override
-	public void configure(final Properties properties) {
+	public void configure(final Properties properties, final Run run) {
+		super.configure(properties, run);
 		try {
 			solutionFile = getFile(properties.getProperty("solution.file", "solution.tmp"));
 			snapshotFile = getFile(properties.getProperty("snapshot.file", "snapshot.csv"));

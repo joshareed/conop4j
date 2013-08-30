@@ -3,6 +3,7 @@ package org.andrill.conop.search.listeners;
 import java.util.Properties;
 
 import org.andrill.conop.search.AbortedException;
+import org.andrill.conop.search.Run;
 import org.andrill.conop.search.Solution;
 
 /**
@@ -30,8 +31,8 @@ public class StoppingListener extends AbstractListener {
 	}
 
 	@Override
-	public void configure(final Properties properties) {
-		super.configure(properties);
+	public void configure(final Properties properties, final Run run) {
+		super.configure(properties, run);
 
 		// parse stopping conditions
 		if (properties.containsKey("stop.time")) {

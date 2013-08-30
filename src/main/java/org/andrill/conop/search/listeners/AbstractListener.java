@@ -3,6 +3,7 @@ package org.andrill.conop.search.listeners;
 import java.util.Properties;
 
 import org.andrill.conop.search.Configurable;
+import org.andrill.conop.search.Run;
 import org.andrill.conop.search.Solution;
 
 /**
@@ -13,7 +14,7 @@ import org.andrill.conop.search.Solution;
 public abstract class AbstractListener implements Listener, Configurable {
 
 	@Override
-	public void configure(final Properties properties) {
+	public void configure(final Properties properties, final Run run) {
 		// do nothing
 	}
 

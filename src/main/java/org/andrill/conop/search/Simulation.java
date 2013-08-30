@@ -298,7 +298,7 @@ public class Simulation {
 			System.err.println("Unknown " + type.getName() + " '" + name + "', defaulting to " + instance);
 		}
 		if ((instance != null) && (instance instanceof Configurable)) {
-			((Configurable) instance).configure(properties);
+			((Configurable) instance).configure(properties, run);
 		}
 		return instance;
 	}
