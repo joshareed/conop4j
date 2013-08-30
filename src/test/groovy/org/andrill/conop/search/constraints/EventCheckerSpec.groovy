@@ -1,7 +1,6 @@
 package org.andrill.conop.search.constraints
 
-import org.andrill.conop.search.Event
-import org.andrill.conop.search.Solution
+import org.andrill.conop.search.*
 
 import spock.lang.Specification
 
@@ -13,8 +12,18 @@ class EventCheckerSpec extends Specification {
 		def pair2 = pair1.beforeConstraint
 		def other = new Event("Other")
 
+		and: "a mock run"
+		def run = new Run([
+			new Section("Test", [
+				new Observation(pair1, 5, 1, 1),
+				new Observation(other, 10, 1, 1),
+				new Observation(pair2, 15, 1, 1)
+			])
+		])
+
 		and: "an EventChecker"
 		def checker = new EventChecker()
+		checker.configure(new Properties(), run)
 
 		when: "a valid solution"
 		def solution1 = new Solution(null, [pair1, pair2, other])
