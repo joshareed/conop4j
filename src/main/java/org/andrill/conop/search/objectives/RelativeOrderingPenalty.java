@@ -2,7 +2,7 @@ package org.andrill.conop.search.objectives;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
+import java.util.Properties;
 import java.util.concurrent.Future;
 
 import org.andrill.conop.search.*;
@@ -63,33 +63,23 @@ public class RelativeOrderingPenalty extends AbstractParallelObjective {
 
 	protected Map<Event, EventOrdering> orderings = Maps.newHashMap();
 
-	@Override
-	public double score(final Solution solution) {
-		List<Future<Double>> results = Lists.newArrayList();
-		for (Event e : solution.getEvents()) {
-			EventOrdering ordering = orderings.get(e);
-			if (ordering == null) {
-				ordering = new EventOrdering(e, solution.getRun());
-				orderings.put(e, ordering);
-			}
-			results.add(execute(ordering, solution));
-		}
-
-		double penalty = 0;
-		for (Future<Double> r : results) {
-			try {
-				penalty += r.get();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				e.printStackTrace();
-			}
-		}
-		return penalty;
+	public RelativeOrderingPenalty() {
+		super("Relative Ordering");
 	}
 
 	@Override
-	public String toString() {
-		return "Relative Ordering [" + procs + "]";
+	public void configure(final Properties properties, final Run run) {
+		for (Event e : run.getEvents()) {
+			orderings.put(e, new EventOrdering(e, run));
+		}
+	}
+
+	@Override
+	protected List<Future<Double>> internalScore(final Solution solution) {
+		List<Future<Double>> results = Lists.newArrayList();
+		for (Event e : solution.getEvents()) {
+			results.add(execute(orderings.get(e), solution));
+		}
+		return results;
 	}
 }

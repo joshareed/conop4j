@@ -3,13 +3,9 @@ package org.andrill.conop.search.objectives;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import org.andrill.conop.search.Event;
-import org.andrill.conop.search.Observation;
-import org.andrill.conop.search.Section;
-import org.andrill.conop.search.Solution;
+import org.andrill.conop.search.*;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -193,33 +189,26 @@ public class PlacementPenalty extends AbstractParallelObjective {
 
 	protected final Map<Section, SectionPlacement> placements = Maps.newHashMap();
 
-	@Override
-	public double score(final Solution solution) {
-		List<Future<Double>> results = Lists.newArrayList();
-		for (final Section section : solution.getRun().getSections()) {
-			SectionPlacement placement = placements.get(section);
-			if (placement == null) {
-				placement = new SectionPlacement(section);
-				placements.put(section, placement);
-			}
-			results.add(execute(placement, solution));
-		}
-
-		double penalty = 0;
-		for (Future<Double> r : results) {
-			try {
-				penalty += r.get();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				e.printStackTrace();
-			}
-		}
-		return penalty;
+	public PlacementPenalty() {
+		super("Placement");
 	}
 
 	@Override
-	public String toString() {
-		return "Placement [" + procs + "]";
+	public void configure(final Properties properties, final Run run) {
+		super.configure(properties, run);
+
+		// create our section placements
+		for (final Section section : run.getSections()) {
+			placements.put(section, new SectionPlacement(section));
+		}
+	}
+
+	@Override
+	protected List<Future<Double>> internalScore(final Solution solution) {
+		List<Future<Double>> results = Lists.newArrayList();
+		for (final Section section : solution.getRun().getSections()) {
+			results.add(execute(placements.get(section), solution));
+		}
+		return results;
 	}
 }

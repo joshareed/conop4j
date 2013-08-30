@@ -1,17 +1,10 @@
 package org.andrill.conop.search.objectives;
 
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
+import java.util.*;
 import java.util.concurrent.Future;
 
-import org.andrill.conop.search.Event;
-import org.andrill.conop.search.Observation;
-import org.andrill.conop.search.Section;
-import org.andrill.conop.search.Solution;
+import org.andrill.conop.search.*;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -41,12 +34,43 @@ public class MatrixPenalty extends AbstractParallelObjective {
 		 * @param section
 		 *            the section.
 		 */
-		public SectionMatrix(final Section section) {
+		public SectionMatrix(final Section section, final Run run) {
 			this.section = section;
 
 			// get our sorted levels
 			levels = Lists.newArrayList(section.getLevels());
 			Collections.sort(levels, REVERSE);
+
+			// initialize
+			init(run);
+		}
+
+		private void init(final Run run) {
+			int eventCount = run.getEvents().size();
+			int levelCount = levels.size();
+
+			// initialize our work matrix
+			matrix = new double[eventCount][levels.size()];
+
+			// initialize our penalty matrix
+			penalties = new double[eventCount][levelCount];
+			for (Event e : run.getEvents()) {
+				int i = e.getInternalId();
+				Observation o = section.getObservation(e);
+				for (int j = 0; j < levelCount; j++) {
+					if (o == null) {
+						penalties[i][j] = 0.0;
+					} else {
+						BigDecimal level = levels.get(j);
+						double diff = level.subtract(o.getLevel()).doubleValue();
+						if (diff > 0) {
+							penalties[i][j] = diff * o.getWeightUp();
+						} else {
+							penalties[i][j] = -diff * o.getWeightDown();
+						}
+					}
+				}
+			}
 		}
 
 		/**
@@ -60,31 +84,6 @@ public class MatrixPenalty extends AbstractParallelObjective {
 		public double score(final Solution solution) {
 			int eventCount = solution.getEvents().size();
 			int levelCount = levels.size();
-
-			// populate our penalties matrix the first time
-			if (penalties == null) {
-				penalties = new double[eventCount][levelCount];
-				for (Event e : solution.getEvents()) {
-					int i = e.getInternalId();
-					Observation o = section.getObservation(e);
-					for (int j = 0; j < levelCount; j++) {
-						if (o == null) {
-							penalties[i][j] = 0.0;
-						} else {
-							BigDecimal level = levels.get(j);
-							double diff = level.subtract(o.getLevel()).doubleValue();
-							if (diff > 0) {
-								penalties[i][j] = diff * o.getWeightUp();
-							} else {
-								penalties[i][j] = -diff * o.getWeightDown();
-							}
-						}
-					}
-				}
-			}
-			if (matrix == null) {
-				matrix = new double[eventCount][levels.size()];
-			}
 
 			// initialize our score matrix with the penalties
 			for (int i = 0; i < eventCount; i++) {
@@ -114,33 +113,26 @@ public class MatrixPenalty extends AbstractParallelObjective {
 
 	protected Map<Section, SectionMatrix> matrices = Maps.newHashMap();
 
-	@Override
-	public double score(final Solution solution) {
-		List<Future<Double>> results = Lists.newArrayList();
-		for (Section section : solution.getRun().getSections()) {
-			SectionMatrix matrix = matrices.get(section);
-			if (matrix == null) {
-				matrix = new SectionMatrix(section);
-				matrices.put(section, matrix);
-			}
-			results.add(execute(matrix, solution));
-		}
-
-		double penalty = 0;
-		for (Future<Double> r : results) {
-			try {
-				penalty += r.get();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				e.printStackTrace();
-			}
-		}
-		return penalty;
+	public MatrixPenalty() {
+		super("Matrix");
 	}
 
 	@Override
-	public String toString() {
-		return "Matrix [" + procs + "]";
+	public void configure(final Properties properties, final Run run) {
+		super.configure(properties, run);
+
+		// initialize our section matrices
+		for (Section section : run.getSections()) {
+			matrices.put(section, new SectionMatrix(section, run));
+		}
+	}
+
+	@Override
+	protected List<Future<Double>> internalScore(final Solution solution) {
+		List<Future<Double>> results = Lists.newArrayList();
+		for (Section section : solution.getRun().getSections()) {
+			results.add(execute(matrices.get(section), solution));
+		}
+		return results;
 	}
 }
