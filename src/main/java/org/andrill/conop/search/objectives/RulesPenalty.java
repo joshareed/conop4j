@@ -1,7 +1,6 @@
 package org.andrill.conop.search.objectives;
 
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.*;
 
 import org.andrill.conop.search.*;
@@ -25,12 +24,12 @@ public class RulesPenalty extends AbstractConfigurable implements ObjectiveFunct
 	protected int observations = 2;
 
 	@Override
-	public void configure(final Properties properties, final Run run) {
-		procs = Integer.parseInt(properties.getProperty("processors", ""
+	public void configure(final Simulation simulation) {
+		procs = Integer.parseInt(simulation.getProperty("processors", ""
 				+ Runtime.getRuntime().availableProcessors()));
 		pool = MoreExecutors.getExitingExecutorService((ThreadPoolExecutor) Executors.newFixedThreadPool(procs));
-		factor = Double.parseDouble(properties.getProperty("rule.factor", "1000"));
-		observations = Integer.parseInt(properties.getProperty(
+		factor = Double.parseDouble(simulation.getProperty("rule.factor", "1000"));
+		observations = Integer.parseInt(simulation.getProperty(
 				"rule.observations", "2"));
 	}
 

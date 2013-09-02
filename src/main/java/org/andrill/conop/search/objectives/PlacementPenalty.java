@@ -194,10 +194,11 @@ public class PlacementPenalty extends AbstractParallelObjective {
 	}
 
 	@Override
-	public void configure(final Properties properties, final Run run) {
-		super.configure(properties, run);
+	public void configure(final Simulation simulation) {
+		super.configure(simulation);
 
 		// create our section placements
+		Run run = simulation.getRun();
 		for (final Section section : run.getSections()) {
 			placements.put(section, new SectionPlacement(section));
 		}

@@ -1,9 +1,7 @@
 package org.andrill.conop.search.schedules;
 
-import java.util.Properties;
-
 import org.andrill.conop.search.AbstractConfigurable;
-import org.andrill.conop.search.Run;
+import org.andrill.conop.search.Simulation;
 import org.andrill.conop.search.Solution;
 
 public class TemperingSchedule extends AbstractConfigurable implements CoolingSchedule {
@@ -27,10 +25,10 @@ public class TemperingSchedule extends AbstractConfigurable implements CoolingSc
 	}
 
 	@Override
-	public void configure(final Properties properties, final Run run) {
-		this.initial = Double.parseDouble(properties.getProperty("schedule.initial", "1000"));
-		this.factor = Double.parseDouble(properties.getProperty("schedule.delta", "0.01"));
-		this.minStepsPer = Long.parseLong(properties.getProperty("schedule.stepsPer", "100"));
+	public void configure(final Simulation simulation) {
+		this.initial = Double.parseDouble(simulation.getProperty("schedule.initial", "1000"));
+		this.factor = Double.parseDouble(simulation.getProperty("schedule.delta", "0.01"));
+		this.minStepsPer = Long.parseLong(simulation.getProperty("schedule.stepsPer", "100"));
 		this.current = initial;
 		this.temperTo = initial / 2;
 		this.temperWhen = Math.log10(temperTo);

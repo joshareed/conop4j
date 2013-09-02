@@ -2,7 +2,6 @@ package org.andrill.conop.search.objectives;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.Future;
 
 import org.andrill.conop.search.*;
@@ -68,7 +67,8 @@ public class RelativeOrderingPenalty extends AbstractParallelObjective {
 	}
 
 	@Override
-	public void configure(final Properties properties, final Run run) {
+	public void configure(final Simulation simulation) {
+		Run run = simulation.getRun();
 		for (Event e : run.getEvents()) {
 			orderings.put(e, new EventOrdering(e, run));
 		}

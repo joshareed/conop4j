@@ -4,10 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 import org.andrill.conop.search.constraints.ConstraintChecker;
 import org.andrill.conop.search.constraints.EventChecker;
@@ -27,6 +24,7 @@ import org.andrill.conop.search.schedules.LinearSchedule;
 import org.andrill.conop.search.schedules.TemperingSchedule;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * Reads a simulation configuration from a properties file.
@@ -37,6 +35,55 @@ public class Simulation {
 	protected final File directory;
 	protected final Properties properties;
 	protected Run run;
+
+	public static final Map<String, ObjectiveFunction> OBJECTIVES = Collections
+			.unmodifiableMap(new HashMap<String, ObjectiveFunction>() {
+				private static final long serialVersionUID = 1L;
+				{
+					put("placement", new PlacementPenalty());
+					put("matrix", new MatrixPenalty());
+					put("ordering", new RelativeOrderingPenalty());
+					put("default", new PlacementPenalty());
+				}
+			});
+	public static final Map<String, MutationStrategy> MUTATORS = Collections
+			.unmodifiableMap(new HashMap<String, MutationStrategy>() {
+				private static final long serialVersionUID = 1L;
+				{
+					put("random", new RandomMutator());
+					put("constrained", new ConstrainedMutator());
+					put("annealing", new AnnealingMutator());
+					put("default", new RandomMutator());
+				}
+			});
+	public static final Map<String, Listener> LISTENERS = Collections.unmodifiableMap(new HashMap<String, Listener>() {
+		private static final long serialVersionUID = 1L;
+		{
+			put("console", new ConsoleProgressListener());
+			put("snapshot", new SnapshotListener());
+			put("stopping", new StoppingListener());
+			put("conopweb", new ConopWebProgressListener());
+		}
+	});
+	public static final Map<String, ConstraintChecker> CONSTRAINTS = Collections
+			.unmodifiableMap(new HashMap<String, ConstraintChecker>() {
+				private static final long serialVersionUID = 1L;
+				{
+					put("null", new NullChecker());
+					put("event", new EventChecker());
+					put("default", new NullChecker());
+				}
+			});
+	public static final Map<String, CoolingSchedule> SCHEDULES = Collections
+			.unmodifiableMap(new HashMap<String, CoolingSchedule>() {
+				private static final long serialVersionUID = 1L;
+				{
+					put("exponential", new ExponentialSchedule());
+					put("tempering", new TemperingSchedule());
+					put("linear", new LinearSchedule());
+					put("default", new ExponentialSchedule());
+				}
+			});
 
 	/**
 	 * Create a new Simulation.
@@ -56,6 +103,12 @@ public class Simulation {
 		}
 	}
 
+	public Simulation(final Properties properties, final Run run) {
+		this.properties = properties;
+		this.directory = new File(".");
+		this.run = run;
+	}
+
 	/**
 	 * Gets the configured {@link ConstraintChecker}.
 	 * 
@@ -68,16 +121,8 @@ public class Simulation {
 	 * 
 	 * @return the configured ConstraintChecker.
 	 */
-	@SuppressWarnings("serial")
 	public ConstraintChecker getConstraints() {
-		return lookup(properties.getProperty("constraints", "default"), ConstraintChecker.class,
-				new HashMap<String, ConstraintChecker>() {
-					{
-						put("null", new NullChecker());
-						put("event", new EventChecker());
-						put("default", new NullChecker());
-					}
-				});
+		return lookup(properties.getProperty("constraints", "default"), ConstraintChecker.class, CONSTRAINTS);
 	}
 
 	/**
@@ -120,21 +165,11 @@ public class Simulation {
 	 * 
 	 * @return the list of listeners.
 	 */
-	@SuppressWarnings("serial")
 	public List<Listener> getListeners() {
-		Map<String, Listener> map = new HashMap<String, Listener>() {
-			{
-				put("console", new ConsoleProgressListener());
-				put("snapshot", new SnapshotListener());
-				put("stopping", new StoppingListener());
-				put("conopweb", new ConopWebProgressListener());
-			}
-		};
-
 		// lookup our listeners
 		List<Listener> listeners = Lists.newArrayList();
 		for (String name : properties.getProperty("listeners", "").split(",")) {
-			Listener l = lookup(name, Listener.class, map);
+			Listener l = lookup(name, Listener.class, LISTENERS);
 			if (l != null) {
 				listeners.add(l);
 			}
@@ -154,17 +189,8 @@ public class Simulation {
 	 * 
 	 * @return the configured MutationStrategy.
 	 */
-	@SuppressWarnings("serial")
 	public MutationStrategy getMutator() {
-		return lookup(properties.getProperty("mutator", "default"), MutationStrategy.class,
-				new HashMap<String, MutationStrategy>() {
-					{
-						put("random", new RandomMutator());
-						put("constrained", new ConstrainedMutator());
-						put("annealing", new AnnealingMutator());
-						put("default", new RandomMutator());
-					}
-				});
+		return lookup(properties.getProperty("mutator", "default"), MutationStrategy.class, MUTATORS);
 	}
 
 	/**
@@ -179,17 +205,8 @@ public class Simulation {
 	 * 
 	 * @return the configured ObjectiveFunction.
 	 */
-	@SuppressWarnings("serial")
 	public ObjectiveFunction getObjectiveFunction() {
-		return lookup(properties.getProperty("objective", "default"), ObjectiveFunction.class,
-				new HashMap<String, ObjectiveFunction>() {
-					{
-						put("placement", new PlacementPenalty());
-						put("matrix", new MatrixPenalty());
-						put("ordering", new RelativeOrderingPenalty());
-						put("default", new PlacementPenalty());
-					}
-				});
+		return lookup(properties.getProperty("objective", "default"), ObjectiveFunction.class, OBJECTIVES);
 	}
 
 	/**
@@ -250,17 +267,8 @@ public class Simulation {
 	 * 
 	 * @return the configured CoolingSchedule.
 	 */
-	@SuppressWarnings("serial")
 	public CoolingSchedule getSchedule() {
-		return lookup(properties.getProperty("schedule", "default"), CoolingSchedule.class,
-				new HashMap<String, CoolingSchedule>() {
-					{
-						put("exponential", new ExponentialSchedule());
-						put("tempering", new TemperingSchedule());
-						put("linear", new LinearSchedule());
-						put("default", new ExponentialSchedule());
-					}
-				});
+		return lookup(properties.getProperty("schedule", "default"), CoolingSchedule.class, SCHEDULES);
 	}
 
 	protected <E> E instantiate(final String name, final Class<E> type) {
@@ -282,7 +290,20 @@ public class Simulation {
 		return null;
 	}
 
-	protected <E> E lookup(final String key, final Class<E> type, final Map<String, E> map) {
+	/**
+	 * Gets the keys in this simulation file.
+	 * 
+	 * @return the set of keys.
+	 */
+	public Set<String> keys() {
+		Set<String> keys = Sets.newHashSet();
+		for (Object o : properties.keySet()) {
+			keys.add(o.toString());
+		}
+		return keys;
+	}
+
+	public <E> E lookup(final String key, final Class<E> type, final Map<String, E> map) {
 		String name = key.trim();
 		if ("".equals(name)) {
 			return null;
@@ -298,7 +319,7 @@ public class Simulation {
 			System.err.println("Unknown " + type.getName() + " '" + name + "', defaulting to " + instance);
 		}
 		if ((instance != null) && (instance instanceof Configurable)) {
-			((Configurable) instance).configure(properties, run);
+			((Configurable) instance).configure(this);
 		}
 		return instance;
 	}

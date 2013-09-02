@@ -1,7 +1,5 @@
 package org.andrill.conop.search;
 
-import java.util.Properties;
-
 /**
  * Defines the interface for a configurable object.
  * 
@@ -10,12 +8,10 @@ import java.util.Properties;
 public interface Configurable {
 
 	/**
-	 * Configures this object with the specified properties.
+	 * Configures this object with the specified simulation.
 	 * 
-	 * @param properties
-	 *            the properties.
-	 * @param run
-	 *            the run.
+	 * @param simulation
+	 *            the simulation.
 	 */
-	public void configure(Properties properties, Run run);
+	public void configure(Simulation simulation);
 }

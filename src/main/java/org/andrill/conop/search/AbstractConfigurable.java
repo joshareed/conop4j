@@ -1,7 +1,5 @@
 package org.andrill.conop.search;
 
-import java.util.Properties;
-
 /**
  * An abstract implementation of the {@link Configurable} interface.
  * 
@@ -10,7 +8,7 @@ import java.util.Properties;
 public abstract class AbstractConfigurable implements Configurable {
 
 	@Override
-	public void configure(final Properties properties, final Run run) {
+	public void configure(final Simulation simulation) {
 		// override
 	}
 }

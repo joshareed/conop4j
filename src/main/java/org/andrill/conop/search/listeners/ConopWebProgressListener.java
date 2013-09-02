@@ -8,11 +8,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
 
 import org.andrill.conop.search.CONOP;
 import org.andrill.conop.search.Event;
-import org.andrill.conop.search.Run;
+import org.andrill.conop.search.Simulation;
 import org.andrill.conop.search.Solution;
 import org.andrill.conop.search.util.TimerUtils;
 
@@ -26,23 +25,21 @@ public class ConopWebProgressListener extends AsyncListener {
 	private String name = null;
 	private int next = 15;
 	private String run = null;
-	private Map<String, String> simulation = Maps.newHashMap();
+	private Map<String, String> invariants = Maps.newHashMap();
 
 	@Override
-	public void configure(final Properties properties, final Run r) {
-		super.configure(properties, r);
+	public void configure(final Simulation simulation) {
+		super.configure(simulation);
 
 		// require a dataset id
-		dataset = properties.getProperty("conopweb.dataset");
+		dataset = simulation.getProperty("conopweb.dataset");
 		if ((dataset == null) || "".equals(dataset)) {
 			System.err.println("No 'conopweb.dataset' configured, unable to send progress");
 			dataset = null;
 		}
 
 		// override our default endpoint if specified
-		if (properties.containsKey("conopweb.endpoint")) {
-			endpoint = properties.getProperty("conopweb.endpoint");
-		}
+		endpoint = simulation.getProperty("conopweb.endpoint", endpoint);
 
 		// set our run id
 		String date = new SimpleDateFormat("yyyy-MM-dd_HHmmss").format(new Date());
@@ -54,22 +51,18 @@ public class ConopWebProgressListener extends AsyncListener {
 			host = "unknown_host";
 		}
 
-		run = properties.getProperty("conopweb.run");
+		run = simulation.getProperty("conopweb.run");
 		if ((run == null) || "".equals(run)) {
 			// generate a run id
 			run = user + ":" + host + ":" + date;
 		}
 
 		// set our name
-		if (properties.containsKey("conopweb.name")) {
-			name = properties.getProperty("conopweb.name");
-		} else {
-			name = user + " @ " + date;
-		}
+		name = simulation.getProperty("conopweb.name", user + " @ " + date);
 
 		// save our simulation
-		for (Entry<Object, Object> e : properties.entrySet()) {
-			simulation.put(e.getKey().toString(), e.getValue().toString());
+		for (String key : simulation.keys()) {
+			invariants.put(key, simulation.getProperty(key));
 		}
 	}
 
@@ -83,7 +76,7 @@ public class ConopWebProgressListener extends AsyncListener {
 			json.writeNumberField("time", TimerUtils.getCounter());
 			json.writeNumberField("temp", temp);
 			json.writeNumberField("score", best.getScore());
-			json.writeStringField("objective", simulation.get("objective"));
+			json.writeStringField("objective", invariants.get("objective"));
 			if (s != null) {
 				json.writeFieldName("solution");
 				json.writeRawValue(getSolutionPayload(s));
@@ -107,7 +100,7 @@ public class ConopWebProgressListener extends AsyncListener {
 			json.writeStringField("name", name);
 			json.writeFieldName("simulation");
 			json.writeStartObject();
-			for (Entry<String, String> e : simulation.entrySet()) {
+			for (Entry<String, String> e : invariants.entrySet()) {
 				json.writeStringField(mangle(e.getKey()), e.getValue());
 			}
 			json.writeEndObject();

@@ -1,11 +1,10 @@
 package org.andrill.conop.search.objectives;
 
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.*;
 
 import org.andrill.conop.search.AbstractConfigurable;
-import org.andrill.conop.search.Run;
+import org.andrill.conop.search.Simulation;
 import org.andrill.conop.search.Solution;
 
 import com.google.common.util.concurrent.Futures;
@@ -21,8 +20,8 @@ public abstract class AbstractParallelObjective extends AbstractConfigurable imp
 	}
 
 	@Override
-	public void configure(final Properties properties, final Run run) {
-		this.procs = Integer.parseInt(properties.getProperty("processors", ""
+	public void configure(final Simulation simulation) {
+		this.procs = Integer.parseInt(simulation.getProperty("processors", ""
 				+ Runtime.getRuntime().availableProcessors()));
 		if (procs > 1) {
 			pool = MoreExecutors.getExitingExecutorService((ThreadPoolExecutor) Executors.newFixedThreadPool(procs));

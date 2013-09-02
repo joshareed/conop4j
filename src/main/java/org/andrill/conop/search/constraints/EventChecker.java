@@ -1,11 +1,10 @@
 package org.andrill.conop.search.constraints;
 
-import java.util.Properties;
 import java.util.Set;
 
 import org.andrill.conop.search.AbstractConfigurable;
 import org.andrill.conop.search.Event;
-import org.andrill.conop.search.Run;
+import org.andrill.conop.search.Simulation;
 import org.andrill.conop.search.Solution;
 
 import com.google.common.collect.Sets;
@@ -19,11 +18,11 @@ public class EventChecker extends AbstractConfigurable implements ConstraintChec
 	protected Set<Event> constrained = Sets.newHashSet();
 
 	@Override
-	public void configure(final Properties properties, final Run run) {
-		super.configure(properties, run);
+	public void configure(final Simulation simulation) {
+		super.configure(simulation);
 
 		// find minimum number of events to fully check all constraints
-		for (Event e : run.getEvents()) {
+		for (Event e : simulation.getRun().getEvents()) {
 			Event before = e.getBeforeConstraint();
 			Event after = e.getAfterConstraint();
 			if ((before != null) && ((before.getAfterConstraint() != e) || !constrained.contains(before))) {

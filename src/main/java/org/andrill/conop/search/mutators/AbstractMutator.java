@@ -1,8 +1,6 @@
 package org.andrill.conop.search.mutators;
 
-import java.util.Properties;
-
-import org.andrill.conop.search.Run;
+import org.andrill.conop.search.Simulation;
 import org.andrill.conop.search.Solution;
 import org.andrill.conop.search.listeners.AbstractListener;
 
@@ -18,8 +16,8 @@ public abstract class AbstractMutator extends AbstractListener implements Mutati
 	protected double temp = -1;
 
 	@Override
-	public void configure(final Properties properties, final Run run) {
-		reset = Long.parseLong(properties.getProperty("mutator.reset", "-1"));
+	public void configure(final Simulation simulation) {
+		reset = Long.parseLong(simulation.getProperty("mutator.reset", "-1"));
 	}
 
 	protected abstract Solution internalMutate(final Solution solution);

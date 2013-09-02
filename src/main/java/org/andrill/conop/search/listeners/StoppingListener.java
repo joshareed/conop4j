@@ -1,9 +1,7 @@
 package org.andrill.conop.search.listeners;
 
-import java.util.Properties;
-
 import org.andrill.conop.search.AbortedException;
-import org.andrill.conop.search.Run;
+import org.andrill.conop.search.Simulation;
 import org.andrill.conop.search.Solution;
 
 /**
@@ -31,31 +29,17 @@ public class StoppingListener extends AbstractListener {
 	}
 
 	@Override
-	public void configure(final Properties properties, final Run run) {
-		super.configure(properties, run);
+	public void configure(final Simulation simulation) {
+		super.configure(simulation);
 
 		// parse stopping conditions
-		if (properties.containsKey("stop.time")) {
-			stopTime = Double.parseDouble(properties.getProperty("stop.time", "-1")) * 1000 * 60;
-		}
-		if (properties.containsKey("stop.steps")) {
-			stopIteration = Long.parseLong(properties.getProperty("stop.steps", "-1"));
-		}
-		if (properties.containsKey("stop.progress.time")) {
-			stopProgressTime = Double.parseDouble(properties.getProperty("stop.progress.time", "-1")) * 1000 * 60;
-		}
-		if (properties.containsKey("stop.progress.steps")) {
-			stopProgressIteration = Long.parseLong(properties.getProperty("stop.progress.steps", "-1"));
-		}
-		if (properties.containsKey("stop.threshold")) {
-			stopThreshold = Double.parseDouble(properties.getProperty("stop.threshold", "-1"));
-		}
-		if (properties.containsKey("stop.threshold.time")) {
-			stopThresholdTime = Double.parseDouble(properties.getProperty("stop.threshold.time", "-1")) * 1000 * 60;
-		}
-		if (properties.containsKey("stop.threshold.steps")) {
-			stopThresholdIteration = Long.parseLong(properties.getProperty("stop.threshold.steps", "-1"));
-		}
+		stopTime = Double.parseDouble(simulation.getProperty("stop.time", "-1")) * 1000 * 60;
+		stopIteration = Long.parseLong(simulation.getProperty("stop.steps", "-1"));
+		stopProgressTime = Double.parseDouble(simulation.getProperty("stop.progress.time", "-1")) * 1000 * 60;
+		stopProgressIteration = Long.parseLong(simulation.getProperty("stop.progress.steps", "-1"));
+		stopThreshold = Double.parseDouble(simulation.getProperty("stop.threshold", "-1"));
+		stopThresholdTime = Double.parseDouble(simulation.getProperty("stop.threshold.time", "-1")) * 1000 * 60;
+		stopThresholdIteration = Long.parseLong(simulation.getProperty("stop.threshold.steps", "-1"));
 	}
 
 	protected double minutes(final double millis) {

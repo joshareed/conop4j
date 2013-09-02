@@ -1,7 +1,10 @@
 package org.andrill.conop.search.objectives;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Future;
 
 import org.andrill.conop.search.*;
@@ -118,10 +121,11 @@ public class MatrixPenalty extends AbstractParallelObjective {
 	}
 
 	@Override
-	public void configure(final Properties properties, final Run run) {
-		super.configure(properties, run);
+	public void configure(final Simulation simulation) {
+		super.configure(simulation);
 
 		// initialize our section matrices
+		Run run = simulation.getRun();
 		for (Section section : run.getSections()) {
 			matrices.put(section, new SectionMatrix(section, run));
 		}

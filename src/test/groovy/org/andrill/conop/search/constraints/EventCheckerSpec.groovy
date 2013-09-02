@@ -23,7 +23,7 @@ class EventCheckerSpec extends Specification {
 
 		and: "an EventChecker"
 		def checker = new EventChecker()
-		checker.configure(new Properties(), run)
+		checker.configure(new Simulation(new Properties(), run))
 
 		when: "a valid solution"
 		def solution1 = new Solution(null, [pair1, pair2, other])

@@ -1,9 +1,7 @@
 package org.andrill.conop.search.schedules;
 
-import java.util.Properties;
-
 import org.andrill.conop.search.AbstractConfigurable;
-import org.andrill.conop.search.Run;
+import org.andrill.conop.search.Simulation;
 import org.andrill.conop.search.Solution;
 
 /**
@@ -30,10 +28,10 @@ public class LinearSchedule extends AbstractConfigurable implements CoolingSched
 	}
 
 	@Override
-	public void configure(final Properties properties, final Run run) {
-		this.initial = Double.parseDouble(properties.getProperty("schedule.initial", "1000"));
-		this.delta = Double.parseDouble(properties.getProperty("schedule.delta", "0.01"));
-		minStepsPer = Long.parseLong(properties.getProperty("schedule.stepsPer", "100"));
+	public void configure(final Simulation simulation) {
+		this.initial = Double.parseDouble(simulation.getProperty("schedule.initial", "1000"));
+		this.delta = Double.parseDouble(simulation.getProperty("schedule.delta", "0.01"));
+		minStepsPer = Long.parseLong(simulation.getProperty("schedule.stepsPer", "100"));
 		this.current = initial;
 	}
 

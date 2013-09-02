@@ -5,10 +5,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.Properties;
 
 import org.andrill.conop.search.Event;
-import org.andrill.conop.search.Run;
+import org.andrill.conop.search.Simulation;
 import org.andrill.conop.search.Solution;
 import org.andrill.conop.search.util.TimerUtils;
 
@@ -45,11 +44,11 @@ public class SnapshotListener extends AsyncListener {
 	protected CSVWriter writer;
 
 	@Override
-	public void configure(final Properties properties, final Run run) {
-		super.configure(properties, run);
+	public void configure(final Simulation simulation) {
+		super.configure(simulation);
 		try {
-			solutionFile = getFile(properties.getProperty("solution.file", "solution.tmp"));
-			snapshotFile = getFile(properties.getProperty("snapshot.file", "snapshot.csv"));
+			solutionFile = getFile(simulation.getProperty("solution.file", "solution.tmp"));
+			snapshotFile = getFile(simulation.getProperty("snapshot.file", "snapshot.csv"));
 			writer = new CSVWriter(new BufferedWriter(new FileWriter(snapshotFile)), '\t');
 		} catch (IOException e) {
 			e.printStackTrace();
