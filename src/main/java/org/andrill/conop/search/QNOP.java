@@ -37,6 +37,7 @@ public class QNOP {
 		}
 	}
 
+	public static final String VERSION = "0.9.0";
 	private static final DecimalFormat D = new DecimalFormat("0.00");
 
 	public static void main(final String[] args) {
@@ -73,6 +74,7 @@ public class QNOP {
 			long elapsed = (System.currentTimeMillis() - start) / 60000;
 			System.out.println("Simulation aborted after " + elapsed + " minutes: " + cause.getMessage());
 		}
+		System.exit(0);
 	}
 
 	protected final LinkedBlockingQueue<Solution> work;

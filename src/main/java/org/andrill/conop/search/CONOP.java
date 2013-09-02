@@ -24,7 +24,7 @@ import com.google.common.collect.Lists;
  */
 public class CONOP {
 	private static final DecimalFormat D = new DecimalFormat("0.00");
-	public static final String VERSION = "0.8.1";
+	public static final String VERSION = "0.9.0";
 
 	public static void main(final String[] args) {
 		// load the simulation configuration
@@ -50,16 +50,6 @@ public class CONOP {
 			// run the simulation
 			Solution solution = conop.solve(run, initial);
 
-			// run the endgame simulation
-			/*
-			File endgame = simulation.getEndgame();
-			if (endgame == null) {
-				return solution;
-			} else {
-				System.out.println("Starting endgame scenario: " + endgame.getName());
-				return runSimulation(new Simulation(endgame), run, solution, mode, extra);
-			}
-			*/
 			long elapsed = (System.currentTimeMillis() - start) / 60000;
 			System.out.println("Simulation completed after " + elapsed + " minutes.  Final score: "
 					+ D.format(solution.getScore()) + "                                ");
