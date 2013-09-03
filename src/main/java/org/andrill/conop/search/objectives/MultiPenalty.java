@@ -8,10 +8,10 @@ import org.andrill.conop.search.Solution;
 
 import com.google.common.collect.Lists;
 
-public class WeightedMultiPenalty extends AbstractParallelObjective {
+public class MultiPenalty extends AbstractParallelObjective {
 	protected List<ObjectiveFunction> objectives;
 
-	protected WeightedMultiPenalty() {
+	public MultiPenalty() {
 		super("Multi");
 	}
 

@@ -5,11 +5,11 @@ import org.andrill.conop.search.Solution
 
 import spock.lang.Specification
 
-class WeightedMultiPenaltySpec extends Specification {
+class MultiPenaltySpec extends Specification {
 
 	def "scores using all specified objective functions"() {
 		given: 'a multi objective'
-		def objective = new WeightedMultiPenalty()
+		def objective = new MultiPenalty()
 
 		and: 'a simulation'
 		def simulation = new Simulation(new Properties(), null)
