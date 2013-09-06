@@ -11,13 +11,13 @@ This will generate a JAR file in `build/release`.  You can run the generated JAR
 
 It provides a barebones GUI for accessing the analysis and search tools. You can also perform all of the same search and analysis functions from the command line.
 
-To run a simulation:
+To run a simulation using the standard CONOP solver:
 
-	java -jar conop-tools-X.Y.Z.jar run <simulation file>
+	java -jar conop-tools-X.Y.Z.jar conop <simulation file>
+	
+To run a simulation using the experimental QNOP solver:
 
-To score a solution:
-
-	java -jar conop-tools-X.Y.Z.jar score <run directory> <solution file>
+	java -jar conop-tools-X.Y.Z.jar qnop <simulation file>
 
 To post-process the CONOP9 data:
 
