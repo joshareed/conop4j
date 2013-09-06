@@ -34,10 +34,14 @@ class SolutionSpec extends Specification {
 		def solution = Solution.initial(run)
 
 		when: 'set score'
+		println 'Set Score'
 		solution.setScore(1000.0)
 
 		then: 'the score is saved'
 		solution.score == 1000.0
+
+		and: 'the ranks is not empty'
+		solution.ranks
 
 		when: 'get a specific event'
 		def event = solution.getEvent(0)
