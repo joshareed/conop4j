@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 
 import org.andrill.conop.search.Event;
+import org.andrill.conop.search.RanksMatrix;
 import org.andrill.conop.search.Simulation;
 import org.andrill.conop.search.Solution;
 import org.andrill.conop.search.util.TimerUtils;
@@ -98,13 +99,14 @@ public class SnapshotListener extends AsyncListener {
 
 			// write the events
 			int total = solution.getEvents().size();
+			RanksMatrix ranks = solution.getRun().getRanksMatrix();
 			String[] next = new String[4];
 			for (int i = 0; i < total; i++) {
 				Event e = solution.getEvent(i);
 				next[0] = e.getName();
 				next[1] = I.format(total - i);
-				next[2] = I.format(solution.getMinRank(e));
-				next[3] = I.format(solution.getMaxRank(e));
+				next[2] = I.format(ranks.getMinRank(e));
+				next[3] = I.format(ranks.getMaxRank(e));
 				csv.writeNext(next);
 			}
 		} catch (IOException e) {

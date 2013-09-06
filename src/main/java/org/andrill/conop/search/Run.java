@@ -206,7 +206,9 @@ public class Run {
 
 	protected final ImmutableSet<Event> events;
 	protected CoexistenceMatrix matrix = null;
+	protected RanksMatrix ranks = null;
 	protected final ImmutableSet<Section> sections;
+	protected Solution best = null;
 
 	/**
 	 * Create a new run from the specified sections.
@@ -223,6 +225,18 @@ public class Run {
 			b.addAll(s.getEvents());
 		}
 		events = b.build();
+	}
+
+	/**
+	 * Add a new solution to this run.
+	 * 
+	 * @param solution the scored solution.
+	 */
+	public void add(final Solution solution) {
+		if ((best == null) || (solution.getScore() <= best.getScore())) {
+			best = solution;
+			getRanksMatrix().update(solution);
+		}
 	}
 
 	/**
@@ -244,6 +258,18 @@ public class Run {
 	 */
 	public ImmutableSet<Event> getEvents() {
 		return events;
+	}
+
+	/**
+	 * Gets the ranks matrix for this run.
+	 * 
+	 * @return the ranks matrix.
+	 */
+	public RanksMatrix getRanksMatrix() {
+		if (ranks == null) {
+			ranks = new RanksMatrix(events.size());
+		}
+		return ranks;
 	}
 
 	/**

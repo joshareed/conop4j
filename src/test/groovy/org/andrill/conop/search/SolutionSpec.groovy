@@ -6,6 +6,7 @@ class SolutionSpec extends Specification {
 	private Run run;
 
 	void setup() {
+		Event.ID = 0
 		run = Run.loadCONOP9Run(new File('src/test/resources/riley'))
 	}
 
@@ -34,25 +35,16 @@ class SolutionSpec extends Specification {
 		def solution = Solution.initial(run)
 
 		when: 'set score'
-		println 'Set Score'
 		solution.setScore(1000.0)
 
 		then: 'the score is saved'
 		solution.score == 1000.0
-
-		and: 'the ranks is not empty'
-		solution.ranks
 
 		when: 'get a specific event'
 		def event = solution.getEvent(0)
 
 		then: 'the position matches'
 		solution.getPosition(event) == 0
-
-		and: 'the rank is opposite of the position'
-		solution.getRank(event) == solution.getMinRank(event)
-		solution.getRank(event) == solution.getMaxRank(event)
-		solution.getRank(event) == 124
 	}
 
 	def "can parse a solution"() {

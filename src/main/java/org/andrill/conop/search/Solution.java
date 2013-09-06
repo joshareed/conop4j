@@ -15,8 +15,6 @@ import com.google.common.collect.Maps;
  * @author Josh Reed (jareed@andrill.org)
  */
 public class Solution {
-	private static double best = Double.MAX_VALUE;
-	private static Map<Event, double[]> ranks;
 
 	/**
 	 * Creates an initial solution with events sorted by type.
@@ -128,46 +126,6 @@ public class Solution {
 	}
 
 	/**
-	 * Gets the max rank for the specified event.
-	 * 
-	 * @param e
-	 *            the event.
-	 * @return the max rank.
-	 */
-	public int getMaxRank(final Event e) {
-		double[] array = ranks.get(e);
-		if (array == null) {
-			return -1;
-		}
-
-		int i = 0;
-		while ((i < array.length) && (array[i] != score)) {
-			i++;
-		}
-		return array.length - i;
-	}
-
-	/**
-	 * Gets the min rank for the specified event.
-	 * 
-	 * @param e
-	 *            the event.
-	 * @return the min rank.
-	 */
-	public int getMinRank(final Event e) {
-		double[] array = ranks.get(e);
-		if (array == null) {
-			return -1;
-		}
-
-		int i = array.length - 1;
-		while ((i >= 0) && (array[i] != score)) {
-			i--;
-		}
-		return array.length - i;
-	}
-
-	/**
 	 * Gets the position of the event in this solution.
 	 * 
 	 * @param event
@@ -187,15 +145,6 @@ public class Solution {
 	 */
 	public int getRank(final Event e) {
 		return events.size() - getPosition(e);
-	}
-
-	/**
-	 * Get the ranks array.
-	 * 
-	 * @return the ranks array.
-	 */
-	public Map<Event, double[]> getRanks() {
-		return ranks;
 	}
 
 	/**
@@ -239,26 +188,8 @@ public class Solution {
 	 */
 	public void setScore(final double score) {
 		this.score = score;
-
-		synchronized (Solution.class) {
-			// create our ranks
-			if (ranks == null) {
-				ranks = Maps.newHashMap();
-				int size = events.size();
-				for (Event e : events) {
-					double[] array = new double[size];
-					Arrays.fill(array, -1);
-					ranks.put(e, array);
-				}
-			}
-		}
-
-		// update our ranks
-		if (score <= best) {
-			best = score;
-			for (Event e : events) {
-				ranks.get(e)[getPosition(e)] = score;
-			}
+		if (run != null) {
+			run.add(this);
 		}
 	}
 }

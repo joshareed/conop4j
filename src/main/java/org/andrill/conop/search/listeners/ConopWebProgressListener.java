@@ -9,10 +9,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.andrill.conop.search.CONOP;
-import org.andrill.conop.search.Event;
-import org.andrill.conop.search.Simulation;
-import org.andrill.conop.search.Solution;
+import org.andrill.conop.search.*;
 import org.andrill.conop.search.util.TimerUtils;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -122,12 +119,14 @@ public class ConopWebProgressListener extends AsyncListener {
 			json.writeNumberField("score", s.getScore());
 			json.writeArrayFieldStart("events");
 
+			RanksMatrix ranks = s.getRun().getRanksMatrix();
+
 			for (Event e : s.getEvents()) {
 				json.writeStartObject();
 				json.writeStringField("name", e.getName());
 				json.writeNumberField("rank", s.getRank(e));
-				json.writeNumberField("max", s.getMaxRank(e));
-				json.writeNumberField("min", s.getMinRank(e));
+				json.writeNumberField("max", ranks.getMaxRank(e));
+				json.writeNumberField("min", ranks.getMinRank(e));
 				json.writeEndObject();
 			}
 			json.writeEndArray();
