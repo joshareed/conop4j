@@ -14,6 +14,11 @@ public abstract class AbstractMutator extends AbstractListener implements Mutati
 	protected Solution local;
 	protected long reset = -1;
 	protected double temp = -1;
+	protected final String name;
+
+	protected AbstractMutator(final String name) {
+		this.name = name;
+	}
 
 	@Override
 	public void configure(final Simulation simulation) {
@@ -30,6 +35,11 @@ public abstract class AbstractMutator extends AbstractListener implements Mutati
 		} else {
 			return internalMutate(solution);
 		}
+	}
+
+	@Override
+	public String toString() {
+		return name;
 	}
 
 	@Override

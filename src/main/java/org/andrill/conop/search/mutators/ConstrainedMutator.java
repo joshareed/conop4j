@@ -16,6 +16,10 @@ import com.google.common.collect.Lists;
 public class ConstrainedMutator extends AbstractMutator {
 	protected Random random = new Random();
 
+	public ConstrainedMutator() {
+		super("Constrained");
+	}
+
 	@Override
 	public Solution internalMutate(final Solution solution) {
 		List<Event> events = Lists.newArrayList(solution.getEvents());
@@ -28,10 +32,5 @@ public class ConstrainedMutator extends AbstractMutator {
 		// add in the event at a random valid position
 		events.add(min + (max == min ? 0 : random.nextInt(max - min)), e);
 		return new Solution(solution.getRun(), events);
-	}
-
-	@Override
-	public String toString() {
-		return "Constrained";
 	}
 }

@@ -16,6 +16,10 @@ import com.google.common.collect.Lists;
 public class RandomMutator extends AbstractMutator {
 	protected Random random = new Random();
 
+	public RandomMutator() {
+		super("Random");
+	}
+
 	@Override
 	public Solution internalMutate(final Solution solution) {
 		List<Event> events = Lists.newArrayList(solution.getEvents());
@@ -31,10 +35,5 @@ public class RandomMutator extends AbstractMutator {
 		Event e = events.remove(cur);
 		events.add(pos, e);
 		return new Solution(solution.getRun(), events);
-	}
-
-	@Override
-	public String toString() {
-		return "Random";
 	}
 }

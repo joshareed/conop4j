@@ -21,6 +21,10 @@ public class AnnealingMutator extends AbstractMutator implements Listener {
 	protected Random random = new Random();
 	private double temp = 1000.0;
 
+	public AnnealingMutator() {
+		super("Annealing");
+	}
+
 	@Override
 	protected Solution internalMutate(final Solution solution) {
 		List<Event> events = Lists.newArrayList(solution.getEvents());
