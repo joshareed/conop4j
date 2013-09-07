@@ -88,7 +88,7 @@ public class StoppingListener extends AbstractListener {
 		if ((stopProgressTime > 0) && ((time - lastProgressTime) >= stopProgressTime)) {
 			stop("Stopped because no progress was made in " + minutes(stopProgressTime) + " minutes");
 		}
-		if ((stopThreshold > 0) && (best.getScore() > stopThreshold)) {
+		if ((stopThreshold > 0) && (bestScore > stopThreshold)) {
 			if ((stopThresholdIteration > 0) && (currentIteration >= stopThresholdIteration)) {
 				abort("Stopped because simulation did not reach score threshold of " + stopThreshold + " in "
 						+ stopThresholdIteration + " iterations");
