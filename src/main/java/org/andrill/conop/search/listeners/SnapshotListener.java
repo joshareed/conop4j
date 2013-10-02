@@ -48,7 +48,7 @@ public class SnapshotListener extends AsyncListener {
 	public void configure(final Simulation simulation) {
 		super.configure(simulation);
 		try {
-			solutionFile = getFile(simulation.getProperty("solution.file", "solution.tmp"));
+			solutionFile = getFile(simulation.getProperty("solution.file", "solution.csv"));
 			snapshotFile = getFile(simulation.getProperty("snapshot.file", "snapshot.csv"));
 			writer = new CSVWriter(new BufferedWriter(new FileWriter(snapshotFile)), '\t');
 		} catch (IOException e) {
@@ -77,9 +77,8 @@ public class SnapshotListener extends AsyncListener {
 		if (solution == null) {
 			snapshotFile.delete();
 		} else {
-			writeResults(getFile("solution.csv"), solution);
+			writeResults(solutionFile, solution);
 		}
-		solutionFile.delete();
 	}
 
 	@Override
