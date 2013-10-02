@@ -1,17 +1,13 @@
-package org.andrill.conop.analysis;
+package org.andrill.conop.analysis.summary;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import org.andrill.conop.analysis.SummarySpreadsheet.Summary;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.andrill.conop.analysis.Solution;
+import org.andrill.conop.analysis.summary.SummarySpreadsheet.Summary;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
@@ -30,6 +26,7 @@ public class CompareSolutions implements Summary {
 		return null;
 	}
 
+	@Override
 	public void generate(final Workbook workbook, final Solution... solutions) {
 		// create our sheet
 		Sheet sheet = workbook.createSheet("Diff");
@@ -77,6 +74,7 @@ public class CompareSolutions implements Summary {
 		// get our events sorted in solution order
 		List<Map<String, String>> events = solutions[0].getEvents();
 		Collections.sort(events, new Comparator<Map<String, String>>() {
+			@Override
 			public int compare(final Map<String, String> o1, final Map<String, String> o2) {
 				return new Integer(o2.get("solution")).compareTo(new Integer(o1.get("solution")));
 			}
@@ -102,29 +100,21 @@ public class CompareSolutions implements Summary {
 			}
 		}
 
-		// generate our diff picture
-		// try {
-		// File temp = File.createTempFile("compare", ".png");
-		// SolutionImage image = new SolutionImage();
-		// image.generate(temp, runs);
-		//
-		// // add it to the spreadsheet
-		// InputStream is = new FileInputStream(temp);
-		// byte[] bytes = IOUtils.toByteArray(is);
-		// int pictureIdx = workbook.addPicture(bytes,
-		// Workbook.PICTURE_TYPE_PNG);
-		// is.close();
-		//
-		// // anchor it in the spreadsheet
-		// CreationHelper helper = workbook.getCreationHelper();
-		// Drawing drawing = sheet.createDrawingPatriarch();
-		// ClientAnchor anchor = helper.createClientAnchor();
-		// anchor.setCol1(3 * runs.length + 3);
-		// anchor.setRow1(1);
-		// Picture pict = drawing.createPicture(anchor, pictureIdx);
-		// pict.resize();
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// }
+		/*
+		// write our solutions
+		int offset = events.size() + 2;
+		int i = 0;
+		for (Entry<String, ObjectiveFunction> entry : Simulation.OBJECTIVES.entrySet()) {
+			if (!"default".equals(entry.getKey())) {
+				Row row = sheet.createRow(offset + (i++));
+				row.createCell(0).setCellValue(entry.getKey());
+
+				for (int j = 0; j < solutions.length; j++) {
+					Solution solution = solutions[j];
+					row.createCell(2 + (j * 3) + 0).setCellValue(Integer.parseInt(e.get("solution")));
+				}
+			}
+		}
+		*/
 	}
 }

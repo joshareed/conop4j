@@ -5,26 +5,17 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import javax.swing.AbstractAction;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+import javax.swing.*;
 
 import net.miginfocom.swing.MigLayout;
 
-import org.andrill.conop.analysis.AgeAndPlacements;
 import org.andrill.conop.analysis.CONOP4JSolution;
 import org.andrill.conop.analysis.CONOP9Solution;
-import org.andrill.conop.analysis.CompareSolutions;
 import org.andrill.conop.analysis.Solution;
-import org.andrill.conop.analysis.SummarySpreadsheet;
-import org.andrill.conop.analysis.SummarySpreadsheet.Summary;
+import org.andrill.conop.analysis.summary.AgeAndPlacements;
+import org.andrill.conop.analysis.summary.CompareSolutions;
+import org.andrill.conop.analysis.summary.SummarySpreadsheet;
+import org.andrill.conop.analysis.summary.SummarySpreadsheet.Summary;
 
 import com.google.common.collect.Lists;
 
@@ -74,6 +65,7 @@ public class AnalysisPanel extends JPanel {
 		addButton.setAction(new AbstractAction("+") {
 			private static final long serialVersionUID = 1L;
 
+			@Override
 			public void actionPerformed(final ActionEvent arg0) {
 				fileChooser.setDialogTitle("Choose Run File or Directory");
 				if (fileChooser.showOpenDialog(AnalysisPanel.this) == JFileChooser.APPROVE_OPTION) {
@@ -93,6 +85,7 @@ public class AnalysisPanel extends JPanel {
 		removeButton.setAction(new AbstractAction("-") {
 			private static final long serialVersionUID = 1L;
 
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				Object selected = list.getSelectedValue();
 				if (selected != null) {
@@ -112,6 +105,7 @@ public class AnalysisPanel extends JPanel {
 			checkbox.setAction(new AbstractAction(getLabelFor(summary)) {
 				private static final long serialVersionUID = 1L;
 
+				@Override
 				public void actionPerformed(final ActionEvent e) {
 					if (checkbox.isSelected()) {
 						summaries.add(summary);
@@ -127,6 +121,7 @@ public class AnalysisPanel extends JPanel {
 		processButton.setAction(new AbstractAction("Process") {
 			private static final long serialVersionUID = 1L;
 
+			@Override
 			public void actionPerformed(final ActionEvent e) {
 				fileChooser.setDialogTitle("Save");
 				if (fileChooser.showSaveDialog(AnalysisPanel.this) == JFileChooser.APPROVE_OPTION) {

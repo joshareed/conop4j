@@ -1,11 +1,12 @@
-package org.andrill.conop.analysis;
+package org.andrill.conop.analysis.summary;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import org.andrill.conop.analysis.SummarySpreadsheet.Summary;
+import org.andrill.conop.analysis.Solution;
+import org.andrill.conop.analysis.summary.SummarySpreadsheet.Summary;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;

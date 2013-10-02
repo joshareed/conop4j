@@ -6,7 +6,8 @@ import java.util.List;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
-import org.andrill.conop.analysis.SummarySpreadsheet.Summary;
+import org.andrill.conop.analysis.summary.SummarySpreadsheet;
+import org.andrill.conop.analysis.summary.SummarySpreadsheet.Summary;
 
 import com.google.common.collect.Lists;
 
@@ -49,7 +50,7 @@ public class PostProcess {
 		List<Summary> summaries = Lists.newArrayList();
 		for (Object summary : options.valuesOf("summary")) {
 			String name = summary.toString();
-			String className = name.indexOf('.') > 0 ? name : "org.andrill.conop.analysis." + name;
+			String className = name.indexOf('.') > 0 ? name : "org.andrill.conop.analysis.summary." + name;
 			try {
 				Class<?> clazz = Class.forName(className);
 				summaries.add((Summary) clazz.newInstance());
