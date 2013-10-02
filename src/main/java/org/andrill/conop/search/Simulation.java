@@ -10,10 +10,7 @@ import org.andrill.conop.search.constraints.ConstraintChecker;
 import org.andrill.conop.search.constraints.EventChecker;
 import org.andrill.conop.search.constraints.NullChecker;
 import org.andrill.conop.search.listeners.*;
-import org.andrill.conop.search.mutators.AnnealingMutator;
-import org.andrill.conop.search.mutators.ConstrainedMutator;
-import org.andrill.conop.search.mutators.MutationStrategy;
-import org.andrill.conop.search.mutators.RandomMutator;
+import org.andrill.conop.search.mutators.*;
 import org.andrill.conop.search.objectives.*;
 import org.andrill.conop.search.schedules.CoolingSchedule;
 import org.andrill.conop.search.schedules.ExponentialSchedule;
@@ -40,6 +37,7 @@ public class Simulation {
 					put("placement", new PlacementPenalty());
 					put("matrix", new MatrixPenalty());
 					put("ordering", new RelativeOrderingPenalty());
+					put("coexistence", new CoexistencePenalty());
 					put("multi", new MultiPenalty());
 					put("default", new PlacementPenalty());
 				}
@@ -51,6 +49,7 @@ public class Simulation {
 					put("random", new RandomMutator());
 					put("constrained", new ConstrainedMutator());
 					put("annealing", new AnnealingMutator());
+					put("methodical", new MethodicalMutator());
 					put("default", new RandomMutator());
 				}
 			});
