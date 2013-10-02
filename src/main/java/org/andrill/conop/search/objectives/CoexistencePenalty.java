@@ -1,39 +1,77 @@
 package org.andrill.conop.search.objectives;
 
-import org.andrill.conop.search.AbstractConfigurable;
-import org.andrill.conop.search.CoexistenceMatrix;
-import org.andrill.conop.search.Event;
-import org.andrill.conop.search.Solution;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Future;
+
+import org.andrill.conop.search.*;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * Create a penalty based on event coexistence violations.
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class CoexistencePenalty extends AbstractConfigurable implements ObjectiveFunction {
+public class CoexistencePenalty extends AbstractParallelObjective {
+	static class CoexistenceCheck implements ObjectiveFunction {
+		private final Event target;
+		private final CoexistenceMatrix runMatrix;
+		public CoexistenceMatrix solutionMatrix;
 
-	@Override
-	public double score(final Solution solution) {
-		int penalty = 0;
-		CoexistenceMatrix rm = solution.getRun().getCoexistenceMatrix();
-		CoexistenceMatrix sm = new CoexistenceMatrix(solution);
-		for (Event e1 : solution.getEvents()) {
-			for (Event e2 : solution.getEvents()) {
-				int observed = rm.getCoexistence(e1, e2);
-				int proposed = sm.getCoexistence(e1, e2);
+		public CoexistenceCheck(final Event target, final CoexistenceMatrix runMatrix) {
+			this.target = target;
+			this.runMatrix = runMatrix;
+		}
+
+		@Override
+		public double score(final Solution solution) {
+			double penalty = 0.0;
+			for (Event event : solution.getEvents()) {
+				int observed = runMatrix.getCoexistence(target, event);
+				int proposed = solutionMatrix.getCoexistence(target, event);
 				int combined = observed & proposed;
 				if (combined == 0) {
-					penalty += 10;
+					penalty += MAJOR_PENALTY;
 				} else if (combined < observed) {
-					penalty += 4;
+					penalty += MINOR_PENALTY;
 				}
 			}
+			return penalty;
 		}
-		return penalty;
+	}
+
+	public static final int MAJOR_PENALTY = 10;
+	public static final int MINOR_PENALTY = 4;
+
+	protected Map<Event, CoexistenceCheck> checks = Maps.newHashMap();
+
+	public CoexistencePenalty() {
+		super("Coexistence");
 	}
 
 	@Override
-	public String toString() {
-		return "Coexistence";
+	public void configure(final Simulation simulation) {
+		super.configure(simulation);
+
+		// initialize our coexistence matrix
+		Run run = simulation.getRun();
+		CoexistenceMatrix matrix = run.getCoexistenceMatrix();
+		for (Event e : run.getEvents()) {
+			checks.put(e, new CoexistenceCheck(e, matrix));
+		}
+	}
+
+	@Override
+	protected List<Future<Double>> internalScore(final Solution solution) {
+		CoexistenceMatrix solutionMatrix = new CoexistenceMatrix(solution);
+		List<Future<Double>> results = Lists.newArrayList();
+		for (Event e : solution.getEvents()) {
+			CoexistenceCheck check = checks.get(e);
+			check.solutionMatrix = solutionMatrix;
+			results.add(execute(check, solution));
+		}
+		return results;
 	}
 }
