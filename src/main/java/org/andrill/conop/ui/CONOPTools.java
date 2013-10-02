@@ -1,13 +1,15 @@
 package org.andrill.conop.ui;
 
 import java.awt.BorderLayout;
+import java.io.File;
+import java.text.DecimalFormat;
 
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 
 import org.andrill.conop.analysis.PostProcess;
-import org.andrill.conop.search.CONOP;
-import org.andrill.conop.search.QNOP;
+import org.andrill.conop.search.*;
+import org.andrill.conop.search.objectives.ObjectiveFunction;
 
 /**
  * The CONOP tools main class.
@@ -45,8 +47,8 @@ public class CONOPTools {
 			CONOP.main(newargs);
 		} else if ("qnop".equals(cmd)) {
 			QNOP.main(newargs);
-			//		} else if ("score".equals(cmd)) {
-			//			Solution.main(newargs);
+		} else if ("score".equals(cmd)) {
+			score(newargs);
 		} else if ("process".equals(cmd)) {
 			PostProcess.main(newargs);
 		} else {
@@ -73,6 +75,35 @@ public class CONOPTools {
 			gui();
 		} else {
 			cli(args);
+		}
+	}
+
+	protected static void score(final String[] args) {
+		if ((args == null) || (args.length == 0)) {
+			System.out.println("Usage: <simulation> <solution 1> ... [solution n]");
+			System.exit(0);
+		}
+
+		// get our run
+		Simulation simulation = new Simulation(new File(args[0]));
+		Run run = simulation.getRun();
+
+		DecimalFormat D = new DecimalFormat("0.00");
+
+		// score our solutions
+		for (int i = 1; i < args.length; i++) {
+			File f = new File(args[i]);
+			Solution solution = Solution.parse(run, f);
+
+			System.out.println("---- " + f.getName() + " ----");
+			for (String key : Simulation.OBJECTIVES.keySet()) {
+				if (!"default".equals(key)) {
+					ObjectiveFunction objective = simulation
+							.lookup(key, ObjectiveFunction.class, Simulation.OBJECTIVES);
+					System.out.println("  " + key + ": " + D.format(objective.score(solution)));
+				}
+			}
+			System.out.println("");
 		}
 	}
 }
