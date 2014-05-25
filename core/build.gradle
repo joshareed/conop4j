@@ -1,0 +1,13 @@
+manifest.mainAttributes(
+	'Implementation-Title': 'CONOP Core',
+	'Implementation-Version': version,
+	'Main-Class': 'org.andrill.conop.ui.CONOPTools'
+)
+
+dependencies {
+	compile 'com.google.guava:guava:17.0'
+	compile 'net.sf.opencsv:opencsv:2.3'
+
+	testCompile "org.codehaus.groovy:groovy-all:$groovyVersion"
+	testCompile "org.spockframework:spock-core:1.0-groovy-2.0-SNAPSHOT"
+}
