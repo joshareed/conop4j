@@ -1,8 +1,7 @@
 package org.andrill.conop.core.constraints
 
-import org.andrill.conop.core.constraints.NullChecker;
-import org.andrill.conop.core.Run
 import org.andrill.conop.core.Solution
+import org.andrill.conop.core.RunFixtures
 
 import spock.lang.Specification
 
@@ -16,7 +15,7 @@ class NullCheckerSpec extends Specification {
 		checker.isValid(null)
 
 		when: 'a run'
-		def run = Run.loadCONOP9Run(new File('src/test/resources/riley'))
+		def run = RunFixtures.simpleRun()
 
 		then: 'any solution is valid'
 		checker.isValid(Solution.initial(run))

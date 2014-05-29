@@ -1,7 +1,5 @@
 package org.andrill.conop.core.objectives
 
-import org.andrill.conop.core.objectives.MultiPenalty;
-import org.andrill.conop.core.objectives.ObjectiveFunction;
 import org.andrill.conop.core.Simulation
 import org.andrill.conop.core.Solution
 
@@ -27,10 +25,9 @@ class MultiPenaltySpec extends Specification {
 }
 
 class TestPenalty implements ObjectiveFunction {
-	int score = 7;
 
 	@Override
-	public double score(Solution solution) {
-		return score;
+	double score(Solution solution) {
+		7
 	}
 }

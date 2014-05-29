@@ -1,10 +1,10 @@
 package org.andrill.conop.core.mutators
 
-import org.andrill.conop.core.mutators.AbstractMutator;
 import org.andrill.conop.core.Event
 import org.andrill.conop.core.Run
 import org.andrill.conop.core.Simulation
 import org.andrill.conop.core.Solution
+import org.andrill.conop.core.RunFixtures
 
 import spock.lang.Specification
 
@@ -13,7 +13,7 @@ class AbstractMutatorSpec extends Specification {
 
 	void setup() {
 		Event.ID = 0
-		run = Run.loadCONOP9Run(new File('src/test/resources/riley'))
+		run = RunFixtures.simpleRun()
 	}
 
 	def "test initial setup"() {

@@ -1,6 +1,5 @@
 package org.andrill.conop.core.listeners
 
-import org.andrill.conop.core.listeners.StoppingListener;
 import org.andrill.conop.core.*
 import org.andrill.conop.core.listeners.Listener.Mode
 
@@ -118,7 +117,7 @@ class StoppingListenerSpec extends Specification {
 
 		and: 'a run'
 		Event.ID = 0
-		def run = Run.loadCONOP9Run(new File('src/test/resources/riley'))
+		def run = RunFixtures.simpleRun()
 
 		expect:
 		listener.currentIteration == 0

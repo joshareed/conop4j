@@ -1,9 +1,5 @@
 package org.andrill.conop.core
 
-import org.andrill.conop.core.Event;
-import org.andrill.conop.core.Run;
-import org.andrill.conop.core.Solution;
-
 import spock.lang.Specification
 
 class SolutionSpec extends Specification {
@@ -11,7 +7,7 @@ class SolutionSpec extends Specification {
 
 	void setup() {
 		Event.ID = 0
-		run = Run.loadCONOP9Run(new File('src/test/resources/riley'))
+		run = RunFixtures.simpleRun()
 	}
 
 	def "creating an initial solution for a run works"() {
