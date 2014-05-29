@@ -45,25 +45,4 @@ class SolutionSpec extends Specification {
 		then: 'the position matches'
 		solution.getPosition(event) == 0
 	}
-
-	def "can parse a solution"() {
-		when: 'parse a solution'
-		def solution = Solution.parse(run, new File('src/test/resources/conop4j/solution-riley.csv'))
-
-		then: 'the solution was parsed'
-		solution != null
-
-		and: 'expected number of events'
-		solution.events.size() == 124
-
-		when: 'find specific event'
-		def event = solution.events.find { it.name == 'Dysoristus lochmanae LAD' }
-
-		then: 'event was found'
-		event != null
-
-		and: 'position and rank is correct'
-		solution.getPosition(event) == 0
-		solution.getRank(event) == 124
-	}
 }

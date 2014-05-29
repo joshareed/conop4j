@@ -154,17 +154,7 @@ public class Simulation {
 	 * @return the initial solution.
 	 */
 	public Solution getInitialSolution() {
-		// support loading from a file
-		String path = properties.getProperty("initial");
-		Solution initial = null;
-		if (path != null) {
-			initial = Solution.parse(run, new File(directory, path));
-		}
-		if (initial != null) {
-			return initial;
-		} else {
-			return Solution.initial(run);
-		}
+		return Solution.initial(run);
 	}
 
 	/**
