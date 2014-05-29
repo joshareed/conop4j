@@ -253,7 +253,9 @@ public class Simulation {
 			String eventFile = properties.getProperty("data.eventFile", "events.evt");
 			String loadFile = properties.getProperty("data.loadFile", "loadfile.dat");
 
-			run = Run.loadCONOP9Run(new File(runDir, sectionFile), new File(runDir, eventFile), new File(runDir, loadFile), overrideWeights);
+			// run = Run.loadCONOP9Run(new File(runDir, sectionFile), new
+			// File(runDir, eventFile), new File(runDir,
+			// loadFile), overrideWeights);
 		}
 		return run;
 	}
@@ -266,7 +268,7 @@ public class Simulation {
 	 * Values:
 	 * 		exponential - {@link ExponentialSchedule} (default)
 	 * 		linear      - {@link LinearSchedule}
-	 *
+	 * 
 	 * Additional Keys:
 	 * 		schedule.initial    - initial temperature (double)
 	 * 		schedule.delta      - temperature delta (double)

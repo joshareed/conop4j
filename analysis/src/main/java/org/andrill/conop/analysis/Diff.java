@@ -94,7 +94,8 @@ public class Diff {
 	 */
 	public static void main(final String[] args) {
 		// load our run
-		Run run = Run.loadCONOP9Run(new File(args[0]), false);
+		// Run run = Run.loadCONOP9Run(new File(args[0]), false);
+		Run run = null;
 
 		// load our first solution
 		Map<Event, Rank> s1 = fromCSV(run, new File(args[1]));
