@@ -6,7 +6,7 @@ import groovy.transform.CompileStatic
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-class LocalRepository {
+class LocalRepository implements Repository {
 	private static final PATTERN = ~/.*\.json/
 
 	private Logger log = LoggerFactory.getLogger(LocalRepository)
