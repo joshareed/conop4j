@@ -209,7 +209,6 @@ public class Run {
 	}
 
 	protected final ImmutableSet<Event> events;
-	protected CoexistenceMatrix matrix = null;
 	protected RanksMatrix ranks = null;
 	protected final ImmutableSet<Section> sections;
 	protected final ImmutableMap<Event, Integer> ids;
@@ -251,18 +250,6 @@ public class Run {
 			best = solution;
 			getRanksMatrix().update(solution);
 		}
-	}
-
-	/**
-	 * Gets the coexistence matrix for this run.
-	 *
-	 * @return the coexistence matrix.
-	 */
-	public CoexistenceMatrix getCoexistenceMatrix() {
-		if (matrix == null) {
-			matrix = new CoexistenceMatrix(this);
-		}
-		return matrix;
 	}
 
 	/**
