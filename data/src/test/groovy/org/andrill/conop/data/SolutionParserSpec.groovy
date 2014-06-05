@@ -1,7 +1,9 @@
 package org.andrill.conop.data
 
+import org.andrill.conop.core.DefaultEvent
+import org.andrill.conop.core.DefaultObservation
+import org.andrill.conop.core.DefaultSection
 import org.andrill.conop.core.Event
-import org.andrill.conop.core.Observation
 import org.andrill.conop.core.Run
 import org.andrill.conop.core.Section
 
@@ -10,22 +12,21 @@ import spock.lang.Specification
 class SolutionParserSpec extends Specification {
 
 	private Run getTestRun() {
-		Event.ID = 0
 
 		// events
-		Event e1 = Event.createPaired("Fossil 1 LAD", "Fossil 1 FAD")
+		Event e1 = DefaultEvent.createPaired("Fossil 1 LAD", "Fossil 1 FAD")
 		Event e2 = e1.beforeConstraint
-		Event e3 = Event.createPaired("Fossil 2 LAD", "Fossil 2 FAD")
+		Event e3 = DefaultEvent.createPaired("Fossil 2 LAD", "Fossil 2 FAD")
 		Event e4 = e3.beforeConstraint
-		Event e5 = new Event("Ash")
+		Event e5 = new DefaultEvent("Ash")
 
 		// section
-		Section s1 = new Section("Section 1", [
-			new Observation(e1, -1, 1.0, 10.0),
-			new Observation(e3, -2, 1.0, 10.0),
-			new Observation(e5, -3, 10.0, 10.0),
-			new Observation(e4, -4, 10.0, 1.0),
-			new Observation(e2, -5, 10.0, 1.0)
+		Section s1 = new DefaultSection("Section 1", [
+			new DefaultObservation(e1, -1, 1.0, 10.0),
+			new DefaultObservation(e3, -2, 1.0, 10.0),
+			new DefaultObservation(e5, -3, 10.0, 10.0),
+			new DefaultObservation(e4, -4, 10.0, 1.0),
+			new DefaultObservation(e2, -5, 10.0, 1.0)
 		])
 
 		return new Run([s1])
