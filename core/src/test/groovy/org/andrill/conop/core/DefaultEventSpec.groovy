@@ -1,31 +1,30 @@
 package org.andrill.conop.core
 
-import org.andrill.conop.core.Event;
+import org.andrill.conop.core.DefaultEvent;
 
 import spock.lang.*
 
-class EventSpec extends Specification {
+class DefaultEventSpec extends Specification {
 
 	def "create simple event"() {
 		given: 'an event'
-		def event = new Event('Test')
+		def event = new DefaultEvent('Test')
 
 		expect: 'the event is initialized properly'
 		event.name == 'Test'
 		event.toString() == 'Test'
 		!event.beforeConstraint
 		!event.afterConstraint
-		event.internalId >= 0
 
 		and: 'equals and hashCode work as expected'
-		def other = new Event('Test')
+		def other = new DefaultEvent('Test')
 		other == event
 		other.hashCode() == event.hashCode()
 	}
 
 	def "create paired events"() {
 		given: 'a paried event'
-		def first = Event.createPaired('First', 'Last')
+		def first = DefaultEvent.createPaired('First', 'Last')
 
 		expect: 'the first event is initialize properly'
 		first.name == 'First'

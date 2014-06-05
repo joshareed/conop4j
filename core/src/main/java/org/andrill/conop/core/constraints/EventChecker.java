@@ -11,7 +11,7 @@ import com.google.common.collect.Sets;
 
 /**
  * Ensures all event constraints are satisfied.
- * 
+ *
  * @author Josh Reed (jareed@andrill.org)
  */
 public class EventChecker extends AbstractConfigurable implements ConstraintChecker {

@@ -1,6 +1,6 @@
 package org.andrill.conop.core.mutators
 
-import org.andrill.conop.core.Event
+import org.andrill.conop.core.DefaultEvent
 import org.andrill.conop.core.Run
 import org.andrill.conop.core.Solution
 import org.andrill.conop.core.RunFixtures
@@ -11,7 +11,6 @@ class ConstrainedMutatorSpec extends Specification {
 	private Run run;
 
 	void setup() {
-		Event.ID = 0
 		run = RunFixtures.simpleRun()
 	}
 

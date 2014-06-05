@@ -1,18 +1,18 @@
 package org.andrill.conop.core
 
-import org.andrill.conop.core.Event;
-import org.andrill.conop.core.Observation;
+import org.andrill.conop.core.DefaultEvent;
+import org.andrill.conop.core.DefaultObservation;
 
 import spock.lang.Specification
 
-class ObservationSpec extends Specification {
+class DefaultObservationSpec extends Specification {
 
 	def "create simple observation"() {
 		given: "an event"
-		def event = new Event("Test")
+		def event = new DefaultEvent("Test")
 
 		when: "create an observation"
-		def obs = new Observation(event, 100.0, 10.0, 5.0)
+		def obs = new DefaultObservation(event, 100.0, 10.0, 5.0)
 
 		then: "the observation is initialized correctly"
 		obs.event == event

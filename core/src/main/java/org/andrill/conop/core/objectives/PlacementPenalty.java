@@ -1,18 +1,29 @@
 package org.andrill.conop.core.objectives;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.concurrent.Future;
 
-import org.andrill.conop.core.*;
+import org.andrill.conop.core.Event;
+import org.andrill.conop.core.Observation;
+import org.andrill.conop.core.Run;
+import org.andrill.conop.core.Section;
+import org.andrill.conop.core.Simulation;
+import org.andrill.conop.core.Solution;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
  * A parallel version of {@link PlacementPenalty}.
- * 
+ *
  * @author Josh Reed (jareed@andrill.org)
  */
 public class PlacementPenalty extends AbstractParallelObjective {
@@ -45,7 +56,7 @@ public class PlacementPenalty extends AbstractParallelObjective {
 
 		/**
 		 * Create a new section placement for the specified section.
-		 * 
+		 *
 		 * @param section
 		 *            the section.
 		 */
@@ -69,7 +80,7 @@ public class PlacementPenalty extends AbstractParallelObjective {
 
 		/**
 		 * Gets the placement penalty for this section.
-		 * 
+		 *
 		 * @return the penalty.
 		 */
 		public double getPenalty() {
@@ -98,7 +109,7 @@ public class PlacementPenalty extends AbstractParallelObjective {
 
 		/**
 		 * Gets the placement level for the specified event.
-		 * 
+		 *
 		 * @param e
 		 *            the event.
 		 * @return the placement level.
@@ -124,7 +135,7 @@ public class PlacementPenalty extends AbstractParallelObjective {
 
 		/**
 		 * Place the specified event.
-		 * 
+		 *
 		 * @param e
 		 *            the event.
 		 */
@@ -141,7 +152,8 @@ public class PlacementPenalty extends AbstractParallelObjective {
 					placed.get(o.getLevel()).add(e);
 					head = optimal;
 				} else {
-					// calculate the cost of placing it at the current head and the
+					// calculate the cost of placing it at the current head and
+					// the
 					// cost of shifting the head placements up one level
 					double placePenalty = getPenalty(e, levels.get(head));
 					double shiftPenalty = getShiftPenalty();
@@ -172,7 +184,7 @@ public class PlacementPenalty extends AbstractParallelObjective {
 
 		/**
 		 * Scores the specified solution against this section.
-		 * 
+		 *
 		 * @param solution
 		 *            the solution.
 		 * @return the score.

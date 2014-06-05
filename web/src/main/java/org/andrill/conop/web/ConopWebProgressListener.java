@@ -3,13 +3,21 @@ package org.andrill.conop.web;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.andrill.conop.core.*;
+import org.andrill.conop.core.CONOP;
+import org.andrill.conop.core.Event;
+import org.andrill.conop.core.RanksMatrix;
+import org.andrill.conop.core.Simulation;
+import org.andrill.conop.core.Solution;
 import org.andrill.conop.core.listeners.AsyncListener;
 import org.andrill.conop.core.util.TimerUtils;
 
@@ -23,7 +31,7 @@ public class ConopWebProgressListener extends AsyncListener {
 	private String name = null;
 	private int next = 15;
 	private String run = null;
-	private Map<String, String> invariants = Maps.newHashMap();
+	private final Map<String, String> invariants = Maps.newHashMap();
 
 	@Override
 	public void configure(final Simulation simulation) {
@@ -179,8 +187,7 @@ public class ConopWebProgressListener extends AsyncListener {
 	@Override
 	protected void run(final double temp, final long iteration, final Solution current, final Solution best) {
 		// send temp, iteration, best score
-		post("runs/" + run + "/progress", getProgressPayload(temp, iteration, best,
-				(TimerUtils.getCounter() % 60) == 0 ? best : null));
+		post("runs/" + run + "/progress", getProgressPayload(temp, iteration, best, (TimerUtils.getCounter() % 60) == 0 ? best : null));
 	}
 
 	@Override

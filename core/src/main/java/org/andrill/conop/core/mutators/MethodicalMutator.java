@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.andrill.conop.core.Event;
+import org.andrill.conop.core.Run;
 import org.andrill.conop.core.Simulation;
 import org.andrill.conop.core.Solution;
 
@@ -21,8 +22,9 @@ public class MethodicalMutator extends AbstractMutator {
 
 	@Override
 	public void configure(final Simulation simulation) {
-		for (Event e : simulation.getRun().getEvents()) {
-			map.put(e.getInternalId(), e);
+		Run run = simulation.getRun();
+		for (Event e : run.getEvents()) {
+			map.put(run.getId(e), e);
 		}
 	}
 

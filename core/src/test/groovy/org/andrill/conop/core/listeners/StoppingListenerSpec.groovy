@@ -116,7 +116,6 @@ class StoppingListenerSpec extends Specification {
 		def listener = new StoppingListener()
 
 		and: 'a run'
-		Event.ID = 0
 		def run = RunFixtures.simpleRun()
 
 		expect:

@@ -1,0 +1,132 @@
+package org.andrill.conop.core;
+
+import java.math.BigDecimal;
+import java.util.Comparator;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
+
+/**
+ * Represents a section.
+ *
+ * @author Josh Reed (jareed@andrill.org)
+ */
+public class DefaultSection implements Section {
+	protected final Map<Event, Observation> events;
+	protected final ImmutableMultimap<BigDecimal, Observation> levels;
+	protected final String name;
+	protected final ImmutableSet<Observation> observations;
+
+	/**
+	 * Create a new section.
+	 *
+	 * @param name
+	 *            the name.
+	 * @param list
+	 *            the list of observations.
+	 */
+	public DefaultSection(final String name, final List<Observation> list) {
+		this.name = name;
+		observations = ImmutableSet.copyOf(list);
+		events = new IdentityHashMap<Event, Observation>();
+
+		// index the observations by event and level
+		ImmutableMultimap.Builder<BigDecimal, Observation> levelBuilder = ImmutableMultimap.builder();
+		for (Observation o : list) {
+			events.put(o.getEvent(), o);
+			levelBuilder.put(o.getLevel(), o);
+		}
+		levels = levelBuilder.orderKeysBy(new Comparator<BigDecimal>() {
+			@Override
+			public int compare(final BigDecimal bd1, final BigDecimal bd2) {
+				return bd1.compareTo(bd2);
+			}
+		}).build();
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		DefaultSection other = (DefaultSection) obj;
+		if (name == null) {
+			if (other.name != null) {
+				return false;
+			}
+		} else if (!name.equals(other.name)) {
+			return false;
+		}
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.andrill.conop.core.Section#getEvents()
+	 */
+	@Override
+	public ImmutableSet<Event> getEvents() {
+		return ImmutableSet.copyOf(events.keySet());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.andrill.conop.core.Section#getLevels()
+	 */
+	@Override
+	public ImmutableSet<BigDecimal> getLevels() {
+		return levels.keySet();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.andrill.conop.core.Section#getName()
+	 */
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.andrill.conop.core.Section#getObservation(org.andrill.conop.core.Event)
+	 */
+	@Override
+	public Observation getObservation(final Event event) {
+		return events.get(event);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.andrill.conop.core.Section#getObservations()
+	 */
+	@Override
+	public ImmutableSet<Observation> getObservations() {
+		return observations;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.andrill.conop.core.Section#getObservations(java.math.BigDecimal)
+	 */
+	@Override
+	public ImmutableSet<Observation> getObservations(final BigDecimal level) {
+		return ImmutableSet.copyOf(levels.get(level));
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = (prime * result) + ((name == null) ? 0 : name.hashCode());
+		return result;
+	}
+
+	@Override
+	public String toString() {
+		return name;
+	}
+}

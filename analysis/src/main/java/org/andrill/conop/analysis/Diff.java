@@ -16,7 +16,7 @@ import com.google.common.collect.Maps;
 
 /**
  * Compares two solutions and generates a difference spreadsheet.
- * 
+ *
  * @author Josh Reed (jareed@andrill.org)
  */
 public class Diff {
@@ -54,7 +54,7 @@ public class Diff {
 
 	/**
 	 * Load a solution from a CSV file.
-	 * 
+	 *
 	 * @param run
 	 *            the run.
 	 * @param csv
@@ -88,7 +88,7 @@ public class Diff {
 
 	/**
 	 * Runs the difference calculator.
-	 * 
+	 *
 	 * @param args
 	 *            the args.
 	 */
@@ -120,8 +120,7 @@ public class Diff {
 				int min2 = Math.min(r2.min, r2.max);
 				int max2 = Math.max(r2.min, r2.max);
 				boolean overlaps = (min1 <= max2) && (min2 <= max1);
-				writer.write("'" + evt.getName() + "'\t" + r1.rank + "\t" + min1 + "\t" + max1 + "\t" + r2.rank + "\t"
-						+ min2 + "\t" + max2 + "\t" + overlaps);
+				writer.write("'" + evt.getName() + "'\t" + r1.rank + "\t" + min1 + "\t" + max1 + "\t" + r2.rank + "\t" + min2 + "\t" + max2 + "\t" + overlaps);
 				for (int i = 0; i < s1.size(); i++) {
 					writer.write("\t");
 					int r = s1.size() - i;

@@ -10,7 +10,7 @@ import com.google.common.collect.Lists;
 
 /**
  * Moves a random event within its before and after constraints.
- * 
+ *
  * @author Josh Reed (jareed@andrill.org)
  */
 public class ConstrainedMutator extends AbstractMutator {

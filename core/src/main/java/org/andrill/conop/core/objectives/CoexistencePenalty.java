@@ -4,14 +4,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
-import org.andrill.conop.core.*;
+import org.andrill.conop.core.CoexistenceMatrix;
+import org.andrill.conop.core.Event;
+import org.andrill.conop.core.Run;
+import org.andrill.conop.core.Simulation;
+import org.andrill.conop.core.Solution;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
  * Create a penalty based on event coexistence violations.
- * 
+ *
  * @author Josh Reed (jareed@andrill.org)
  */
 public class CoexistencePenalty extends AbstractParallelObjective {
