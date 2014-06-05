@@ -1,7 +1,15 @@
 package org.andrill.conop.core;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -11,14 +19,14 @@ import com.google.common.collect.Maps;
 
 /**
  * A solution contains a set of events in a particular order.
- * 
+ *
  * @author Josh Reed (jareed@andrill.org)
  */
 public class Solution {
 
 	/**
 	 * Creates an initial solution with events sorted by type.
-	 * 
+	 *
 	 * @param run
 	 *            the run.
 	 * @return the initial solution.
@@ -32,9 +40,9 @@ public class Solution {
 			}
 
 			public Integer toInt(final Event e) {
-				if ((e.before != null) && (e.after == null)) {
+				if ((e.getBeforeConstraint() != null) && (e.getAfterConstraint() == null)) {
 					return Integer.valueOf(-1);
-				} else if ((e.after != null) && (e.before == null)) {
+				} else if ((e.getAfterConstraint() != null) && (e.getBeforeConstraint() == null)) {
 					return Integer.valueOf(1);
 				} else {
 					return Integer.valueOf(0);
@@ -46,9 +54,11 @@ public class Solution {
 
 	/**
 	 * Parse a solution from a file.
-	 * 
-	 * @param run the run data.
-	 * @param file the solution file.
+	 *
+	 * @param run
+	 *            the run data.
+	 * @param file
+	 *            the solution file.
 	 * @return the solution or null if an error occurs.
 	 */
 	public static Solution parse(final Run run, final File file) {
@@ -88,7 +98,7 @@ public class Solution {
 
 	/**
 	 * Create a new Solution with the specified ordered list of events.
-	 * 
+	 *
 	 * @param run
 	 *            the run.
 	 * @param events
@@ -107,7 +117,7 @@ public class Solution {
 
 	/**
 	 * Gets the event at the specified position.
-	 * 
+	 *
 	 * @param position
 	 *            the position.
 	 * @return the event.
@@ -118,7 +128,7 @@ public class Solution {
 
 	/**
 	 * Gets the ordered, immutable list of events in this solution.
-	 * 
+	 *
 	 * @return the immutable list of events.
 	 */
 	public ImmutableList<Event> getEvents() {
@@ -127,7 +137,7 @@ public class Solution {
 
 	/**
 	 * Gets the position of the event in this solution.
-	 * 
+	 *
 	 * @param event
 	 *            the event.
 	 * @return the position.
@@ -138,7 +148,7 @@ public class Solution {
 
 	/**
 	 * Gets the rank for a specified event.
-	 * 
+	 *
 	 * @param e
 	 *            the event.
 	 * @return the rank.
@@ -149,7 +159,7 @@ public class Solution {
 
 	/**
 	 * Gets the run this solution belongs to.
-	 * 
+	 *
 	 * @return the run.
 	 */
 	public Run getRun() {
@@ -158,7 +168,7 @@ public class Solution {
 
 	/**
 	 * Gets the score for this solution.
-	 * 
+	 *
 	 * @return the score.
 	 */
 	public double getScore() {
@@ -168,13 +178,13 @@ public class Solution {
 	/**
 	 * Generates a hash representation of this solution. This hash is only
 	 * guaranteed to be unique for a single run.
-	 * 
+	 *
 	 * @return the hash.
 	 */
 	public String hash() {
 		StringBuilder hash = new StringBuilder();
 		for (Event e : events) {
-			hash.append(e.id);
+			hash.append(e);
 			hash.append(':');
 		}
 		return hash.toString();
@@ -182,7 +192,7 @@ public class Solution {
 
 	/**
 	 * Sets the score for this solution.
-	 * 
+	 *
 	 * @param score
 	 *            the score.
 	 */

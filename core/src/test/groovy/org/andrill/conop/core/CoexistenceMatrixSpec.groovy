@@ -3,17 +3,13 @@ package org.andrill.conop.core
 import static org.andrill.conop.core.CoexistenceMatrix.*
 
 import org.andrill.conop.core.CoexistenceMatrix;
-import org.andrill.conop.core.Event;
+import org.andrill.conop.core.DefaultEvent;
 import org.andrill.conop.core.Run;
 import org.andrill.conop.core.Solution;
 
 import spock.lang.Specification
 
 class CoexistenceMatrixSpec extends Specification {
-
-	def setup() {
-		Event.ID = 0;
-	}
 
 	def "coexistence is computed correctly"() {
 		when: 'compute coexistence'

@@ -1,15 +1,11 @@
 package org.andrill.conop.core
 
-import org.andrill.conop.core.Event;
+import org.andrill.conop.core.DefaultEvent;
 import org.andrill.conop.core.Run;
 
 import spock.lang.Specification
 
 class RunSpec extends Specification {
-
-	def setup() {
-		Event.ID = 0;
-	}
 
 	def "can load a standard CONOP9 run directory and preserve the weights"() {
 		when:

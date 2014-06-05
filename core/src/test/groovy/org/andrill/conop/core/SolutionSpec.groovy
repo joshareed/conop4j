@@ -6,7 +6,6 @@ class SolutionSpec extends Specification {
 	private Run run;
 
 	void setup() {
-		Event.ID = 0
 		run = RunFixtures.simpleRun()
 	}
 

@@ -4,7 +4,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
-import org.andrill.conop.core.*;
+import org.andrill.conop.core.Event;
+import org.andrill.conop.core.Observation;
+import org.andrill.conop.core.Run;
+import org.andrill.conop.core.Section;
+import org.andrill.conop.core.Simulation;
+import org.andrill.conop.core.Solution;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -23,7 +28,7 @@ public class RelativeOrderingPenalty extends AbstractParallelObjective {
 			penalties = new int[events.size()][2];
 
 			for (Event e : events) {
-				int i = e.getInternalId();
+				int i = run.getId(e);
 				penalties[i][0] = 0;
 				penalties[i][1] = 0;
 
@@ -49,10 +54,11 @@ public class RelativeOrderingPenalty extends AbstractParallelObjective {
 			int me = solution.getRank(event);
 			for (Event e : solution.getEvents()) {
 				int them = solution.getRank(e);
+				int id = solution.getRun().getId(e);
 				if (me < them) {
-					score += penalties[e.getInternalId()][1];
+					score += penalties[id][1];
 				} else if (me > them) {
-					score += penalties[e.getInternalId()][0];
+					score += penalties[id][0];
 				}
 			}
 

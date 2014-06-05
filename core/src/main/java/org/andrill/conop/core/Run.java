@@ -9,12 +9,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.*;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 
 /**
  * Represents a CONOP run.
- * 
+ *
  * @author Josh Reed (jareed@andrill.org)
  */
 public class Run {
@@ -22,7 +27,7 @@ public class Run {
 	/**
 	 * Load a CONOP9 run from the specified directory. This assumes the standard
 	 * filenames of sections.sct, events.evt, and loadfile.dat.
-	 * 
+	 *
 	 * @param dir
 	 *            the run directory.
 	 * @return the run.
@@ -34,7 +39,7 @@ public class Run {
 	/**
 	 * Load a CONOP9 run from the specified directory. This assumes the standard
 	 * filenames of sections.sct, events.evt, and loadfile.dat.
-	 * 
+	 *
 	 * @param dir
 	 *            the run directory.
 	 * @param overrideWeights
@@ -42,13 +47,12 @@ public class Run {
 	 * @return the run.
 	 */
 	public static Run loadCONOP9Run(final File dir, final boolean overrideWeights) {
-		return loadCONOP9Run(new File(dir, "sections.sct"), new File(dir, "events.evt"), new File(dir, "loadfile.dat"),
-				overrideWeights);
+		return loadCONOP9Run(new File(dir, "sections.sct"), new File(dir, "events.evt"), new File(dir, "loadfile.dat"), overrideWeights);
 	}
 
 	/**
 	 * Load a CONOP9 run from the specified files.
-	 * 
+	 *
 	 * @param sectionFile
 	 *            the sections file.
 	 * @param eventFile
@@ -59,8 +63,7 @@ public class Run {
 	 *            override the specified weights.
 	 * @return the run.
 	 */
-	public static Run loadCONOP9Run(final File sectionFile, final File eventFile, final File loadFile,
-			final boolean overrideWeights) {
+	public static Run loadCONOP9Run(final File sectionFile, final File eventFile, final File loadFile, final boolean overrideWeights) {
 
 		// parse section names
 		Map<String, String> sectionNames = Maps.newHashMap();
@@ -75,8 +78,8 @@ public class Run {
 		}
 
 		// parse our load file
-		Map<String, Event> events = Maps.newHashMap();
-		Multimap<String, Observation> observations = HashMultimap.create();
+		Map<String, DefaultEvent> events = Maps.newHashMap();
+		Multimap<String, DefaultObservation> observations = HashMultimap.create();
 		for (List<String> row : parse(loadFile)) {
 			String id = row.get(0);
 			String type = row.get(1);
@@ -85,19 +88,19 @@ public class Run {
 			double weightUp = Double.parseDouble(row.get(6));
 			double weightDn = Double.parseDouble(row.get(7));
 			String key = id + "_" + type;
-			Event event = events.get(key);
+			DefaultEvent event = events.get(key);
 			if (event == null) {
 				String name = eventNames.get(id).replaceAll("  ", " ");
 				if (type.equals("1")) {
-					Event lad = Event.createPaired(name + " LAD", name + " FAD");
+					DefaultEvent lad = DefaultEvent.createPaired(name + " LAD", name + " FAD");
 					event = lad.getBeforeConstraint();
 					events.put(id + "_2", lad);
 				} else if (type.equals("3")) {
-					event = new Event(name + " MID", events.get(id + "_1"), events.get(id + "_2"));
+					event = new DefaultEvent(name + " MID", events.get(id + "_1"), events.get(id + "_2"));
 				} else if (type.equals("4")) {
-					event = new Event(name + " ASH");
+					event = new DefaultEvent(name + " ASH");
 				} else if (type.equals("5")) {
-					event = new Event(name + " AGE");
+					event = new DefaultEvent(name + " AGE");
 				}
 				events.put(key, event);
 			}
@@ -118,20 +121,21 @@ public class Run {
 			boolean unique = true;
 			for (Observation o : observations.get(section)) {
 				if (event.equals(o.getEvent())) {
-					System.err.println("Event " + o.getEvent().getName() + " (" + id + ") is not unique in section "
-							+ section);
+					System.err.println("Event " + o.getEvent().getName() + " (" + id + ") is not unique in section " + section);
 					unique = false;
 				}
 			}
 			if (unique) {
-				observations.put(section, new Observation(event, level, weightUp, weightDn));
+				observations.put(section, new DefaultObservation(event, level, weightUp, weightDn));
 			}
 		}
 
 		// create all our sections
 		List<Section> sections = Lists.newArrayList();
 		for (String key : observations.keySet()) {
-			sections.add(new Section(sectionNames.get(key), Lists.newArrayList(observations.get(key))));
+			List<Observation> value = Lists.newArrayList();
+			value.addAll(observations.get(key));
+			sections.add(new DefaultSection(sectionNames.get(key), value));
 		}
 
 		// create the run
@@ -140,7 +144,7 @@ public class Run {
 
 	/**
 	 * Parse the specified CONOP formatted file.
-	 * 
+	 *
 	 * @param file
 	 *            the file.
 	 * @return the parsed lines.
@@ -166,7 +170,7 @@ public class Run {
 
 	/**
 	 * Parse the specified line.
-	 * 
+	 *
 	 * @param line
 	 *            the line.
 	 * @return the parsed line.
@@ -208,11 +212,12 @@ public class Run {
 	protected CoexistenceMatrix matrix = null;
 	protected RanksMatrix ranks = null;
 	protected final ImmutableSet<Section> sections;
+	protected final ImmutableMap<Event, Integer> ids;
 	protected Solution best = null;
 
 	/**
 	 * Create a new run from the specified sections.
-	 * 
+	 *
 	 * @param list
 	 *            the sections.
 	 */
@@ -225,12 +230,21 @@ public class Run {
 			b.addAll(s.getEvents());
 		}
 		events = b.build();
+
+		// assign ids to events
+		ImmutableMap.Builder<Event, Integer> i = ImmutableMap.builder();
+		int id = 0;
+		for (Event e : events) {
+			i.put(e, id++);
+		}
+		ids = i.build();
 	}
 
 	/**
 	 * Add a new solution to this run.
-	 * 
-	 * @param solution the scored solution.
+	 *
+	 * @param solution
+	 *            the scored solution.
 	 */
 	public void add(final Solution solution) {
 		if ((best == null) || (solution.getScore() <= best.getScore())) {
@@ -241,7 +255,7 @@ public class Run {
 
 	/**
 	 * Gets the coexistence matrix for this run.
-	 * 
+	 *
 	 * @return the coexistence matrix.
 	 */
 	public CoexistenceMatrix getCoexistenceMatrix() {
@@ -253,28 +267,32 @@ public class Run {
 
 	/**
 	 * Gets all events in this run.
-	 * 
+	 *
 	 * @return the events.
 	 */
 	public ImmutableSet<Event> getEvents() {
 		return events;
 	}
 
+	public int getId(final Event e) {
+		return ids.get(e);
+	}
+
 	/**
 	 * Gets the ranks matrix for this run.
-	 * 
+	 *
 	 * @return the ranks matrix.
 	 */
 	public RanksMatrix getRanksMatrix() {
 		if (ranks == null) {
-			ranks = new RanksMatrix(events.size());
+			ranks = new RanksMatrix(this);
 		}
 		return ranks;
 	}
 
 	/**
 	 * Gets all sections in this run.
-	 * 
+	 *
 	 * @return the sections.
 	 */
 	public ImmutableSet<Section> getSections() {

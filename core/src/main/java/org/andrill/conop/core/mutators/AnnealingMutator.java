@@ -13,7 +13,7 @@ import com.google.common.collect.Lists;
  * Randomly move an event with no consideration to constraints. The possible
  * distance an event can move reduces as the temperature of the simulation
  * decreases.
- * 
+ *
  * @author Josh Reed (jareed@andrill.org)
  */
 public class AnnealingMutator extends AbstractMutator implements Listener {

@@ -16,7 +16,7 @@ import au.com.bytecode.opencsv.CSVWriter;
 
 /**
  * Writes a log and current best solution to files every minute.
- * 
+ *
  * @author Josh Reed (jareed@andrill.org)
  */
 public class SnapshotListener extends AsyncListener {
@@ -60,12 +60,7 @@ public class SnapshotListener extends AsyncListener {
 	protected void run(final double temp, final long iteration, final Solution current, final Solution best) {
 		try {
 			writeResults(solutionFile, best);
-			writer.writeNext(new String[] {
-					I.format((next / 60) - 1),
-					I.format(iteration),
-					D.format(temp),
-					D.format(best.getScore())
-			});
+			writer.writeNext(new String[] { I.format((next / 60) - 1), I.format(iteration), D.format(temp), D.format(best.getScore()) });
 			writer.flush();
 		} catch (IOException e) {
 			e.printStackTrace();

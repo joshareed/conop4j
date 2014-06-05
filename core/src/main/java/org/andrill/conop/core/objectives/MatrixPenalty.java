@@ -7,7 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
-import org.andrill.conop.core.*;
+import org.andrill.conop.core.Event;
+import org.andrill.conop.core.Observation;
+import org.andrill.conop.core.Run;
+import org.andrill.conop.core.Section;
+import org.andrill.conop.core.Simulation;
+import org.andrill.conop.core.Solution;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -15,7 +20,7 @@ import com.google.common.collect.Maps;
 /**
  * An {@link ObjectiveFunction} implementation that places events using
  * cumulative penalties in a matrix.
- * 
+ *
  * @author Josh Reed (jareed@andrill.org)
  */
 public class MatrixPenalty extends AbstractParallelObjective {
@@ -33,7 +38,7 @@ public class MatrixPenalty extends AbstractParallelObjective {
 
 		/**
 		 * Create a new SectionMatrix.
-		 * 
+		 *
 		 * @param section
 		 *            the section.
 		 */
@@ -58,7 +63,7 @@ public class MatrixPenalty extends AbstractParallelObjective {
 			// initialize our penalty matrix
 			penalties = new double[eventCount][levelCount];
 			for (Event e : run.getEvents()) {
-				int i = e.getInternalId();
+				int i = run.getId(e);
 				Observation o = section.getObservation(e);
 				for (int j = 0; j < levelCount; j++) {
 					if (o == null) {
@@ -78,7 +83,7 @@ public class MatrixPenalty extends AbstractParallelObjective {
 
 		/**
 		 * Score the solution against this section.
-		 * 
+		 *
 		 * @param solution
 		 *            the solution.
 		 * @return the penalty.
@@ -87,11 +92,12 @@ public class MatrixPenalty extends AbstractParallelObjective {
 		public double score(final Solution solution) {
 			int eventCount = solution.getEvents().size();
 			int levelCount = levels.size();
+			Run run = solution.getRun();
 
 			// initialize our score matrix with the penalties
 			for (int i = 0; i < eventCount; i++) {
 				Event e = solution.getEvent(i);
-				System.arraycopy(penalties[e.getInternalId()], 0, matrix[i], 0, levelCount);
+				System.arraycopy(penalties[run.getId(e)], 0, matrix[i], 0, levelCount);
 			}
 
 			// accumulate penalties

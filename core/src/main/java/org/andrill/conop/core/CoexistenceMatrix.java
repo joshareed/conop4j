@@ -3,11 +3,13 @@ package org.andrill.conop.core;
 import java.math.BigDecimal;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 
 /**
  * Models coexistence relationships among events.
- * 
+ *
  * @author Josh Reed (jareed@andrill.org)
  */
 public class CoexistenceMatrix {
@@ -22,8 +24,7 @@ public class CoexistenceMatrix {
 	public static final int CONJUNCT_CONTAINED = (1 << 7);
 	public static final int MASK = (1 << 8) - 1;
 
-	protected static int computeCoexistence(final Number start1, final Number end1, final Number start2,
-			final Number end2) {
+	protected static int computeCoexistence(final Number start1, final Number end1, final Number start2, final Number end2) {
 
 		// handle one or the other not present
 		if ((start1 == null) || (start2 == null) || (end1 == null) || (end2 == null)) {
@@ -60,14 +61,17 @@ public class CoexistenceMatrix {
 	}
 
 	protected final int[][] matrix;
+	protected final ImmutableMap<Event, Integer> ids;
 
 	/**
 	 * Creates a new coexistence matrix for the specified run.
-	 * 
+	 *
 	 * @param run
 	 *            the run.
 	 */
 	public CoexistenceMatrix(final Run run) {
+		ids = initIds(run);
+
 		// create our matrix
 		matrix = initMatrix(run.events.size());
 
@@ -77,13 +81,16 @@ public class CoexistenceMatrix {
 
 	/**
 	 * Create a new coexistence matrix for the specified solution.
-	 * 
+	 *
 	 * @param solution
 	 *            the solution.
 	 */
 	public CoexistenceMatrix(final Solution solution) {
+		Run run = solution.getRun();
+		ids = initIds(run);
+
 		// create our matrix
-		matrix = initMatrix(solution.events.size());
+		matrix = initMatrix(run.events.size());
 
 		// populate the matrix
 		populateMatrix(solution);
@@ -107,7 +114,7 @@ public class CoexistenceMatrix {
 
 	/**
 	 * Get the coexistence value for the specified events.
-	 * 
+	 *
 	 * @param e1
 	 *            the first event.
 	 * @param e2
@@ -115,7 +122,16 @@ public class CoexistenceMatrix {
 	 * @return the coexistence value.
 	 */
 	public int getCoexistence(final Event e1, final Event e2) {
-		return matrix[e1.getInternalId()][e2.getInternalId()];
+		return matrix[ids.get(e1)][ids.get(e2)];
+	}
+
+	protected ImmutableMap<Event, Integer> initIds(final Run run) {
+		// build our id map
+		Builder<Event, Integer> builder = ImmutableMap.builder();
+		for (Event e : run.getEvents()) {
+			builder.put(e, run.getId(e));
+		}
+		return builder.build();
 	}
 
 	private int[][] initMatrix(final int size) {
@@ -133,11 +149,11 @@ public class CoexistenceMatrix {
 		for (Event e1 : events) {
 			for (Event e2 : events) {
 				for (Section s : run.getSections()) {
-					matrix[e1.getInternalId()][e2.getInternalId()] &= computeCoexistence(e1, e2, s);
+					matrix[ids.get(e1)][ids.get(e2)] &= computeCoexistence(e1, e2, s);
 				}
 				// if still null then assume ABSENT
-				if (matrix[e1.getInternalId()][e2.getInternalId()] == MASK) {
-					matrix[e1.getInternalId()][e2.getInternalId()] = 0;
+				if (matrix[ids.get(e1)][ids.get(e2)] == MASK) {
+					matrix[ids.get(e1)][ids.get(e2)] = 0;
 				}
 			}
 		}
@@ -147,7 +163,7 @@ public class CoexistenceMatrix {
 		ImmutableList<Event> events = solution.getEvents();
 		for (Event e1 : events) {
 			for (Event e2 : events) {
-				matrix[e1.getInternalId()][e2.getInternalId()] = computeCoexistence(e1, e2, solution);
+				matrix[ids.get(e1)][ids.get(e2)] = computeCoexistence(e1, e2, solution);
 			}
 		}
 	}

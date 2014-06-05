@@ -1,32 +1,31 @@
 package org.andrill.conop.core
 
-import org.andrill.conop.core.Event;
-import org.andrill.conop.core.Observation;
-import org.andrill.conop.core.Section;
+import org.andrill.conop.core.DefaultEvent;
+import org.andrill.conop.core.DefaultObservation;
+import org.andrill.conop.core.DefaultSection;
 
 import spock.lang.Specification
 
-
-class SectionSpec extends Specification {
+class DefaultSectionSpec extends Specification {
 
 	def "create section"() {
 		given: "two events"
-		def event1 = new Event("Test 1")
-		def event2 = new Event("Test 2")
+		def event1 = new DefaultEvent("Test 1")
+		def event2 = new DefaultEvent("Test 2")
 
 		and: "an observation"
-		def obs1 = new Observation(event1, 100.0, 10.0, 5.0)
-		def obs2 = new Observation(event2, 50.0, 1, 1)
+		def obs1 = new DefaultObservation(event1, 100.0, 10.0, 5.0)
+		def obs2 = new DefaultObservation(event2, 50.0, 1, 1)
 
 		when: "create a section"
-		def section = new Section("Section", [obs1, obs2])
+		def section = new DefaultSection("Section", [obs1, obs2])
 
 		then: "the section is initialized properly"
 		section.name == "Section"
 		section.toString() == "Section"
 
 		and: "equals and hashCode work as expected"
-		def other = new Section("Section", [])
+		def other = new DefaultSection("Section", [])
 		section == other
 		section.hashCode() == other.hashCode()
 

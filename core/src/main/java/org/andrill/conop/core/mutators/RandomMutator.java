@@ -10,7 +10,7 @@ import com.google.common.collect.Lists;
 
 /**
  * Randomly moves an event with no consideration to constraints.
- * 
+ *
  * @author Josh Reed (jareed@andrill.org)
  */
 public class RandomMutator extends AbstractMutator {
