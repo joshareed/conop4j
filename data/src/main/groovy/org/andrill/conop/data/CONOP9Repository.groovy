@@ -1,5 +1,8 @@
 package org.andrill.conop.data
 
+import org.andrill.conop.core.DefaultEvent
+import org.andrill.conop.core.DefaultObservation
+import org.andrill.conop.core.DefaultSection
 import org.andrill.conop.core.Event
 import org.andrill.conop.core.Observation
 import org.andrill.conop.core.Run
@@ -9,7 +12,6 @@ import com.google.common.collect.HashMultimap
 import com.google.common.collect.Lists
 import com.google.common.collect.Maps
 import com.google.common.collect.Multimap
-
 
 class CONOP9Repository implements Repository {
 
@@ -95,15 +97,15 @@ class CONOP9Repository implements Repository {
 			if (event == null) {
 				String name = eventNames.get(id).replaceAll("  ", " ");
 				if (type.equals("1")) {	// 1 = FAD, 2 = LAD
-					Event lad = Event.createPaired(name + " LAD", name + " FAD");
+					Event lad = DefaultEvent.createPaired(name + " LAD", name + " FAD");
 					event = lad.getBeforeConstraint();
 					events.put(id + "_2", lad);
 				} else if (type.equals("3")) {
-					event = new Event(name + " MID", events.get(id + "_1"), events.get(id + "_2"));
+					event = new DefaultEvent(name + " MID", events.get(id + "_1"), events.get(id + "_2"));
 				} else if (type.equals("4")) {
-					event = new Event(name + " ASH");
+					event = new DefaultEvent(name + " ASH");
 				} else if (type.equals("5")) {
-					event = new Event(name + " AGE");
+					event = new DefaultEvent(name + " AGE");
 				}
 				events.put(key, event);
 			}
@@ -130,14 +132,14 @@ class CONOP9Repository implements Repository {
 				}
 			}
 			if (unique) {
-				observations.put(section, new Observation(event, level, weightUp, weightDn));
+				observations.put(section, new DefaultObservation(event, level, weightUp, weightDn));
 			}
 		}
 
 		// create all our sections
 		List<Section> sections = Lists.newArrayList();
 		for (String key : observations.keySet()) {
-			sections.add(new Section(sectionNames.get(key), Lists.newArrayList(observations.get(key))));
+			sections.add(new DefaultSection(sectionNames.get(key), Lists.newArrayList(observations.get(key))));
 		}
 
 		// create the run
@@ -156,19 +158,20 @@ class CONOP9Repository implements Repository {
 			throw new IllegalArgumentException(file.getAbsolutePath() + " does not exist!");
 		}
 		List<List<String>> parsed = Lists.newArrayList();
-		/*
-		 try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-		 String line = null;
-		 while ((line = reader.readLine()) != null) {
-		 List<String> row = parseLine(line.trim());
-		 if (row.size() > 0) {
-		 parsed.add(row);
-		 }
-		 }
-		 } catch (IOException e) {
-		 // do nothing
-		 }
-		 */
+
+		BufferedReader reader = new BufferedReader(new FileReader(file))
+		try  {
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				List<String> row = parseLine(line.trim());
+				if (row.size() > 0) {
+					parsed.add(row);
+				}
+			}
+		} catch (IOException e) {
+			// do nothing
+		}
+
 		return parsed;
 	}
 

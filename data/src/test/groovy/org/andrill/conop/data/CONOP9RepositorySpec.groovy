@@ -1,15 +1,12 @@
-package org.andrill.conop.core
-
-import org.andrill.conop.core.DefaultEvent;
-import org.andrill.conop.core.Run;
+package org.andrill.conop.data
 
 import spock.lang.Specification
 
-class RunSpec extends Specification {
+class CONOP9RepositorySpec extends Specification {
 
 	def "can load a standard CONOP9 run directory and preserve the weights"() {
 		when:
-		def run = Run.loadCONOP9Run(new File('src/test/resources/riley'))
+		def run = CONOP9Repository.loadCONOP9Run(new File('src/test/resources/repos/conop9/riley'))
 
 		then: 'the run was parsed'
 		run != null
@@ -26,7 +23,7 @@ class RunSpec extends Specification {
 
 	def "can load a standard CONOP9 run directory and override the weights"() {
 		when:
-		def run = Run.loadCONOP9Run(new File('src/test/resources/riley'), true)
+		def run = CONOP9Repository.loadCONOP9Run(new File('src/test/resources/repos/conop9/riley'), true)
 
 		then: 'the run was parsed'
 		run != null
