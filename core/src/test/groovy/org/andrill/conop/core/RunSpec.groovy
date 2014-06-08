@@ -20,9 +20,6 @@ class RunSpec extends Specification {
 		and: 'all events were parsed'
 		run.events.size() == 124
 
-		and: 'a coexistence matrix'
-		run.coexistenceMatrix != null
-
 		and: 'did not override weights'
 		!run.sections.collect { it.observations }.flatten().find { it.weightUp > 1 || it.weightDown > 1 }
 	}
@@ -39,9 +36,6 @@ class RunSpec extends Specification {
 
 		and: 'all events were parsed'
 		run.events.size() == 124
-
-		and: 'a coexistence matrix'
-		run.coexistenceMatrix != null
 
 		and: 'override weights'
 		run.sections.collect { it.observations }.flatten().find { it.weightUp > 1 || it.weightDown > 1 }
