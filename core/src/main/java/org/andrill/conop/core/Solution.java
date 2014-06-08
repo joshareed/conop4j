@@ -1,21 +1,13 @@
 package org.andrill.conop.core;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
-import au.com.bytecode.opencsv.CSVReader;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 /**
  * A solution contains a set of events in a particular order.
@@ -50,45 +42,6 @@ public class Solution {
 			}
 		});
 		return new Solution(run, events);
-	}
-
-	/**
-	 * Parse a solution from a file.
-	 *
-	 * @param run
-	 *            the run data.
-	 * @param file
-	 *            the solution file.
-	 * @return the solution or null if an error occurs.
-	 */
-	public static Solution parse(final Run run, final File file) {
-		Solution initial = null;
-		try (CSVReader csv = new CSVReader(new BufferedReader(new FileReader(file)), '\t')) {
-			// build a quick map of our eligible events
-			Map<String, Event> lookup = Maps.newHashMap();
-			for (Event e : run.getEvents()) {
-				lookup.put(e.getName(), e);
-			}
-
-			// parse the CSV
-			final List<Event> events = Lists.newArrayList();
-			String[] row = csv.readNext();
-			while ((row = csv.readNext()) != null) {
-				Event e = lookup.get(row[0]);
-				if (e == null) {
-					System.err.println("No event with name '" + row[0] + "'");
-					return null;
-				} else {
-					events.add(e);
-				}
-			}
-			initial = new Solution(run, events);
-		} catch (FileNotFoundException e) {
-			System.err.println("Invalid solution file: " + file.getAbsolutePath());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return initial;
 	}
 
 	protected final ImmutableList<Event> events;

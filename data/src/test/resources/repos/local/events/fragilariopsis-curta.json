@@ -1,0 +1,11 @@
+{
+	"id": "fragilariopsis-curta",
+	"name": "Fragilariopsis curta",
+	"type": "diatom",
+	"observations": {
+		"and1-1b": {
+			"first": -570.13,
+			"last": -0.01
+		}
+	}
+}

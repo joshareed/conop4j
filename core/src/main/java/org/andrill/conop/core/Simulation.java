@@ -154,17 +154,7 @@ public class Simulation {
 	 * @return the initial solution.
 	 */
 	public Solution getInitialSolution() {
-		// support loading from a file
-		String path = properties.getProperty("initial");
-		Solution initial = null;
-		if (path != null) {
-			initial = Solution.parse(run, new File(directory, path));
-		}
-		if (initial != null) {
-			return initial;
-		} else {
-			return Solution.initial(run);
-		}
+		return Solution.initial(run);
 	}
 
 	/**
@@ -253,7 +243,9 @@ public class Simulation {
 			String eventFile = properties.getProperty("data.eventFile", "events.evt");
 			String loadFile = properties.getProperty("data.loadFile", "loadfile.dat");
 
-			run = Run.loadCONOP9Run(new File(runDir, sectionFile), new File(runDir, eventFile), new File(runDir, loadFile), overrideWeights);
+			// run = Run.loadCONOP9Run(new File(runDir, sectionFile), new
+			// File(runDir, eventFile), new File(runDir,
+			// loadFile), overrideWeights);
 		}
 		return run;
 	}
@@ -266,7 +258,7 @@ public class Simulation {
 	 * Values:
 	 * 		exponential - {@link ExponentialSchedule} (default)
 	 * 		linear      - {@link LinearSchedule}
-	 *
+	 * 
 	 * Additional Keys:
 	 * 		schedule.initial    - initial temperature (double)
 	 * 		schedule.delta      - temperature delta (double)

@@ -1,19 +1,17 @@
 package org.andrill.conop.ui;
 
 import java.awt.BorderLayout;
-import java.io.File;
-import java.text.DecimalFormat;
 
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 
 import org.andrill.conop.analysis.PostProcess;
-import org.andrill.conop.core.*;
-import org.andrill.conop.core.objectives.ObjectiveFunction;
+import org.andrill.conop.core.CONOP;
+import org.andrill.conop.core.QNOP;
 
 /**
  * The CONOP tools main class.
- * 
+ *
  * @author Josh Reed (jareed@andrill.org)
  */
 public class CONOPTools {
@@ -66,7 +64,7 @@ public class CONOPTools {
 	/**
 	 * If no args specified, open up a GUI. Otherwise fire up the command line
 	 * interface.
-	 * 
+	 *
 	 * @param args
 	 *            the args.
 	 */
@@ -84,26 +82,27 @@ public class CONOPTools {
 			System.exit(0);
 		}
 
-		// get our run
-		Simulation simulation = new Simulation(new File(args[0]));
-		Run run = simulation.getRun();
-
-		DecimalFormat D = new DecimalFormat("0.00");
-
-		// score our solutions
-		for (int i = 1; i < args.length; i++) {
-			File f = new File(args[i]);
-			Solution solution = Solution.parse(run, f);
-
-			System.out.println("---- " + f.getName() + " ----");
-			for (String key : Simulation.OBJECTIVES.keySet()) {
-				if (!"default".equals(key)) {
-					ObjectiveFunction objective = simulation
-							.lookup(key, ObjectiveFunction.class, Simulation.OBJECTIVES);
-					System.out.println("  " + key + ": " + D.format(objective.score(solution)));
-				}
-			}
-			System.out.println("");
-		}
+		// // get our run
+		// Simulation simulation = new Simulation(new File(args[0]));
+		// Run run = simulation.getRun();
+		//
+		// DecimalFormat D = new DecimalFormat("0.00");
+		//
+		// // score our solutions
+		// for (int i = 1; i < args.length; i++) {
+		// File f = new File(args[i]);
+		// Solution solution = Solution.parse(run, f);
+		//
+		// System.out.println("---- " + f.getName() + " ----");
+		// for (String key : Simulation.OBJECTIVES.keySet()) {
+		// if (!"default".equals(key)) {
+		// ObjectiveFunction objective = simulation
+		// .lookup(key, ObjectiveFunction.class, Simulation.OBJECTIVES);
+		// System.out.println("  " + key + ": " +
+		// D.format(objective.score(solution)));
+		// }
+		// }
+		// System.out.println("");
+		// }
 	}
 }
