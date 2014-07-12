@@ -1,6 +1,9 @@
-package org.andrill.conop.core;
+package org.andrill.conop.core.internal;
 
 import java.math.BigDecimal;
+
+import org.andrill.conop.core.Event;
+import org.andrill.conop.core.Observation;
 
 /**
  * Represents an observation of an event in a section.

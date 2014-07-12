@@ -1,15 +1,15 @@
 package org.andrill.conop.core.schedules;
 
 import org.andrill.conop.core.AbstractConfigurable;
-import org.andrill.conop.core.Simulation;
+import org.andrill.conop.core.Configuration;
 import org.andrill.conop.core.Solution;
 
 /**
  * An exponential cooling schedule.
- * 
+ *
  * @author Josh Reed (jareed@andrill.org)
  */
-public class ExponentialSchedule extends AbstractConfigurable implements CoolingSchedule {
+public class ExponentialSchedule extends AbstractConfigurable implements Schedule {
 	protected long count;
 	protected double current;
 	protected double factor;
@@ -28,10 +28,10 @@ public class ExponentialSchedule extends AbstractConfigurable implements Cooling
 	}
 
 	@Override
-	public void configure(final Simulation simulation) {
-		this.initial = Double.parseDouble(simulation.getProperty("schedule.initial", "1000"));
-		this.factor = Double.parseDouble(simulation.getProperty("schedule.delta", "0.01"));
-		this.minStepsPer = Long.parseLong(simulation.getProperty("schedule.stepsPer", "100"));
+	public void configure(final Configuration config) {
+		this.initial = config.get("schedule.initial", 1000.0);
+		this.factor = config.get("schedule.delta", 0.01);
+		this.minStepsPer = config.get("schedule.stepsPer", 100l);
 		this.current = initial;
 	}
 

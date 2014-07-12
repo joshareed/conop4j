@@ -1,10 +1,9 @@
 package org.andrill.conop.core.mutators
 
-import org.andrill.conop.core.DefaultEvent
-import org.andrill.conop.core.Run
-import org.andrill.conop.core.Simulation
-import org.andrill.conop.core.Solution
+import org.andrill.conop.core.Configuration
+import org.andrill.conop.core.Run;
 import org.andrill.conop.core.RunFixtures
+import org.andrill.conop.core.Solution
 
 import spock.lang.Specification
 
@@ -29,11 +28,10 @@ class AbstractMutatorSpec extends Specification {
 		def mutator = new TestMutator()
 
 		and: 'a simulation'
-		def simulation = new Simulation(new Properties(), run)
-		simulation.setProperty('mutator.reset', '1')
+		def config = new Configuration('mutator.reset': 1)
 
 		when: 'configure'
-		mutator.configure(simulation)
+		mutator.configure(config)
 
 		then:
 		mutator.reset == 1

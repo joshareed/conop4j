@@ -1,10 +1,14 @@
-package org.andrill.conop.core;
+package org.andrill.conop.core.internal;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.andrill.conop.core.Event;
+import org.andrill.conop.core.Observation;
+import org.andrill.conop.core.Section;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;

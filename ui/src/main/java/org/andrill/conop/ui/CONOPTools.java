@@ -6,8 +6,8 @@ import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 
 import org.andrill.conop.analysis.PostProcess;
-import org.andrill.conop.core.CONOP;
-import org.andrill.conop.core.QNOP;
+import org.andrill.conop.core.solver.CONOP;
+import org.andrill.conop.core.solver.QNOP;
 
 /**
  * The CONOP tools main class.

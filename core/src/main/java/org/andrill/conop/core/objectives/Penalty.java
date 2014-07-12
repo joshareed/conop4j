@@ -7,7 +7,7 @@ import org.andrill.conop.core.Solution;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public interface ObjectiveFunction {
+public interface Penalty {
 
 	/**
 	 * Calculate the score.

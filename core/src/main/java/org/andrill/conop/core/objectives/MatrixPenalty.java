@@ -11,20 +11,19 @@ import org.andrill.conop.core.Event;
 import org.andrill.conop.core.Observation;
 import org.andrill.conop.core.Run;
 import org.andrill.conop.core.Section;
-import org.andrill.conop.core.Simulation;
 import org.andrill.conop.core.Solution;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
- * An {@link ObjectiveFunction} implementation that places events using
+ * An {@link Penalty} implementation that places events using
  * cumulative penalties in a matrix.
  *
  * @author Josh Reed (jareed@andrill.org)
  */
-public class MatrixPenalty extends AbstractParallelObjective {
-	public static class SectionMatrix implements ObjectiveFunction {
+public class MatrixPenalty extends AbstractParallelPenalty {
+	public static class SectionMatrix implements Penalty {
 		private static final Comparator<BigDecimal> REVERSE = new Comparator<BigDecimal>() {
 			@Override
 			public int compare(final BigDecimal o1, final BigDecimal o2) {
@@ -120,18 +119,15 @@ public class MatrixPenalty extends AbstractParallelObjective {
 
 	}
 
-	protected Map<Section, SectionMatrix> matrices = Maps.newHashMap();
+	protected Map<Section, SectionMatrix> matrices = null;
 
 	public MatrixPenalty() {
 		super("Matrix");
 	}
 
 	@Override
-	public void configure(final Simulation simulation) {
-		super.configure(simulation);
-
-		// initialize our section matrices
-		Run run = simulation.getRun();
+	protected void initialize(final Run run) {
+		matrices = Maps.newHashMap();
 		for (Section section : run.getSections()) {
 			matrices.put(section, new SectionMatrix(section, run));
 		}

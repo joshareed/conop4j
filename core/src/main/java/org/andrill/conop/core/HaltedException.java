@@ -5,10 +5,10 @@ package org.andrill.conop.core;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class AbortedException extends RuntimeException {
+public class HaltedException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 
-	public AbortedException(final String message) {
+	public HaltedException(final String message) {
 		super(message);
 	}
 }

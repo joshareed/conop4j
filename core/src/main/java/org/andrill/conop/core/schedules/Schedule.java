@@ -7,7 +7,7 @@ import org.andrill.conop.core.Solution;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public interface CoolingSchedule {
+public interface Schedule {
 
 	/**
 	 * Gets the initial temperature.

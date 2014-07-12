@@ -2,6 +2,7 @@ package org.andrill.conop.core.listeners
 
 import org.andrill.conop.core.*
 import org.andrill.conop.core.listeners.Listener.Mode
+import org.andrill.conop.core.util.TimerUtils
 
 import spock.lang.Specification
 
@@ -22,10 +23,9 @@ class StoppingListenerSpec extends Specification {
 
 		and: 'initial state'
 		listener.bestScore == Double.MAX_VALUE
-		listener.currentIteration == 0
-		listener.lastProgressIteration == 0
-		listener.lastProgressTime == 0
-		listener.startTime == 0
+		listener.currentIteration == -1
+		listener.lastProgressIteration == -1
+		listener.lastProgressTime == -1
 
 		and: 'mode'
 		listener.mode == Mode.ANY
@@ -36,17 +36,18 @@ class StoppingListenerSpec extends Specification {
 		def listener = new StoppingListener()
 
 		and: 'a simulation'
-		def simulation = new Simulation(new Properties(), null)
-		simulation.setProperty("stop.time", "1")
-		simulation.setProperty("stop.steps", "2")
-		simulation.setProperty("stop.progress.time", "3")
-		simulation.setProperty("stop.progress.steps", "4")
-		simulation.setProperty("stop.threshold", "5")
-		simulation.setProperty("stop.threshold.time", "6")
-		simulation.setProperty("stop.threshold.steps", "7")
+		def config = new Configuration(
+				"stop.time": 1,
+				"stop.steps": 2,
+				"stop.progress.time": 3,
+				"stop.progress.steps": 4,
+				"stop.threshold": 5,
+				"stop.threshold.time": 6,
+				"stop.threshold.steps": 7
+				)
 
 		when: 'configure'
-		listener.configure(simulation)
+		listener.configure(config)
 
 		then: 'initial configuration'
 		listener.stopIteration == 2
@@ -66,7 +67,7 @@ class StoppingListenerSpec extends Specification {
 		listener.abort("Foo")
 
 		then: 'throws exception'
-		def e = thrown(AbortedException)
+		def e = thrown(HaltedException)
 		e.message == 'Foo'
 	}
 
@@ -87,7 +88,7 @@ class StoppingListenerSpec extends Specification {
 		def listener = new StoppingListener()
 
 		when: 'minutes'
-		def minutes = listener.minutes(3 * 60 * 1000)
+		def minutes = listener.minutes(3 * 60)
 
 		then: 'throws exception'
 		minutes == 3
@@ -99,7 +100,6 @@ class StoppingListenerSpec extends Specification {
 		listener.currentIteration = 100
 		listener.lastProgressIteration = 100
 		listener.lastProgressTime = 100
-		listener.startTime = 100
 
 		when: 'started'
 		listener.started(null)
@@ -108,7 +108,6 @@ class StoppingListenerSpec extends Specification {
 		listener.currentIteration == 0
 		listener.lastProgressIteration == 0
 		listener.lastProgressTime == 0
-		listener.startTime == 0
 	}
 
 	def "test stopping conditions"() {
@@ -119,8 +118,13 @@ class StoppingListenerSpec extends Specification {
 		def run = RunFixtures.simpleRun()
 
 		expect:
+		listener.currentIteration == -1
+
+		when: 'started'
+		listener.started(null)
+
+		then:
 		listener.currentIteration == 0
-		listener.startTime == 0
 
 		when: 'tried'
 		def solution = Solution.initial(run)
@@ -129,10 +133,9 @@ class StoppingListenerSpec extends Specification {
 
 		then:
 		listener.currentIteration == 1
-		listener.startTime > 0
 		listener.bestScore == 1000
 		listener.lastProgressIteration == 1
-		listener.lastProgressTime == listener.startTime
+		listener.lastProgressTime >= 0
 
 		when: 'stop iteration'
 		listener.currentIteration = 10
@@ -145,13 +148,13 @@ class StoppingListenerSpec extends Specification {
 
 		when: 'stop time'
 		listener.stopIteration = -1
-		listener.stopTime = 60000
-		listener.startTime = (System.currentTimeMillis() - 61000)
+		listener.stopTime = 60
+		TimerUtils.thread.counter = 61
 		listener.tried(1000, solution, solution)
 
 		then:
 		e = thrown(RuntimeException)
-		e.message == "Stopped because run time of 1.0 minutes was reached"
+		e.message == "Stopped because run time of 1 minutes was reached"
 
 		when: 'progress iteration'
 		listener.stopTime = -1
@@ -164,31 +167,31 @@ class StoppingListenerSpec extends Specification {
 
 		when: 'stop progress time'
 		listener.stopProgressIteration = -1
-		listener.stopProgressTime = 60000
-		listener.lastProgressTime = (System.currentTimeMillis() - 61000)
+		listener.stopProgressTime = 60
+		listener.lastProgressTime = 1
 		listener.tried(1000, solution, solution)
 
 		then:
 		e = thrown(RuntimeException)
-		e.message == "Stopped because no progress was made in 1.0 minutes"
+		e.message == "Stopped because no progress was made in 1 minutes"
 
 		when: 'stop threshold iterations'
 		listener.stopProgressTime = -1
-		listener.stopThreshold = 100
+		listener.stopThreshold = 100.0
 		listener.stopThresholdIteration = 1
 		listener.tried(1000, solution, solution)
 
 		then:
-		e = thrown(AbortedException)
+		e = thrown(HaltedException)
 		e.message == "Stopped because simulation did not reach score threshold of 100.0 in 1 iterations"
 
 		when: 'stop threshold time'
 		listener.stopThresholdIteration = -1
-		listener.stopThresholdTime = 60000
+		listener.stopThresholdTime = 60
 		listener.tried(1000, solution, solution)
 
 		then:
-		e = thrown(AbortedException)
-		e.message == "Stopped because simulation did not reach score threshold of 100.0 in 1.0 minutes"
+		e = thrown(HaltedException)
+		e.message == "Stopped because simulation did not reach score threshold of 100.0 in 1 minutes"
 	}
 }

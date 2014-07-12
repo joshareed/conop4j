@@ -1,7 +1,10 @@
 package org.andrill.conop.core.constraints
 
-import org.andrill.conop.core.constraints.EventChecker;
 import org.andrill.conop.core.*
+import org.andrill.conop.core.internal.DefaultEvent;
+import org.andrill.conop.core.internal.DefaultObservation;
+import org.andrill.conop.core.internal.DefaultRun;
+import org.andrill.conop.core.internal.DefaultSection;
 
 import spock.lang.Specification
 
@@ -14,7 +17,7 @@ class EventCheckerSpec extends Specification {
 		def other = new DefaultEvent("Other")
 
 		and: "a mock run"
-		def run = new Run([
+		def run = new DefaultRun([
 			new DefaultSection("Test", [
 				new DefaultObservation(pair1, 5, 1, 1),
 				new DefaultObservation(other, 10, 1, 1),
@@ -23,17 +26,17 @@ class EventCheckerSpec extends Specification {
 		])
 
 		and: "an EventChecker"
-		def checker = new EventChecker()
-		checker.configure(new Simulation(new Properties(), run))
+		def checker = new EventConstraints()
+		checker.configure(new Configuration())
 
 		when: "a valid solution"
-		def solution1 = new Solution(null, [pair1, pair2, other])
+		def solution1 = new Solution(run, [pair1, pair2, other])
 
 		then: 'valid'
 		checker.isValid(solution1)
 
 		when: 'an invalid solution'
-		def solution2 = new Solution(null, [other, pair2, pair1])
+		def solution2 = new Solution(run, [other, pair2, pair1])
 
 		then: 'not valid'
 		!checker.isValid(solution2)
@@ -41,6 +44,6 @@ class EventCheckerSpec extends Specification {
 
 	def "toString returns as expected"() {
 		expect:
-		new EventChecker().toString() == "Event"
+		new EventConstraints().toString() == "Event"
 	}
 }

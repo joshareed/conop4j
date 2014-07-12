@@ -13,12 +13,12 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.andrill.conop.core.CONOP;
 import org.andrill.conop.core.Event;
 import org.andrill.conop.core.RanksMatrix;
 import org.andrill.conop.core.Simulation;
 import org.andrill.conop.core.Solution;
 import org.andrill.conop.core.listeners.AsyncListener;
+import org.andrill.conop.core.solver.CONOP;
 import org.andrill.conop.core.util.TimerUtils;
 
 import com.fasterxml.jackson.core.JsonFactory;

@@ -1,6 +1,6 @@
 package org.andrill.conop.core
 
-import org.andrill.conop.core.DefaultEvent;
+import org.andrill.conop.core.internal.DefaultEvent;
 
 import spock.lang.*
 

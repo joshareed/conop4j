@@ -8,7 +8,7 @@ import org.andrill.conop.core.Solution;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public class NullChecker extends AbstractConfigurable implements ConstraintChecker {
+public class NullConstraints extends AbstractConfigurable implements Constraints {
 
 	public boolean isValid(final Solution solution) {
 		return true;

@@ -1,7 +1,6 @@
 package org.andrill.conop.core.schedules
 
-import org.andrill.conop.core.schedules.ExponentialSchedule;
-import org.andrill.conop.core.Simulation
+import org.andrill.conop.core.Configuration
 import org.andrill.conop.core.Solution
 
 import spock.lang.Specification
@@ -21,17 +20,18 @@ class ExponentialScheduleSpec extends Specification {
 
 
 	def "test configuration"() {
-		given: 'a simulation'
-		def simulation = new Simulation(new Properties(), null)
-		simulation.setProperty('schedule.initial', '250')
-		simulation.setProperty('schedule.delta', '5')
-		simulation.setProperty('schedule.stepsPer', '1')
+		given: 'a configuration'
+		def config = new Configuration(
+				'schedule.initial': 250,
+				'schedule.delta': 5,
+				'schedule.stepsPer': 1
+				)
 
 		and: 'a exponential schedule'
 		def schedule = new ExponentialSchedule()
 
 		when: 'configure'
-		schedule.configure(simulation)
+		schedule.configure(config)
 
 		then: 'everything set properly'
 		schedule.initial == 250

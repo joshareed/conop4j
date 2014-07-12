@@ -1,8 +1,8 @@
 package org.andrill.conop.core
 
-import org.andrill.conop.core.DefaultEvent;
-import org.andrill.conop.core.DefaultObservation;
-import org.andrill.conop.core.DefaultSection;
+import org.andrill.conop.core.internal.DefaultEvent;
+import org.andrill.conop.core.internal.DefaultObservation;
+import org.andrill.conop.core.internal.DefaultSection;
 
 import spock.lang.Specification
 

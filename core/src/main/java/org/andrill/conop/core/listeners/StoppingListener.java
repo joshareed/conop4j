@@ -1,49 +1,49 @@
 package org.andrill.conop.core.listeners;
 
-import org.andrill.conop.core.AbortedException;
-import org.andrill.conop.core.Simulation;
+import org.andrill.conop.core.HaltedException;
+import org.andrill.conop.core.Configuration;
 import org.andrill.conop.core.Solution;
+import org.andrill.conop.core.util.TimerUtils;
 
 /**
  * A listener responsible for stopping a run under various conditions.
- * 
+ *
  * @author Josh Reed (jareed@andrill.org)
  */
 public class StoppingListener extends AbstractListener {
 	protected double bestScore = Double.MAX_VALUE;
-	protected long currentIteration = 0;
-	protected long lastProgressIteration = 0;
-	protected long lastProgressTime = 0;
-	protected long startTime = 0;
+	protected long currentIteration = -1;
+	protected long lastProgressIteration = -1;
+	protected long lastProgressTime = -1;
 
 	protected long stopIteration = -1;
 	protected long stopProgressIteration = -1;
-	protected double stopProgressTime = -1;
+	protected long stopProgressTime = -1;
 	protected double stopThreshold = -1;
 	protected long stopThresholdIteration = -1;
-	protected double stopThresholdTime = -1;
-	protected double stopTime = -1;
+	protected long stopThresholdTime = -1;
+	protected long stopTime = -1;
 
 	protected void abort(final String message) {
-		throw new AbortedException(message);
+		throw new HaltedException(message);
 	}
 
 	@Override
-	public void configure(final Simulation simulation) {
-		super.configure(simulation);
+	public void configure(final Configuration config) {
+		super.configure(config);
 
 		// parse stopping conditions
-		stopTime = Double.parseDouble(simulation.getProperty("stop.time", "-1")) * 1000 * 60;
-		stopIteration = Long.parseLong(simulation.getProperty("stop.steps", "-1"));
-		stopProgressTime = Double.parseDouble(simulation.getProperty("stop.progress.time", "-1")) * 1000 * 60;
-		stopProgressIteration = Long.parseLong(simulation.getProperty("stop.progress.steps", "-1"));
-		stopThreshold = Double.parseDouble(simulation.getProperty("stop.threshold", "-1"));
-		stopThresholdTime = Double.parseDouble(simulation.getProperty("stop.threshold.time", "-1")) * 1000 * 60;
-		stopThresholdIteration = Long.parseLong(simulation.getProperty("stop.threshold.steps", "-1"));
+		stopTime = config.get("stop.time", -1l) * 1000l * 60l;
+		stopIteration = config.get("stop.steps", -1l);
+		stopProgressTime = config.get("stop.progress.time", -1l) * 1000l * 60l;
+		stopProgressIteration = config.get("stop.progress.steps", -1l);
+		stopThreshold = config.get("stop.threshold", -1.0);
+		stopThresholdTime = config.get("stop.threshold.time", -1l) * 1000 * 60;
+		stopThresholdIteration = config.get("stop.threshold.steps", -1l);
 	}
 
-	protected double minutes(final double millis) {
-		return millis / 60000;
+	protected int minutes(final long time) {
+		return (int) (time / 60);
 	}
 
 	@Override
@@ -51,7 +51,6 @@ public class StoppingListener extends AbstractListener {
 		currentIteration = 0;
 		lastProgressIteration = 0;
 		lastProgressTime = 0;
-		startTime = 0;
 	}
 
 	protected void stop(final String message) {
@@ -61,12 +60,7 @@ public class StoppingListener extends AbstractListener {
 	@Override
 	public void tried(final double temp, final Solution current, final Solution best) {
 		currentIteration++;
-		long time = System.currentTimeMillis();
-
-		// save our start time
-		if (startTime == 0) {
-			startTime = time;
-		}
+		long time = TimerUtils.getCounter();
 
 		// check our score and update our last progress variables
 		if (best.getScore() < bestScore) {
@@ -79,7 +73,7 @@ public class StoppingListener extends AbstractListener {
 		if ((stopIteration > 0) && (currentIteration >= stopIteration)) {
 			stop("Stopped because iteration " + stopIteration + " was reached");
 		}
-		if ((stopTime > 0) && ((time - startTime) >= stopTime)) {
+		if ((stopTime > 0) && (time >= stopTime)) {
 			stop("Stopped because run time of " + minutes(stopTime) + " minutes was reached");
 		}
 		if ((stopProgressIteration > 0) && ((currentIteration - lastProgressIteration) >= stopProgressIteration)) {
@@ -90,12 +84,10 @@ public class StoppingListener extends AbstractListener {
 		}
 		if ((stopThreshold > 0) && (bestScore > stopThreshold)) {
 			if ((stopThresholdIteration > 0) && (currentIteration >= stopThresholdIteration)) {
-				abort("Stopped because simulation did not reach score threshold of " + stopThreshold + " in "
-						+ stopThresholdIteration + " iterations");
+				abort("Stopped because simulation did not reach score threshold of " + stopThreshold + " in " + stopThresholdIteration + " iterations");
 			}
-			if ((stopThresholdTime > 0) && ((time - startTime) >= stopThresholdTime)) {
-				abort("Stopped because simulation did not reach score threshold of " + stopThreshold + " in "
-						+ minutes(stopThresholdTime) + " minutes");
+			if ((stopThresholdTime > 0) && (time >= stopThresholdTime)) {
+				abort("Stopped because simulation did not reach score threshold of " + stopThreshold + " in " + minutes(stopThresholdTime) + " minutes");
 			}
 		}
 	}
