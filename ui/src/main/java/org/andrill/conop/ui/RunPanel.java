@@ -5,20 +5,18 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.text.DecimalFormat;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.filechooser.FileFilter;
 
 import net.miginfocom.swing.MigLayout;
 
-import org.andrill.conop.core.Simulation;
-import org.andrill.conop.core.Solution;
-import org.andrill.conop.core.listeners.AbstractListener;
-import org.andrill.conop.core.listeners.Listener.Mode;
-import org.andrill.conop.core.solver.CONOP;
-
 /**
  * A simple GUI for running a simulation.
- * 
+ *
  * @author Josh Reed (jareed@andrill.org)
  */
 public class RunPanel extends JPanel {
@@ -121,46 +119,49 @@ public class RunPanel extends JPanel {
 		thread = new Thread() {
 			@Override
 			public void run() {
-				// get our simulation config
-				Simulation config = new Simulation(simulationFile);
-
-				// setup CONOP
-				CONOP conop = new CONOP(config);
-				conop.addListener(new AbstractListener() {
-
-					@Override
-					public Mode getMode() {
-						return Mode.GUI;
-					}
-
-					@Override
-					public void tried(final double temp, final Solution current, final Solution best) {
-						iteration++;
-						if (iteration == 1) {
-							initialTemp = Math.log(temp);
-							start = System.currentTimeMillis();
-							progress.setValue(5);
-						}
-						if (!running) {
-							throw new RuntimeException("user interrupt");
-						}
-						if ((iteration % 1000) == 0) {
-							int value = (int) (((initialTemp - Math.log(temp)) / initialTemp) * 100) + 5;
-							progress.setValue(value);
-
-							iterLabel.setText(iteration + "");
-
-							tempLabel.setText(DEC.format(temp));
-
-							long elapsed = (System.currentTimeMillis() - start) / 60000;
-							timeLabel.setText(elapsed + " min");
-
-							scoreLabel.setText(DEC.format(current.getScore()) + " / " + DEC.format(best.getScore()));
-						}
-					}
-				});
-				conop.filterMode(Mode.GUI);
-				conop.solve(config.getRun(), config.getInitialSolution());
+				// // get our simulation config
+				// Simulation config = new Simulation(simulationFile);
+				//
+				// // setup CONOP
+				// CONOP conop = new CONOP(config);
+				// conop.addListener(new AbstractListener() {
+				//
+				// @Override
+				// public Mode getMode() {
+				// return Mode.GUI;
+				// }
+				//
+				// @Override
+				// public void tried(final double temp, final Solution current,
+				// final Solution best) {
+				// iteration++;
+				// if (iteration == 1) {
+				// initialTemp = Math.log(temp);
+				// start = System.currentTimeMillis();
+				// progress.setValue(5);
+				// }
+				// if (!running) {
+				// throw new RuntimeException("user interrupt");
+				// }
+				// if ((iteration % 1000) == 0) {
+				// int value = (int) (((initialTemp - Math.log(temp)) /
+				// initialTemp) * 100) + 5;
+				// progress.setValue(value);
+				//
+				// iterLabel.setText(iteration + "");
+				//
+				// tempLabel.setText(DEC.format(temp));
+				//
+				// long elapsed = (System.currentTimeMillis() - start) / 60000;
+				// timeLabel.setText(elapsed + " min");
+				//
+				// scoreLabel.setText(DEC.format(current.getScore()) + " / " +
+				// DEC.format(best.getScore()));
+				// }
+				// }
+				// });
+				// conop.filterMode(Mode.GUI);
+				// conop.solve(config.getRun(), config.getInitialSolution());
 			}
 		};
 		thread.start();
