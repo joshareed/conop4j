@@ -3,8 +3,8 @@ package org.andrill.conop.core.internal;
 import java.util.List;
 
 import org.andrill.conop.core.Event;
+import org.andrill.conop.core.Location;
 import org.andrill.conop.core.Run;
-import org.andrill.conop.core.Section;
 import org.andrill.conop.core.Solution;
 
 import com.google.common.collect.ImmutableMap;
@@ -18,22 +18,22 @@ import com.google.common.collect.ImmutableSet.Builder;
  */
 public class DefaultRun implements Run {
 	protected final ImmutableSet<Event> events;
-	protected final ImmutableSet<Section> sections;
+	protected final ImmutableSet<Location> locations;
 	protected final ImmutableMap<Event, Integer> ids;
 	protected Solution best = null;
 
 	/**
-	 * Create a new run from the specified sections.
+	 * Create a new run from the specified locations.
 	 *
 	 * @param list
-	 *            the sections.
+	 *            the locations.
 	 */
-	public DefaultRun(final List<Section> list) {
-		sections = ImmutableSet.copyOf(list);
+	public DefaultRun(final List<Location> list) {
+		locations = ImmutableSet.copyOf(list);
 
 		// build our immutable set of events
 		Builder<Event> b = ImmutableSet.builder();
-		for (Section s : sections) {
+		for (Location s : locations) {
 			b.addAll(s.getEvents());
 		}
 		events = b.build();
@@ -49,7 +49,7 @@ public class DefaultRun implements Run {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.andrill.conop.core.Run#getEvents()
 	 */
 	@Override
@@ -59,7 +59,7 @@ public class DefaultRun implements Run {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.andrill.conop.core.Run#getId(org.andrill.conop.core.Event)
 	 */
 	@Override
@@ -69,11 +69,11 @@ public class DefaultRun implements Run {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.andrill.conop.core.Run#getSections()
+	 *
+	 * @see org.andrill.conop.core.Run#getLocations()
 	 */
 	@Override
-	public ImmutableSet<Section> getSections() {
-		return sections;
+	public ImmutableSet<Location> getLocations() {
+		return locations;
 	}
 }

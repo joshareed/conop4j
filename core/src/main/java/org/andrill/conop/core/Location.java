@@ -4,24 +4,24 @@ import java.math.BigDecimal;
 
 import com.google.common.collect.ImmutableSet;
 
-public interface Section {
+public interface Location {
 
 	/**
-	 * Gets the events in this section.
+	 * Gets the events in this location.
 	 *
 	 * @return the set of events.
 	 */
 	public abstract ImmutableSet<Event> getEvents();
 
 	/**
-	 * Gets the levels in this section.
+	 * Gets the levels in this location.
 	 *
 	 * @return the set of levels.
 	 */
 	public abstract ImmutableSet<BigDecimal> getLevels();
 
 	/**
-	 * Gets the name of this section.
+	 * Gets the name of this location.
 	 *
 	 * @return the name.
 	 */

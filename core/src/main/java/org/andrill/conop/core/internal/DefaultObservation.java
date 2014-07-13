@@ -6,7 +6,7 @@ import org.andrill.conop.core.Event;
 import org.andrill.conop.core.Observation;
 
 /**
- * Represents an observation of an event in a section.
+ * Represents an observation of an event in a location.
  *
  * @author Josh Reed (jareed@andrill.org)
  */
@@ -35,7 +35,9 @@ public class DefaultObservation implements Observation {
 		this.weightDown = weightDown;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.andrill.conop.core.Observation#getEvent()
 	 */
 	@Override
@@ -43,7 +45,9 @@ public class DefaultObservation implements Observation {
 		return event;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.andrill.conop.core.Observation#getLevel()
 	 */
 	@Override
@@ -51,7 +55,9 @@ public class DefaultObservation implements Observation {
 		return level;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.andrill.conop.core.Observation#getWeightDown()
 	 */
 	@Override
@@ -59,7 +65,9 @@ public class DefaultObservation implements Observation {
 		return weightDown;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.andrill.conop.core.Observation#getWeightUp()
 	 */
 	@Override

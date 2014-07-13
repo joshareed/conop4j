@@ -7,32 +7,32 @@ import java.util.List;
 import java.util.Map;
 
 import org.andrill.conop.core.Event;
+import org.andrill.conop.core.Location;
 import org.andrill.conop.core.Observation;
-import org.andrill.conop.core.Section;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Represents a section.
+ * Represents a location.
  *
  * @author Josh Reed (jareed@andrill.org)
  */
-public class DefaultSection implements Section {
+public class DefaultLocation implements Location {
 	protected final Map<Event, Observation> events;
 	protected final ImmutableMultimap<BigDecimal, Observation> levels;
 	protected final String name;
 	protected final ImmutableSet<Observation> observations;
 
 	/**
-	 * Create a new section.
+	 * Create a new location.
 	 *
 	 * @param name
 	 *            the name.
 	 * @param list
 	 *            the list of observations.
 	 */
-	public DefaultSection(final String name, final List<Observation> list) {
+	public DefaultLocation(final String name, final List<Observation> list) {
 		this.name = name;
 		observations = ImmutableSet.copyOf(list);
 		events = new IdentityHashMap<Event, Observation>();
@@ -62,7 +62,7 @@ public class DefaultSection implements Section {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		DefaultSection other = (DefaultSection) obj;
+		DefaultLocation other = (DefaultLocation) obj;
 		if (name == null) {
 			if (other.name != null) {
 				return false;
@@ -73,48 +73,63 @@ public class DefaultSection implements Section {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.andrill.conop.core.Section#getEvents()
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.andrill.conop.core.Location#getEvents()
 	 */
 	@Override
 	public ImmutableSet<Event> getEvents() {
 		return ImmutableSet.copyOf(events.keySet());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.andrill.conop.core.Section#getLevels()
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.andrill.conop.core.Location#getLevels()
 	 */
 	@Override
 	public ImmutableSet<BigDecimal> getLevels() {
 		return levels.keySet();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.andrill.conop.core.Section#getName()
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.andrill.conop.core.Location#getName()
 	 */
 	@Override
 	public String getName() {
 		return name;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.andrill.conop.core.Section#getObservation(org.andrill.conop.core.Event)
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * org.andrill.conop.core.Location#getObservation(org.andrill.conop.core.
+	 * Event)
 	 */
 	@Override
 	public Observation getObservation(final Event event) {
 		return events.get(event);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.andrill.conop.core.Section#getObservations()
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.andrill.conop.core.Location#getObservations()
 	 */
 	@Override
 	public ImmutableSet<Observation> getObservations() {
 		return observations;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.andrill.conop.core.Section#getObservations(java.math.BigDecimal)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.andrill.conop.core.Location#getObservations(java.math.BigDecimal)
 	 */
 	@Override
 	public ImmutableSet<Observation> getObservations(final BigDecimal level) {

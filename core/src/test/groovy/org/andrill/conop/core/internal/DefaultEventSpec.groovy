@@ -1,4 +1,4 @@
-package org.andrill.conop.core
+package org.andrill.conop.core.internal
 
 import org.andrill.conop.core.internal.DefaultEvent;
 

@@ -12,9 +12,9 @@ import java.util.TreeMap;
 import java.util.concurrent.Future;
 
 import org.andrill.conop.core.Event;
+import org.andrill.conop.core.Location;
 import org.andrill.conop.core.Observation;
 import org.andrill.conop.core.Run;
-import org.andrill.conop.core.Section;
 import org.andrill.conop.core.Solution;
 
 import com.google.common.collect.Lists;
@@ -26,7 +26,8 @@ import com.google.common.collect.Maps;
  * @author Josh Reed (jareed@andrill.org)
  */
 public class PlacementPenalty extends AbstractParallelPenalty {
-	public static class SectionPlacement implements Penalty {
+
+	public static class LocationPlacement implements Penalty {
 		private static final IdentityHashMap<BigDecimal, Double> cache = new IdentityHashMap<BigDecimal, Double>() {
 			private static final long serialVersionUID = 1L;
 
@@ -51,19 +52,19 @@ public class PlacementPenalty extends AbstractParallelPenalty {
 		protected final Map<BigDecimal, Integer> levelMap;
 		protected final List<BigDecimal> levels;
 		protected final Map<BigDecimal, List<Event>> placed;
-		protected final Section section;
+		protected final Location location;
 
 		/**
-		 * Create a new section placement for the specified section.
+		 * Create a new placement for the specified location.
 		 *
-		 * @param section
-		 *            the section.
+		 * @param location
+		 *            the location.
 		 */
-		public SectionPlacement(final Section section) {
-			this.section = section;
+		public LocationPlacement(final Location location) {
+			this.location = location;
 
 			// get our sorted levels
-			levels = Lists.newArrayList(section.getLevels());
+			levels = Lists.newArrayList(location.getLevels());
 			Collections.sort(levels, REVERSE);
 
 			// create our placement object
@@ -78,7 +79,7 @@ public class PlacementPenalty extends AbstractParallelPenalty {
 		}
 
 		/**
-		 * Gets the placement penalty for this section.
+		 * Gets the placement penalty for this location.
 		 *
 		 * @return the penalty.
 		 */
@@ -93,7 +94,7 @@ public class PlacementPenalty extends AbstractParallelPenalty {
 		}
 
 		protected double getPenalty(final Event event, final BigDecimal level) {
-			Observation o = section.getObservation(event);
+			Observation o = location.getObservation(event);
 			if (o == null) {
 				return 0;
 			}
@@ -139,7 +140,7 @@ public class PlacementPenalty extends AbstractParallelPenalty {
 		 *            the event.
 		 */
 		public void place(final Event e) {
-			Observation o = section.getObservation(e);
+			Observation o = location.getObservation(e);
 			if (o == null) {
 				placed.get(levels.get(head)).add(e);
 			} else {
@@ -182,7 +183,7 @@ public class PlacementPenalty extends AbstractParallelPenalty {
 		}
 
 		/**
-		 * Scores the specified solution against this section.
+		 * Scores the specified solution against this location.
 		 *
 		 * @param solution
 		 *            the solution.
@@ -198,7 +199,7 @@ public class PlacementPenalty extends AbstractParallelPenalty {
 		}
 	}
 
-	protected Map<Section, SectionPlacement> placements = null;
+	protected Map<Location, LocationPlacement> placements = null;
 
 	public PlacementPenalty() {
 		super("Placement");
@@ -207,16 +208,16 @@ public class PlacementPenalty extends AbstractParallelPenalty {
 	@Override
 	public void initialize(final Run run) {
 		placements = Maps.newHashMap();
-		for (final Section section : run.getSections()) {
-			placements.put(section, new SectionPlacement(section));
+		for (final Location location : run.getLocations()) {
+			placements.put(location, new LocationPlacement(location));
 		}
 	}
 
 	@Override
 	protected List<Future<Double>> internalScore(final Solution solution) {
 		List<Future<Double>> results = Lists.newArrayList();
-		for (final Section section : solution.getRun().getSections()) {
-			results.add(execute(placements.get(section), solution));
+		for (final Location location : solution.getRun().getLocations()) {
+			results.add(execute(placements.get(location), solution));
 		}
 		return results;
 	}

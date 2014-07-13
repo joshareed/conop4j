@@ -2,11 +2,12 @@ package org.andrill.conop.data
 
 import org.andrill.conop.core.Event
 import org.andrill.conop.core.Observation
-import org.andrill.conop.core.Run;
-import org.andrill.conop.core.Section
-import org.andrill.conop.core.internal.DefaultEvent;
-import org.andrill.conop.core.internal.DefaultObservation;
-import org.andrill.conop.core.internal.DefaultSection;
+import org.andrill.conop.core.Run
+import org.andrill.conop.core.Location
+import org.andrill.conop.core.internal.DefaultEvent
+import org.andrill.conop.core.internal.DefaultObservation
+import org.andrill.conop.core.internal.DefaultRun
+import org.andrill.conop.core.internal.DefaultLocation
 
 import com.google.common.collect.HashMultimap
 import com.google.common.collect.Lists
@@ -137,9 +138,9 @@ class CONOP9Repository implements Repository {
 		}
 
 		// create all our sections
-		List<Section> sections = Lists.newArrayList();
+		List<Location> sections = Lists.newArrayList();
 		for (String key : observations.keySet()) {
-			sections.add(new DefaultSection(sectionNames.get(key), Lists.newArrayList(observations.get(key))));
+			sections.add(new DefaultLocation(sectionNames.get(key), Lists.newArrayList(observations.get(key))));
 		}
 
 		// create the run

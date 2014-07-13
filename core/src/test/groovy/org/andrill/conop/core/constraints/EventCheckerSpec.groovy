@@ -4,7 +4,7 @@ import org.andrill.conop.core.*
 import org.andrill.conop.core.internal.DefaultEvent;
 import org.andrill.conop.core.internal.DefaultObservation;
 import org.andrill.conop.core.internal.DefaultRun;
-import org.andrill.conop.core.internal.DefaultSection;
+import org.andrill.conop.core.internal.DefaultLocation;
 
 import spock.lang.Specification
 
@@ -18,7 +18,7 @@ class EventCheckerSpec extends Specification {
 
 		and: "a mock run"
 		def run = new DefaultRun([
-			new DefaultSection("Test", [
+			new DefaultLocation("Test", [
 				new DefaultObservation(pair1, 5, 1, 1),
 				new DefaultObservation(other, 10, 1, 1),
 				new DefaultObservation(pair2, 15, 1, 1)
