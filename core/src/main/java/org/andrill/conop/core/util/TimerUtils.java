@@ -3,7 +3,7 @@ package org.andrill.conop.core.util;
 public class TimerUtils {
 
 	private static class CounterThread extends Thread {
-		int counter = 0;
+		long counter = 0;
 
 		@Override
 		public void run() {
@@ -21,10 +21,10 @@ public class TimerUtils {
 
 	/**
 	 * Gets a counter to avoid having to call System.currentTimeMillis().
-	 * 
+	 *
 	 * @return the counter.
 	 */
-	public static synchronized int getCounter() {
+	public static long getCounter() {
 		if (thread == null) {
 			thread = new CounterThread();
 			thread.start();

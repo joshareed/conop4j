@@ -151,8 +151,5 @@ public class Solution {
 	 */
 	public void setScore(final double score) {
 		this.score = score;
-		if (run != null) {
-			run.add(this);
-		}
 	}
 }

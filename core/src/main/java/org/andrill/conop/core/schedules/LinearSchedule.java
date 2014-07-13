@@ -1,15 +1,15 @@
 package org.andrill.conop.core.schedules;
 
 import org.andrill.conop.core.AbstractConfigurable;
-import org.andrill.conop.core.Simulation;
+import org.andrill.conop.core.Configuration;
 import org.andrill.conop.core.Solution;
 
 /**
  * A linear cooling schedule.
- * 
+ *
  * @author Josh Reed (jareed@andrill.org)
  */
-public class LinearSchedule extends AbstractConfigurable implements CoolingSchedule {
+public class LinearSchedule extends AbstractConfigurable implements Schedule {
 	protected long count = 0;
 	protected double current = 0.0;
 	protected double delta = 1;
@@ -28,10 +28,10 @@ public class LinearSchedule extends AbstractConfigurable implements CoolingSched
 	}
 
 	@Override
-	public void configure(final Simulation simulation) {
-		this.initial = Double.parseDouble(simulation.getProperty("schedule.initial", "1000"));
-		this.delta = Double.parseDouble(simulation.getProperty("schedule.delta", "0.01"));
-		minStepsPer = Long.parseLong(simulation.getProperty("schedule.stepsPer", "100"));
+	public void configure(final Configuration config) {
+		this.initial = config.get("schedule.initial", 1000.0);
+		this.delta = config.get("schedule.delta", 0.01);
+		this.minStepsPer = config.get("schedule.stepsPer", 100l);
 		this.current = initial;
 	}
 

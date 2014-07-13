@@ -1,15 +1,15 @@
 package org.andrill.conop.core.mutators;
 
-import org.andrill.conop.core.Simulation;
+import org.andrill.conop.core.Configuration;
 import org.andrill.conop.core.Solution;
 import org.andrill.conop.core.listeners.AbstractListener;
 
 /**
  * An abstract mutator that adds reset support.
- * 
+ *
  * @author Josh Reed (jareed@andrill.org)
  */
-public abstract class AbstractMutator extends AbstractListener implements MutationStrategy {
+public abstract class AbstractMutator extends AbstractListener implements Mutator {
 	protected long counter;
 	protected Solution local;
 	protected long reset = -1;
@@ -21,8 +21,8 @@ public abstract class AbstractMutator extends AbstractListener implements Mutati
 	}
 
 	@Override
-	public void configure(final Simulation simulation) {
-		reset = Long.parseLong(simulation.getProperty("mutator.reset", "-1"));
+	public void configure(final Configuration config) {
+		reset = config.get("mutator.reset", -1l);
 	}
 
 	protected abstract Solution internalMutate(final Solution solution);

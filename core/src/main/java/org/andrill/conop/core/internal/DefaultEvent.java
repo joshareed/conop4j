@@ -1,4 +1,6 @@
-package org.andrill.conop.core;
+package org.andrill.conop.core.internal;
+
+import org.andrill.conop.core.Event;
 
 /**
  * Represents an Event.
@@ -79,7 +81,7 @@ public class DefaultEvent implements Event {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.andrill.conop.core.Event#getAfterConstraint()
 	 */
 	@Override
@@ -89,7 +91,7 @@ public class DefaultEvent implements Event {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.andrill.conop.core.Event#getBeforeConstraint()
 	 */
 	@Override
@@ -99,7 +101,7 @@ public class DefaultEvent implements Event {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.andrill.conop.core.Event#getName()
 	 */
 	@Override

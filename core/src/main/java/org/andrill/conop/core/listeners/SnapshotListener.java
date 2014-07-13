@@ -6,9 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 
+import org.andrill.conop.core.Configuration;
 import org.andrill.conop.core.Event;
-import org.andrill.conop.core.RanksMatrix;
-import org.andrill.conop.core.Simulation;
 import org.andrill.conop.core.Solution;
 import org.andrill.conop.core.util.TimerUtils;
 
@@ -45,11 +44,12 @@ public class SnapshotListener extends AsyncListener {
 	protected CSVWriter writer;
 
 	@Override
-	public void configure(final Simulation simulation) {
-		super.configure(simulation);
+	public void configure(final Configuration config) {
+		super.configure(config);
+
 		try {
-			solutionFile = getFile(simulation.getProperty("solution.file", "solution.csv"));
-			snapshotFile = getFile(simulation.getProperty("snapshot.file", "snapshot.csv"));
+			solutionFile = getFile(config.get("solution.file", "solution.csv"));
+			snapshotFile = getFile(config.get("snapshot.file", "snapshot.csv"));
 			writer = new CSVWriter(new BufferedWriter(new FileWriter(snapshotFile)), '\t');
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -93,14 +93,14 @@ public class SnapshotListener extends AsyncListener {
 
 			// write the events
 			int total = solution.getEvents().size();
-			RanksMatrix ranks = solution.getRun().getRanksMatrix();
+			// RanksMatrix ranks = solution.getRun().getRanksMatrix();
 			String[] next = new String[4];
 			for (int i = 0; i < total; i++) {
 				Event e = solution.getEvent(i);
 				next[0] = e.getName();
 				next[1] = I.format(total - i);
-				next[2] = I.format(ranks.getMinRank(e));
-				next[3] = I.format(ranks.getMaxRank(e));
+				// next[2] = I.format(ranks.getMinRank(e));
+				// next[3] = I.format(ranks.getMaxRank(e));
 				csv.writeNext(next);
 			}
 		} catch (IOException e) {

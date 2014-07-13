@@ -8,7 +8,7 @@ import org.andrill.conop.core.Solution;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public interface ConstraintChecker {
+public interface Constraints {
 
 	/**
 	 * Check whether the specified solution satisfies all constraints.

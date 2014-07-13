@@ -1,11 +1,11 @@
 package org.andrill.conop.data
 
-import org.andrill.conop.core.DefaultEvent
-import org.andrill.conop.core.DefaultObservation
-import org.andrill.conop.core.DefaultSection
 import org.andrill.conop.core.Event
-import org.andrill.conop.core.Run
+import org.andrill.conop.core.Run;
 import org.andrill.conop.core.Section
+import org.andrill.conop.core.internal.DefaultEvent;
+import org.andrill.conop.core.internal.DefaultObservation;
+import org.andrill.conop.core.internal.DefaultSection;
 
 import spock.lang.Specification
 
@@ -29,7 +29,7 @@ class SolutionParserSpec extends Specification {
 			new DefaultObservation(e2, -5, 10.0, 1.0)
 		])
 
-		return new Run([s1])
+		return new DefaultRun([s1])
 	}
 
 	def "can parse a solution"() {

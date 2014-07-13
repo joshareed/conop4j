@@ -1,12 +1,15 @@
 package org.andrill.conop.core.util
 
-import org.andrill.conop.core.util.TimerUtils;
-
 import spock.lang.*
 
 class TimerUtilsSpec extends Specification {
 
 	def "test timer"() {
+		setup:
+		if (TimerUtils?.thread) {
+			TimerUtils.thread.counter = 0
+		}
+
 		expect: 'starts at 0'
 		TimerUtils.counter == 0
 

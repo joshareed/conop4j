@@ -4,7 +4,7 @@ import java.util.Set;
 
 import org.andrill.conop.core.AbstractConfigurable;
 import org.andrill.conop.core.Event;
-import org.andrill.conop.core.Simulation;
+import org.andrill.conop.core.Run;
 import org.andrill.conop.core.Solution;
 
 import com.google.common.collect.Sets;
@@ -14,15 +14,13 @@ import com.google.common.collect.Sets;
  *
  * @author Josh Reed (jareed@andrill.org)
  */
-public class EventChecker extends AbstractConfigurable implements ConstraintChecker {
-	protected Set<Event> constrained = Sets.newHashSet();
+public class EventConstraints extends AbstractConfigurable implements Constraints {
+	protected Set<Event> constrained = null;
 
-	@Override
-	public void configure(final Simulation simulation) {
-		super.configure(simulation);
+	protected void initialize(final Run run) {
+		constrained = Sets.newHashSet();
 
-		// find minimum number of events to fully check all constraints
-		for (Event e : simulation.getRun().getEvents()) {
+		for (Event e : run.getEvents()) {
 			Event before = e.getBeforeConstraint();
 			Event after = e.getAfterConstraint();
 			if ((before != null) && ((before.getAfterConstraint() != e) || !constrained.contains(before))) {
@@ -36,6 +34,11 @@ public class EventChecker extends AbstractConfigurable implements ConstraintChec
 
 	@Override
 	public boolean isValid(final Solution solution) {
+		if (constrained == null) {
+			initialize(solution.getRun());
+		}
+
+		// check our constraints
 		for (Event e : constrained) {
 			int position = solution.getPosition(e);
 			Event before = e.getBeforeConstraint();

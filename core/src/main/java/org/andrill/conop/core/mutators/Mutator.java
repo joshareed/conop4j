@@ -7,7 +7,7 @@ import org.andrill.conop.core.Solution;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public interface MutationStrategy {
+public interface Mutator {
 
 	/**
 	 * Mutates the specified solution into a new solution.

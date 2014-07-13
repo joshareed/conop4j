@@ -1,6 +1,5 @@
 package org.andrill.conop.core.objectives
 
-import org.andrill.conop.core.Simulation
 import org.andrill.conop.core.RunFixtures
 
 import spock.lang.Specification
@@ -8,18 +7,11 @@ import spock.lang.Specification
 class PlacementPenaltySpec extends Specification {
 
 	def "scoring a simple run"() {
-		given: 'a run'
-		def run = RunFixtures.simpleRun()
+		given: 'a possible solution'
+		def initial = RunFixtures.simpleRunBest()
 
-		and: 'a simulation'
-		def simulation = new Simulation(new Properties(), run)
-
-		and: 'the placement penalty'
+		and: 'the objective function'
 		def objective = new PlacementPenalty()
-		objective.configure(simulation)
-
-		and: 'a possible solution'
-		def initial = RunFixtures.simpleRunBest(run)
 
 		when: 'score the solution'
 		def score = objective.score(initial)

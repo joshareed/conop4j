@@ -9,7 +9,7 @@ class NullCheckerSpec extends Specification {
 
 	def "always returns true"() {
 		given: 'a NullChecker'
-		def checker = new NullChecker()
+		def checker = new NullConstraints()
 
 		expect: 'null is valid'
 		checker.isValid(null)
@@ -23,6 +23,6 @@ class NullCheckerSpec extends Specification {
 
 	def "toString returns as expected"() {
 		expect:
-		new NullChecker().toString() == "Null"
+		new NullConstraints().toString() == "Null"
 	}
 }

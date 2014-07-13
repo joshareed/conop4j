@@ -10,11 +10,11 @@ import javax.swing.filechooser.FileFilter;
 
 import net.miginfocom.swing.MigLayout;
 
-import org.andrill.conop.core.CONOP;
 import org.andrill.conop.core.Simulation;
 import org.andrill.conop.core.Solution;
 import org.andrill.conop.core.listeners.AbstractListener;
 import org.andrill.conop.core.listeners.Listener.Mode;
+import org.andrill.conop.core.solver.CONOP;
 
 /**
  * A simple GUI for running a simulation.

@@ -8,15 +8,14 @@ import org.andrill.conop.core.Event;
 import org.andrill.conop.core.Observation;
 import org.andrill.conop.core.Run;
 import org.andrill.conop.core.Section;
-import org.andrill.conop.core.Simulation;
 import org.andrill.conop.core.Solution;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-public class RelativeOrderingPenalty extends AbstractParallelObjective {
-	public static class EventOrdering implements ObjectiveFunction {
+public class RelativeOrderingPenalty extends AbstractParallelPenalty {
+	public static class EventOrdering implements Penalty {
 		protected Event event;
 		protected int[][] penalties;
 
@@ -66,15 +65,15 @@ public class RelativeOrderingPenalty extends AbstractParallelObjective {
 		}
 	}
 
-	protected Map<Event, EventOrdering> orderings = Maps.newHashMap();
+	protected Map<Event, EventOrdering> orderings = null;
 
 	public RelativeOrderingPenalty() {
 		super("Relative Ordering");
 	}
 
 	@Override
-	public void configure(final Simulation simulation) {
-		Run run = simulation.getRun();
+	public void initialize(final Run run) {
+		orderings = Maps.newHashMap();
 		for (Event e : run.getEvents()) {
 			orderings.put(e, new EventOrdering(e, run));
 		}

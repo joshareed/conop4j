@@ -1,5 +1,10 @@
 package org.andrill.conop.core
 
+import org.andrill.conop.core.internal.DefaultEvent;
+import org.andrill.conop.core.internal.DefaultObservation;
+import org.andrill.conop.core.internal.DefaultRun;
+import org.andrill.conop.core.internal.DefaultSection;
+
 class RunFixtures {
 
 	static Run simpleRun() {
@@ -20,7 +25,7 @@ class RunFixtures {
 			new DefaultObservation(e2, -5, 10.0, 1.0)
 		])
 
-		return new Run([s1])
+		return new DefaultRun([s1])
 	}
 
 	static Solution simpleRunBest(Run run = RunFixtures.simpleRun()) {

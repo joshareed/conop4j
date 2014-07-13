@@ -15,7 +15,6 @@ import org.andrill.conop.core.Event;
 import org.andrill.conop.core.Observation;
 import org.andrill.conop.core.Run;
 import org.andrill.conop.core.Section;
-import org.andrill.conop.core.Simulation;
 import org.andrill.conop.core.Solution;
 
 import com.google.common.collect.Lists;
@@ -26,8 +25,8 @@ import com.google.common.collect.Maps;
  *
  * @author Josh Reed (jareed@andrill.org)
  */
-public class PlacementPenalty extends AbstractParallelObjective {
-	public static class SectionPlacement implements ObjectiveFunction {
+public class PlacementPenalty extends AbstractParallelPenalty {
+	public static class SectionPlacement implements Penalty {
 		private static final IdentityHashMap<BigDecimal, Double> cache = new IdentityHashMap<BigDecimal, Double>() {
 			private static final long serialVersionUID = 1L;
 
@@ -199,18 +198,15 @@ public class PlacementPenalty extends AbstractParallelObjective {
 		}
 	}
 
-	protected final Map<Section, SectionPlacement> placements = Maps.newHashMap();
+	protected Map<Section, SectionPlacement> placements = null;
 
 	public PlacementPenalty() {
 		super("Placement");
 	}
 
 	@Override
-	public void configure(final Simulation simulation) {
-		super.configure(simulation);
-
-		// create our section placements
-		Run run = simulation.getRun();
+	public void initialize(final Run run) {
+		placements = Maps.newHashMap();
 		for (final Section section : run.getSections()) {
 			placements.put(section, new SectionPlacement(section));
 		}
