@@ -14,10 +14,10 @@ public interface Run {
 	public abstract int getId(Event e);
 
 	/**
-	 * Gets all sections in this run.
+	 * Gets all locations in this run.
 	 *
-	 * @return the sections.
+	 * @return the locations.
 	 */
-	public abstract ImmutableSet<Section> getSections();
+	public abstract ImmutableSet<Location> getLocations();
 
 }

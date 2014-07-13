@@ -12,13 +12,13 @@ class CONOP9RepositorySpec extends Specification {
 		run != null
 
 		and: 'all sections were parsed'
-		run.sections.size() == 7
+		run.locations.size() == 7
 
 		and: 'all events were parsed'
 		run.events.size() == 124
 
 		and: 'did not override weights'
-		!run.sections.collect { it.observations }.flatten().find { it.weightUp > 1 || it.weightDown > 1 }
+		!run.locations.collect { it.observations }.flatten().find { it.weightUp > 1 || it.weightDown > 1 }
 	}
 
 	def "can load a standard CONOP9 run directory and override the weights"() {
@@ -29,12 +29,12 @@ class CONOP9RepositorySpec extends Specification {
 		run != null
 
 		and: 'all sections were parsed'
-		run.sections.size() == 7
+		run.locations.size() == 7
 
 		and: 'all events were parsed'
 		run.events.size() == 124
 
 		and: 'override weights'
-		run.sections.collect { it.observations }.flatten().find { it.weightUp > 1 || it.weightDown > 1 }
+		run.locations.collect { it.observations }.flatten().find { it.weightUp > 1 || it.weightDown > 1 }
 	}
 }

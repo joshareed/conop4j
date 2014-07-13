@@ -7,7 +7,7 @@ import java.util.concurrent.Future;
 import org.andrill.conop.core.Event;
 import org.andrill.conop.core.Observation;
 import org.andrill.conop.core.Run;
-import org.andrill.conop.core.Section;
+import org.andrill.conop.core.Location;
 import org.andrill.conop.core.Solution;
 
 import com.google.common.collect.ImmutableSet;
@@ -31,7 +31,7 @@ public class RelativeOrderingPenalty extends AbstractParallelPenalty {
 				penalties[i][0] = 0;
 				penalties[i][1] = 0;
 
-				for (Section s : run.getSections()) {
+				for (Location s : run.getLocations()) {
 					Observation o1 = s.getObservation(event);
 					Observation o2 = s.getObservation(e);
 

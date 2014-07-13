@@ -3,7 +3,7 @@ package org.andrill.conop.core
 import org.andrill.conop.core.internal.DefaultEvent;
 import org.andrill.conop.core.internal.DefaultObservation;
 import org.andrill.conop.core.internal.DefaultRun;
-import org.andrill.conop.core.internal.DefaultSection;
+import org.andrill.conop.core.internal.DefaultLocation;
 
 class RunFixtures {
 
@@ -17,7 +17,7 @@ class RunFixtures {
 		DefaultEvent e5 = new DefaultEvent("Ash")
 
 		// section
-		DefaultSection s1 = new DefaultSection("Section 1", [
+		DefaultLocation s1 = new DefaultLocation("Section 1", [
 			new DefaultObservation(e1, -1, 1.0, 10.0),
 			new DefaultObservation(e3, -2, 1.0, 10.0),
 			new DefaultObservation(e5, -3, 10.0, 10.0),
