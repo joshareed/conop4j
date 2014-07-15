@@ -39,7 +39,7 @@ public class DefaultSolverConfiguration implements SolverConfiguration {
 	protected Solution initial = null;
 	protected List<ClassConfig<? extends Listener>> listeners = Lists.newArrayList();
 	protected ClassConfig<? extends Mutator> mutator;
-	protected ClassConfig<? extends Penalty> objective;
+	protected ClassConfig<? extends Penalty> penalty;
 	protected ClassConfig<? extends Schedule> schedule;
 
 	public void configureConstraints(final Class<? extends Constraints> clazz, final Map<Object, Object> config) {
@@ -58,8 +58,8 @@ public class DefaultSolverConfiguration implements SolverConfiguration {
 		mutator = new ClassConfig<Mutator>(clazz, config);
 	}
 
-	public void configureObjective(final Class<? extends Penalty> clazz, final Map<Object, Object> config) {
-		objective = new ClassConfig<Penalty>(clazz, config);
+	public void configurePenalty(final Class<? extends Penalty> clazz, final Map<Object, Object> config) {
+		penalty = new ClassConfig<Penalty>(clazz, config);
 	}
 
 	public void configureSchedule(final Class<? extends Schedule> clazz, final Map<Object, Object> config) {
@@ -98,10 +98,10 @@ public class DefaultSolverConfiguration implements SolverConfiguration {
 
 	@Override
 	public Penalty getPenalty() {
-		if (objective == null) {
-			configureObjective(PlacementPenalty.class, Maps.newHashMap());
+		if (penalty == null) {
+			configurePenalty(PlacementPenalty.class, Maps.newHashMap());
 		}
-		return instantiate(objective);
+		return instantiate(penalty);
 	}
 
 	@Override
@@ -117,7 +117,6 @@ public class DefaultSolverConfiguration implements SolverConfiguration {
 			E instance = classConfig.clazz.newInstance();
 			if (instance instanceof Configurable) {
 				Map<Object, Object> config = Maps.newHashMap();
-				// TODO: global config?
 				config.putAll(classConfig.config);
 
 				((Configurable) instance).configure(new Configuration(config));
