@@ -1,4 +1,4 @@
-package org.andrill.conop.core.objectives;
+package org.andrill.conop.core.penalties;
 
 import org.andrill.conop.core.Solution;
 

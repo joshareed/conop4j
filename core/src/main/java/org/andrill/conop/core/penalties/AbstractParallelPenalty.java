@@ -1,4 +1,4 @@
-package org.andrill.conop.core.objectives;
+package org.andrill.conop.core.penalties;
 
 import java.util.List;
 import java.util.concurrent.Callable;

@@ -11,7 +11,7 @@ import org.andrill.conop.core.Solution;
 import org.andrill.conop.core.constraints.Constraints;
 import org.andrill.conop.core.listeners.Listener;
 import org.andrill.conop.core.mutators.Mutator;
-import org.andrill.conop.core.objectives.Penalty;
+import org.andrill.conop.core.penalties.Penalty;
 import org.andrill.conop.core.schedules.Schedule;
 
 public class QueueSolver extends AbstractSolver {

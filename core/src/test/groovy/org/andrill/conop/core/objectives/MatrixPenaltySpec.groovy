@@ -1,6 +1,7 @@
 package org.andrill.conop.core.objectives
 
 import org.andrill.conop.core.RunFixtures
+import org.andrill.conop.core.penalties.MatrixPenalty;
 
 import spock.lang.Specification
 
