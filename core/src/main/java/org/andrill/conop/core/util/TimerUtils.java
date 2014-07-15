@@ -17,7 +17,7 @@ public class TimerUtils {
 		}
 	}
 
-	private static CounterThread thread = null;
+	private static CounterThread thread = new CounterThread();
 
 	/**
 	 * Gets a counter to avoid having to call System.currentTimeMillis().
@@ -25,8 +25,7 @@ public class TimerUtils {
 	 * @return the counter.
 	 */
 	public static long getCounter() {
-		if (thread == null) {
-			thread = new CounterThread();
+		if (!thread.isAlive()) {
 			thread.start();
 		}
 		return thread.counter;
