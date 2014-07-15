@@ -26,13 +26,12 @@ public class TemperingSchedule extends AbstractConfigurable implements Schedule 
 
 	@Override
 	public void configure(final Configuration config) {
-		this.initial = config.get("schedule.initial", 1000.0);
-		this.factor = config.get("schedule.delta", 0.01);
-		this.minStepsPer = config.get("schedule.stepsPer", 100l);
+		this.initial = config.get("initial", 1000.0);
+		this.factor = config.get("delta", 0.01);
+		this.minStepsPer = config.get("steps", 100l);
 		this.current = initial;
 		this.temperTo = initial / 2;
 		this.temperWhen = Math.log10(temperTo);
-		this.current = initial;
 	}
 
 	@Override
