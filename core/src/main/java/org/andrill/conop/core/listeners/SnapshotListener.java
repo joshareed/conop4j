@@ -21,7 +21,7 @@ import au.com.bytecode.opencsv.CSVWriter;
 public class SnapshotListener extends AsyncListener {
 	private static final DecimalFormat I = new DecimalFormat("0");
 	private static final DecimalFormat D = new DecimalFormat("0.00");
-	private static final String[] HEADER = new String[] { "Event", "Rank", "Min Rank", "Max Rank" };
+	private static final String[] HEADER = new String[] { "Event", "Rank" };
 
 	protected static File getFile(final String file) {
 		File f = new File(file);
@@ -47,13 +47,8 @@ public class SnapshotListener extends AsyncListener {
 	public void configure(final Configuration config) {
 		super.configure(config);
 
-		try {
-			solutionFile = getFile(config.get("solution.file", "solution.csv"));
-			snapshotFile = getFile(config.get("snapshot.file", "snapshot.csv"));
-			writer = new CSVWriter(new BufferedWriter(new FileWriter(snapshotFile)), '\t');
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		solutionFile = getFile(config.get("solution", "solution.csv"));
+		snapshotFile = getFile(config.get("snapshot", "snapshot.csv"));
 	}
 
 	@Override
@@ -62,6 +57,17 @@ public class SnapshotListener extends AsyncListener {
 			writeResults(solutionFile, best);
 			writer.writeNext(new String[] { I.format((next / 60) - 1), I.format(iteration), D.format(temp), D.format(best.getScore()) });
 			writer.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void started(final Solution initial) {
+		super.started(initial);
+
+		try {
+			writer = new CSVWriter(new BufferedWriter(new FileWriter(snapshotFile)), '\t');
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -93,14 +99,11 @@ public class SnapshotListener extends AsyncListener {
 
 			// write the events
 			int total = solution.getEvents().size();
-			// RanksMatrix ranks = solution.getRun().getRanksMatrix();
 			String[] next = new String[4];
 			for (int i = 0; i < total; i++) {
 				Event e = solution.getEvent(i);
 				next[0] = e.getName();
 				next[1] = I.format(total - i);
-				// next[2] = I.format(ranks.getMinRank(e));
-				// next[3] = I.format(ranks.getMaxRank(e));
 				csv.writeNext(next);
 			}
 		} catch (IOException e) {

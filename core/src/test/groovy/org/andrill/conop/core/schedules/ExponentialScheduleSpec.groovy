@@ -13,8 +13,8 @@ class ExponentialScheduleSpec extends Specification {
 
 		expect: 'defaults'
 		schedule.initial == 1000
-		schedule.factor == 0.01
-		schedule.minStepsPer == 100
+		schedule.delta == 0.01
+		schedule.steps == 100
 		schedule.current == 1000
 	}
 
@@ -22,9 +22,9 @@ class ExponentialScheduleSpec extends Specification {
 	def "test configuration"() {
 		given: 'a configuration'
 		def config = new Configuration(
-				'schedule.initial': 250,
-				'schedule.delta': 5,
-				'schedule.stepsPer': 1
+				'initial': 250,
+				'delta': 5,
+				'steps': 1
 				)
 
 		and: 'a exponential schedule'
@@ -35,8 +35,8 @@ class ExponentialScheduleSpec extends Specification {
 
 		then: 'everything set properly'
 		schedule.initial == 250
-		schedule.factor == 5
-		schedule.minStepsPer == 1
+		schedule.delta == 5
+		schedule.steps == 1
 		schedule.current == 250
 	}
 
@@ -44,8 +44,8 @@ class ExponentialScheduleSpec extends Specification {
 		given: 'a exponential schedule'
 		def schedule = new ExponentialSchedule()
 		schedule.initial = 10
-		schedule.factor = 1
-		schedule.minStepsPer = 2
+		schedule.delta = 1
+		schedule.steps = 2
 		schedule.current = 10
 
 		when: 'next 1'

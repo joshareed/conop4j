@@ -75,7 +75,7 @@ public class DefaultLocation implements Location {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.andrill.conop.core.Location#getEvents()
 	 */
 	@Override
@@ -85,7 +85,7 @@ public class DefaultLocation implements Location {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.andrill.conop.core.Location#getLevels()
 	 */
 	@Override
@@ -95,7 +95,7 @@ public class DefaultLocation implements Location {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.andrill.conop.core.Location#getName()
 	 */
 	@Override
@@ -105,7 +105,7 @@ public class DefaultLocation implements Location {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * org.andrill.conop.core.Location#getObservation(org.andrill.conop.core.
 	 * Event)
@@ -117,23 +117,12 @@ public class DefaultLocation implements Location {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.andrill.conop.core.Location#getObservations()
 	 */
 	@Override
 	public ImmutableSet<Observation> getObservations() {
 		return observations;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.andrill.conop.core.Location#getObservations(java.math.BigDecimal)
-	 */
-	@Override
-	public ImmutableSet<Observation> getObservations(final BigDecimal level) {
-		return ImmutableSet.copyOf(levels.get(level));
 	}
 
 	@Override

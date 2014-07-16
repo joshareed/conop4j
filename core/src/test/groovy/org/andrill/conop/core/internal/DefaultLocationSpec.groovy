@@ -1,9 +1,5 @@
 package org.andrill.conop.core.internal
 
-import org.andrill.conop.core.internal.DefaultEvent
-import org.andrill.conop.core.internal.DefaultLocation
-import org.andrill.conop.core.internal.DefaultObservation
-
 import spock.lang.Specification
 
 class DefaultLocationSpec extends Specification {
@@ -40,8 +36,5 @@ class DefaultLocationSpec extends Specification {
 
 		and: "can get a specific observation for an event"
 		location.getObservation(event1) == obs1
-
-		and: "can get a set of observations for a level"
-		location.getObservations(100.0) == [obs1] as Set
 	}
 }

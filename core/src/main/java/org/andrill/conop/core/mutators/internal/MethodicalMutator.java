@@ -1,4 +1,4 @@
-package org.andrill.conop.core.mutators;
+package org.andrill.conop.core.mutators.internal;
 
 import java.util.List;
 import java.util.Map;
@@ -6,6 +6,7 @@ import java.util.Map;
 import org.andrill.conop.core.Event;
 import org.andrill.conop.core.Run;
 import org.andrill.conop.core.Solution;
+import org.andrill.conop.core.mutators.AbstractMutator;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

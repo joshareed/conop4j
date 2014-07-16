@@ -1,13 +1,13 @@
 package org.andrill.conop.data
 
 import org.andrill.conop.core.Event
+import org.andrill.conop.core.Location
 import org.andrill.conop.core.Observation
 import org.andrill.conop.core.Run
-import org.andrill.conop.core.Location
 import org.andrill.conop.core.internal.DefaultEvent
+import org.andrill.conop.core.internal.DefaultLocation
 import org.andrill.conop.core.internal.DefaultObservation
 import org.andrill.conop.core.internal.DefaultRun
-import org.andrill.conop.core.internal.DefaultLocation
 
 import com.google.common.collect.HashMultimap
 import com.google.common.collect.Lists
@@ -16,14 +16,7 @@ import com.google.common.collect.Multimap
 
 class CONOP9Repository implements Repository {
 
-	@Override
-	public Map getLocation(String locationId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	List getObservations(String locationId) {
+	Location getLocation(String locationId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -215,5 +208,4 @@ class CONOP9Repository implements Repository {
 		}
 		return list;
 	}
-
 }

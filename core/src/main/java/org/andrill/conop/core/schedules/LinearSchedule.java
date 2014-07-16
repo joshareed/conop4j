@@ -11,28 +11,18 @@ import org.andrill.conop.core.Solution;
  */
 public class LinearSchedule extends AbstractConfigurable implements Schedule {
 	protected long count = 0;
-	protected double current = 0.0;
-	protected double delta = 1;
-	protected double initial = 0;
-	protected long minStepsPer = 1;
+	protected double current = 1000;
+	protected double delta = 0.01;
+	protected double initial = 1000;
+	protected long steps = 100;
 	protected double score = -1;
-
-	/**
-	 * Create a new LinearSchedule.
-	 */
-	public LinearSchedule() {
-		this.initial = 1000;
-		this.delta = 0.01;
-		minStepsPer = 100;
-		this.current = initial;
-	}
 
 	@Override
 	public void configure(final Configuration config) {
-		this.initial = config.get("schedule.initial", 1000.0);
-		this.delta = config.get("schedule.delta", 0.01);
-		this.minStepsPer = config.get("schedule.stepsPer", 100l);
-		this.current = initial;
+		initial = config.get("initial", 1000.0);
+		delta = config.get("delta", 0.01);
+		steps = config.get("steps", 100l);
+		current = initial;
 	}
 
 	@Override
@@ -52,7 +42,7 @@ public class LinearSchedule extends AbstractConfigurable implements Schedule {
 			score = solution.getScore();
 			count = 0;
 			return current;
-		} else if (count > minStepsPer) {
+		} else if (count > steps) {
 			current = Math.max(current - delta, 0);
 			count = 0;
 			return current;

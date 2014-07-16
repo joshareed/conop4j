@@ -1,0 +1,259 @@
+{
+    "name": "DSDP 269",
+    "program": "dsdp",
+    "id": "dsdp-269",
+    "observations": [
+        {
+            "event": {
+                "id": "5dbafe7d",
+                "name": "Thalassiosira oliverana sparsa FAD"
+            },
+            "level": -98.2200
+        },
+        {
+            "event": {
+                "id": "0c934f91",
+                "name": "Proboscia barboi LAD"
+            },
+            "level": -48.8200
+        },
+        {
+            "event": {
+                "id": "3ae8e864",
+                "name": "Thalassiosira kolbei FAD"
+            },
+            "level": -6.8200
+        },
+        {
+            "event": {
+                "id": "0ba5944a",
+                "name": "Azpeitia tabularis LAD"
+            },
+            "level": -0.9200
+        },
+        {
+            "event": {
+                "id": "b25a3967",
+                "name": "Hemidiscus karstenii FAD"
+            },
+            "level": -3.3200
+        },
+        {
+            "event": {
+                "id": "c89c480c",
+                "name": "Rouxia diploneides LAD"
+            },
+            "level": -47.2500
+        },
+        {
+            "event": {
+                "id": "374e0909",
+                "name": "Rouxia peragalli LAD"
+            },
+            "level": -47.2500
+        },
+        {
+            "event": {
+                "id": "b4f61270",
+                "name": "Thalassiosira lentiginosa LAD"
+            },
+            "level": -0.9200
+        },
+        {
+            "event": {
+                "id": "b60dd1a2",
+                "name": "Actinocyclus ingens FAD"
+            },
+            "level": -340.5000
+        },
+        {
+            "event": {
+                "id": "10285644",
+                "name": "Denticulopsis lauta LAD"
+            },
+            "level": -99.0200
+        },
+        {
+            "event": {
+                "id": "542e3db8",
+                "name": "Eucampia antarctica LAD"
+            },
+            "level": -0.9200
+        },
+        {
+            "event": {
+                "id": "67044c59",
+                "name": "Denticulopsis maccollumii FAD"
+            },
+            "level": -331.9000
+        },
+        {
+            "event": {
+                "id": "bc597773",
+                "name": "Fragilariopsis kerguelensis FAD"
+            },
+            "level": -8.7200
+        },
+        {
+            "event": {
+                "id": "381f6b9f",
+                "name": "Fragilariopsis kerguelensis LAD"
+            },
+            "level": -0.9200
+        },
+        {
+            "event": {
+                "id": "cf7d7f18",
+                "name": "Denticulopsis simonsenii FAD"
+            },
+            "level": -331.9000
+        },
+        {
+            "event": {
+                "id": "67ee098b",
+                "name": "Rouxia diploneides FAD"
+            },
+            "level": -97.5200
+        },
+        {
+            "event": {
+                "id": "5ae4d36a",
+                "name": "Fragilariopsis interfrigidaria LAD"
+            },
+            "level": -47.2500
+        },
+        {
+            "event": {
+                "id": "eaebfe02",
+                "name": "Thalassiosira kolbei LAD"
+            },
+            "level": -3.8200
+        },
+        {
+            "event": {
+                "id": "9234c4d3",
+                "name": "Hemidiscus karstenii LAD"
+            },
+            "level": -1.4500
+        },
+        {
+            "event": {
+                "id": "6ca92772",
+                "name": "Actinocyclus actinochilus LAD"
+            },
+            "level": -0.9200
+        },
+        {
+            "event": {
+                "id": "bcec4043",
+                "name": "Proboscia barboi FAD"
+            },
+            "level": -338.3000
+        },
+        {
+            "event": {
+                "id": "7192abea",
+                "name": "Denticulopsis maccollumii LAD"
+            },
+            "level": -94.1200
+        },
+        {
+            "event": {
+                "id": "44d34fe1",
+                "name": "Denticulopsis lauta FAD"
+            },
+            "level": -338.3000
+        },
+        {
+            "event": {
+                "id": "39042166",
+                "name": "Eucampia antarctica FAD"
+            },
+            "level": -49.6900
+        },
+        {
+            "event": {
+                "id": "2ad1c0bf",
+                "name": "Actinocyclus ingens LAD"
+            },
+            "level": -7.7200
+        },
+        {
+            "event": {
+                "id": "30732f13",
+                "name": "Thalassiosira oliverana sparsa LAD"
+            },
+            "level": -94.1200
+        },
+        {
+            "event": {
+                "id": "44d76b40",
+                "name": "Azpeitia tabularis FAD"
+            },
+            "level": -48.3200
+        },
+        {
+            "event": {
+                "id": "0dd078ca",
+                "name": "Rouxia californica FAD"
+            },
+            "level": -201.4000
+        },
+        {
+            "event": {
+                "id": "3d71143c",
+                "name": "Actinocyclus actinochilus FAD"
+            },
+            "level": -6.8200
+        },
+        {
+            "event": {
+                "id": "f930fbfe",
+                "name": "Thalassiosira lentiginosa FAD"
+            },
+            "level": -8.7200
+        },
+        {
+            "event": {
+                "id": "35cfb2de",
+                "name": "Fragilariopsis interfrigidaria FAD"
+            },
+            "level": -48.3200
+        },
+        {
+            "event": {
+                "id": "764bdf5a",
+                "name": "Rouxia peragalli FAD"
+            },
+            "level": -93.5200
+        },
+        {
+            "event": {
+                "id": "dcb591d4",
+                "name": "Denticulopsis simonsenii LAD"
+            },
+            "level": -94.1200
+        },
+        {
+            "event": {
+                "id": "4e63822d",
+                "name": "Rouxia californica LAD"
+            },
+            "level": -95.4200
+        },
+        {
+            "event": {
+                "id": "5c682c43",
+                "name": "Trinacria excavata FAD"
+            },
+            "level": -340.5000
+        },
+        {
+            "event": {
+                "id": "cc14f4f0",
+                "name": "Trinacria excavata LAD"
+            },
+            "level": -49.2200
+        }
+    ]
+}

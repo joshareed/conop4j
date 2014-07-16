@@ -1,11 +1,20 @@
 package org.andrill.conop.data;
 
-import java.util.List;
-import java.util.Map;
+import org.andrill.conop.core.Location;
 
+/**
+ * Defines the interface for a Repository.
+ *
+ * @author Josh Reed (jareed@andrill.org)
+ */
 public interface Repository {
 
-	Map<?,?> getLocation(String locationId);
-	
-	List<Map<?,?>> getObservations(String locationId);
+	/**
+	 * Get a {@link Location} by id.
+	 *
+	 * @param locationId
+	 *            the location id.
+	 * @return the Location or null.
+	 */
+	Location getLocation(String locationId);
 }

@@ -4,6 +4,7 @@ import org.andrill.conop.core.Run;
 import org.andrill.conop.core.Solution
 import org.andrill.conop.core.RunFixtures
 import org.andrill.conop.core.internal.DefaultEvent;
+import org.andrill.conop.core.mutators.internal.AnnealingMutator;
 
 import spock.lang.Specification
 

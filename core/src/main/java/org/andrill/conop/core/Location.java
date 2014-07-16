@@ -43,13 +43,4 @@ public interface Location {
 	 */
 	public abstract ImmutableSet<Observation> getObservations();
 
-	/**
-	 * Get all observations at the specified level.
-	 *
-	 * @param level
-	 *            the level.
-	 * @return the list of observations.
-	 */
-	public abstract ImmutableSet<Observation> getObservations(BigDecimal level);
-
 }
