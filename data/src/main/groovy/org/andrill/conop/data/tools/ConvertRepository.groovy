@@ -24,35 +24,21 @@ class ConvertRepository {
 
 			l.observations.each { o ->
 				def e = o.event
-				def name = strip(e.name)
+				def name = e.name
 
 				def observation = [:]
 				observation.event = [
 					id: id(name),
 					name: name
 				]
-
-				if (!e.beforeConstraint && !e.afterConstraint) {
-					observation.top = o.level
-					observation.base = o.level
-
-					location.observations << observation
-				} else if (e.beforeConstraint && !e.afterConstraint) {
-					observation.top = o.level
-					observation.base = l.getObservation(e.beforeConstraint).level
-
-					location.observations << observation
-				}
+				observation.level = o.level
+				location.observations << observation
 			}
 
 			def dir = new File(out, program)
 			dir.mkdirs()
 			new File(dir, "${site}.json").write(new JsonBuilder(location).toPrettyString())
 		}
-	}
-
-	static strip(name) {
-		(name - 'AGE' - 'ASH' - 'MID' - 'LAD' - 'FAD').trim()
 	}
 
 	static id(name) {
