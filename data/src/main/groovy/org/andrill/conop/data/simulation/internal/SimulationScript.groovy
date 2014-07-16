@@ -1,7 +1,9 @@
 package org.andrill.conop.data.simulation.internal
 
 import org.andrill.conop.core.Run
+import org.andrill.conop.core.internal.DefaultRun
 import org.andrill.conop.core.solver.SolverConfiguration
+import org.andrill.conop.data.Repository
 
 class SimulationScript extends Script {
 	def repos = []
@@ -13,7 +15,18 @@ class SimulationScript extends Script {
 	}
 
 	Run getRun() {
-		return null
+		def locations = locs.collect { getLocation(it) }
+		new DefaultRun(locations)
+	}
+
+	protected getLocation(id) {
+		for (Repository repo : repos) {
+			def location = repo.getLocation(id)
+			if (location) {
+				return location
+			}
+		}
+		throw new RuntimeException("No location with id '${id}' found in any configured repository")
 	}
 
 	SolverConfiguration getSolverConfiguration() {
