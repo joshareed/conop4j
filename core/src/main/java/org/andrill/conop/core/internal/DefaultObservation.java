@@ -11,7 +11,7 @@ import org.andrill.conop.core.Observation;
  * @author Josh Reed (jareed@andrill.org)
  */
 public class DefaultObservation implements Observation {
-	protected final DefaultEvent event;
+	protected final Event event;
 	protected final BigDecimal level;
 	protected final double weightDown;
 	protected final double weightUp;
@@ -28,7 +28,7 @@ public class DefaultObservation implements Observation {
 	 * @param weightDown
 	 *            the down-weight.
 	 */
-	public DefaultObservation(final DefaultEvent event, final BigDecimal level, final double weightUp, final double weightDown) {
+	public DefaultObservation(final Event event, final BigDecimal level, final double weightUp, final double weightDown) {
 		this.event = event;
 		this.level = level;
 		this.weightUp = weightUp;
