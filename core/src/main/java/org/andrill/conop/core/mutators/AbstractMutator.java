@@ -22,7 +22,7 @@ public abstract class AbstractMutator extends AbstractListener implements Mutato
 
 	@Override
 	public void configure(final Configuration config) {
-		reset = config.get("mutator.reset", -1l);
+		reset = config.get("reset", -1l);
 	}
 
 	protected abstract Solution internalMutate(final Solution solution);
