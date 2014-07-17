@@ -24,6 +24,6 @@ class LocalRepository extends AbstractJsonRepository {
 			return null
 		}
 
-		return file.text;
+		return file.text
 	}
 }
