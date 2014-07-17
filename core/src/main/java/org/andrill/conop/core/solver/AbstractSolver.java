@@ -1,6 +1,7 @@
 package org.andrill.conop.core.solver;
 
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.andrill.conop.core.HaltedException;
 import org.andrill.conop.core.Run;
@@ -8,7 +9,7 @@ import org.andrill.conop.core.Solution;
 import org.andrill.conop.core.listeners.Listener;
 
 public abstract class AbstractSolver implements Solver {
-	protected Set<Listener> listeners;
+	protected Set<Listener> listeners = new CopyOnWriteArraySet<Listener>();
 	protected Solution best = null;
 	protected boolean stopped = false;
 
@@ -51,7 +52,12 @@ public abstract class AbstractSolver implements Solver {
 	public Solution solve(final SolverConfiguration config, final Run run) throws HaltedException {
 		addShutdownHook();
 		initialize(config);
-		return solve(config.getInitialSolution());
+
+		Solution initial = config.getInitialSolution();
+		if (initial == null) {
+			initial = Solution.initial(run);
+		}
+		return solve(initial);
 	}
 
 	protected void started(final Solution initial) {
