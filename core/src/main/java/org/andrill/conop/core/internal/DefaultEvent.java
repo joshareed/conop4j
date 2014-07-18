@@ -81,27 +81,7 @@ public class DefaultEvent implements Event {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.andrill.conop.core.Event#getAfterConstraint()
-	 */
-	@Override
-	public DefaultEvent getAfterConstraint() {
-		return after;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.andrill.conop.core.Event#getBeforeConstraint()
-	 */
-	@Override
-	public DefaultEvent getBeforeConstraint() {
-		return before;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.andrill.conop.core.Event#getName()
 	 */
 	@Override

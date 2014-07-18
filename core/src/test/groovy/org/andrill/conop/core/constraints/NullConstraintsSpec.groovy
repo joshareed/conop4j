@@ -5,7 +5,7 @@ import org.andrill.conop.core.RunFixtures
 
 import spock.lang.Specification
 
-class NullCheckerSpec extends Specification {
+class NullConstraintsSpec extends Specification {
 
 	def "always returns true"() {
 		given: 'a NullChecker'

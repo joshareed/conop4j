@@ -1,12 +1,12 @@
 package org.andrill.conop.data
 
 import org.andrill.conop.core.Event
-import org.andrill.conop.core.Run
 import org.andrill.conop.core.Location
+import org.andrill.conop.core.Run
 import org.andrill.conop.core.internal.DefaultEvent
+import org.andrill.conop.core.internal.DefaultLocation
 import org.andrill.conop.core.internal.DefaultObservation
 import org.andrill.conop.core.internal.DefaultRun
-import org.andrill.conop.core.internal.DefaultLocation
 
 import spock.lang.Specification
 
@@ -15,10 +15,10 @@ class SolutionParserSpec extends Specification {
 	private Run getTestRun() {
 
 		// events
-		Event e1 = DefaultEvent.createPaired("Fossil 1 LAD", "Fossil 1 FAD")
-		Event e2 = e1.beforeConstraint
-		Event e3 = DefaultEvent.createPaired("Fossil 2 LAD", "Fossil 2 FAD")
-		Event e4 = e3.beforeConstraint
+		Event e1 = new DefaultEvent("Fossil 1 LAD")
+		Event e2 = new DefaultEvent("Fossil 1 FAD")
+		Event e3 = new DefaultEvent("Fossil 2 LAD")
+		Event e4 = new DefaultEvent("Fossil 2 FAD")
 		Event e5 = new DefaultEvent("Ash")
 
 		// section

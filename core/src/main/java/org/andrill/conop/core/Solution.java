@@ -1,7 +1,5 @@
 package org.andrill.conop.core;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +15,7 @@ import com.google.common.collect.Lists;
 public class Solution {
 
 	/**
-	 * Creates an initial solution with events sorted by type.
+	 * Creates an initial solution.
 	 *
 	 * @param run
 	 *            the run.
@@ -25,22 +23,6 @@ public class Solution {
 	 */
 	public static Solution initial(final Run run) {
 		final List<Event> events = Lists.newArrayList(run.getEvents());
-		Collections.sort(events, new Comparator<Event>() {
-			@Override
-			public int compare(final Event o1, final Event o2) {
-				return toInt(o1).compareTo(toInt(o2));
-			}
-
-			public Integer toInt(final Event e) {
-				if ((e.getBeforeConstraint() != null) && (e.getAfterConstraint() == null)) {
-					return Integer.valueOf(-1);
-				} else if ((e.getAfterConstraint() != null) && (e.getBeforeConstraint() == null)) {
-					return Integer.valueOf(1);
-				} else {
-					return Integer.valueOf(0);
-				}
-			}
-		});
 		return new Solution(run, events);
 	}
 

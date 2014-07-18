@@ -1,19 +1,19 @@
 package org.andrill.conop.core.constraints
 
 import org.andrill.conop.core.*
-import org.andrill.conop.core.internal.DefaultEvent;
-import org.andrill.conop.core.internal.DefaultObservation;
-import org.andrill.conop.core.internal.DefaultRun;
-import org.andrill.conop.core.internal.DefaultLocation;
+import org.andrill.conop.core.internal.DefaultEvent
+import org.andrill.conop.core.internal.DefaultLocation
+import org.andrill.conop.core.internal.DefaultObservation
+import org.andrill.conop.core.internal.DefaultRun
 
 import spock.lang.Specification
 
-class EventCheckerSpec extends Specification {
+class EventConstraintsSpec extends Specification {
 
 	def "checks constraints"() {
 		given: "events"
-		def pair1 = DefaultEvent.createPaired("First", "Last")
-		def pair2 = pair1.beforeConstraint
+		def pair1 = new DefaultEvent("Taxon LAD")
+		def pair2 = new DefaultEvent("Taxon FAD")
 		def other = new DefaultEvent("Other")
 
 		and: "a mock run"
@@ -27,7 +27,7 @@ class EventCheckerSpec extends Specification {
 
 		and: "an EventChecker"
 		def checker = new EventConstraints()
-		checker.configure(new Configuration())
+		checker.configure(new Configuration([:]))
 
 		when: "a valid solution"
 		def solution1 = new Solution(run, [pair1, pair2, other])
