@@ -1,7 +1,7 @@
 package org.andrill.conop.core.mutators
 
 import org.andrill.conop.core.Configuration
-import org.andrill.conop.core.Run;
+import org.andrill.conop.core.Run
 import org.andrill.conop.core.RunFixtures
 import org.andrill.conop.core.Solution
 
@@ -28,7 +28,7 @@ class AbstractMutatorSpec extends Specification {
 		def mutator = new TestMutator()
 
 		and: 'a simulation'
-		def config = new Configuration('mutator.reset': 1)
+		def config = new Configuration('reset': 1)
 
 		when: 'configure'
 		mutator.configure(config)

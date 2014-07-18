@@ -50,6 +50,7 @@ public class StandardSolver extends AbstractSolver {
 		// get our initial temperature and score
 		double temp = schedule.getInitial();
 		initial.setScore(penalty.score(initial));
+		Solution best = initial;
 
 		// initialize the listeners
 		started(initial);
@@ -94,6 +95,7 @@ public class StandardSolver extends AbstractSolver {
 			} else if ((e instanceof InterruptedException) || (e instanceof RejectedExecutionException)) {
 				halt = new HaltedException("User Interrupt");
 			} else {
+				e.printStackTrace();
 				halt = new HaltedException("Unexpected Error: " + e.getMessage());
 			}
 			stopped(best);
