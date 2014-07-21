@@ -31,12 +31,16 @@ class SimulationDSL {
 			System.exit(0)
 		}
 
-		def dsl = new SimulationDSL()
-		dsl.parse(new File(args[0]).text)
-		def run = dsl.run
-		def config = dsl.solverConfiguration
-		def solver = config.solver
-		solver.solve(config, run)
+		try {
+			def dsl = new SimulationDSL()
+			dsl.parse(new File(args[0]).text)
+			def run = dsl.run
+			def config = dsl.solverConfiguration
+			def solver = config.solver
+			solver.solve(config, run)
+		} catch (e) {
+			println "Halted: ${e.message}"
+		}
 
 		System.exit(0)
 	}

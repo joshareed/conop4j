@@ -90,6 +90,8 @@ public class QueueSolver extends AbstractSolver {
 		// get our initial temperature and score
 		double temp = schedule.getInitial();
 		initial.setScore(Double.MAX_VALUE);
+		best = initial;
+
 		started(initial);
 
 		// fill the work queue
@@ -120,7 +122,7 @@ public class QueueSolver extends AbstractSolver {
 					best = next;
 
 					if (best.getScore() == 0) {
-						throw new RuntimeException("Score reached 0");
+						throw new HaltedException("Score reached 0");
 					}
 				}
 

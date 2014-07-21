@@ -74,6 +74,6 @@ class SolverDelegate {
 	}
 
 	def solver(Map params = [:], String name) {
-		config.configureSolver(classFor(name, SOLVER), params)
+		config.configureSolver(classFor(name, SOLVERS), params)
 	}
 }
