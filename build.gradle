@@ -1,7 +1,15 @@
+buildscript {
+	repositories { jcenter() }
+	dependencies {
+		classpath 'com.github.jengelman.gradle.plugins:shadow:1.0.2'
+	}
+}
+
 subprojects {
 	apply plugin: 'java'
 	apply plugin: 'groovy'
 	apply plugin: 'eclipse'
+	apply plugin: 'com.github.johnrengelman.shadow'
 
 	sourceCompatibility = 1.7
 	targetCompatibility = 1.7

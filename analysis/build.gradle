@@ -1,3 +1,5 @@
+archivesBaseName = 'conop4j-analysis'
+
 dependencies {
 	compile project(':core')
 
