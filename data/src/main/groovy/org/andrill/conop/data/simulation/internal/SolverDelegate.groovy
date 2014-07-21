@@ -14,6 +14,8 @@ import org.andrill.conop.core.penalties.RelativeOrderingPenalty
 import org.andrill.conop.core.schedules.ExponentialSchedule
 import org.andrill.conop.core.schedules.LinearSchedule
 import org.andrill.conop.core.schedules.TemperingSchedule
+import org.andrill.conop.core.solver.QueueSolver
+import org.andrill.conop.core.solver.StandardSolver
 
 class SolverDelegate {
 	def config = new DefaultSolverConfiguration()
@@ -41,6 +43,10 @@ class SolverDelegate {
 		'console': ConsoleProgressListener.class.canonicalName,
 		'ranks': RanksListener.class.canonicalName
 	]
+	static SOLVERS = [
+		'conop': StandardSolver.class.canonicalName,
+		'qnop': QueueSolver.class.canonicalName
+	]
 
 	protected classFor(name, lookup) {
 		def clazz = lookup[name] ?: name
@@ -65,5 +71,9 @@ class SolverDelegate {
 
 	def listener(Map params = [:], String name) {
 		config.configureListener(classFor(name, LISTENERS), params)
+	}
+
+	def solver(Map params = [:], String name) {
+		config.configureSolver(classFor(name, SOLVER), params)
 	}
 }

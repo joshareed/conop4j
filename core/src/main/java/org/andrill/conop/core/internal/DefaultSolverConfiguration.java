@@ -15,7 +15,9 @@ import org.andrill.conop.core.penalties.Penalty;
 import org.andrill.conop.core.penalties.PlacementPenalty;
 import org.andrill.conop.core.schedules.ExponentialSchedule;
 import org.andrill.conop.core.schedules.Schedule;
+import org.andrill.conop.core.solver.Solver;
 import org.andrill.conop.core.solver.SolverConfiguration;
+import org.andrill.conop.core.solver.StandardSolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +43,7 @@ public class DefaultSolverConfiguration implements SolverConfiguration {
 	protected ClassConfig<? extends Mutator> mutator;
 	protected ClassConfig<? extends Penalty> penalty;
 	protected ClassConfig<? extends Schedule> schedule;
+	protected ClassConfig<? extends Solver> solver;
 
 	public void configureConstraints(final Class<? extends Constraints> clazz, final Map<Object, Object> config) {
 		constraints = new ClassConfig<Constraints>(clazz, config);
@@ -64,6 +67,10 @@ public class DefaultSolverConfiguration implements SolverConfiguration {
 
 	public void configureSchedule(final Class<? extends Schedule> clazz, final Map<Object, Object> config) {
 		schedule = new ClassConfig<Schedule>(clazz, config);
+	}
+
+	public void configureSolver(final Class<? extends Solver> clazz, final Map<Object, Object> config) {
+		solver = new ClassConfig<Solver>(clazz, config);
 	}
 
 	@Override
@@ -110,6 +117,14 @@ public class DefaultSolverConfiguration implements SolverConfiguration {
 			configureSchedule(ExponentialSchedule.class, Maps.newHashMap());
 		}
 		return instantiate(schedule);
+	}
+
+	@Override
+	public Solver getSolver() {
+		if (solver == null) {
+			configureSolver(StandardSolver.class, Maps.newHashMap());
+		}
+		return instantiate(solver);
 	}
 
 	protected <E> E instantiate(final ClassConfig<E> classConfig) {
