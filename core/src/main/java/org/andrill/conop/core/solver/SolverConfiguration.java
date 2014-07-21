@@ -53,4 +53,11 @@ public interface SolverConfiguration {
 	 */
 	public abstract Schedule getSchedule();
 
+	/**
+	 * Gets the configured {@link Solver}.
+	 *
+	 * @return the solver.
+	 */
+	public abstract Solver getSolver();
+
 }

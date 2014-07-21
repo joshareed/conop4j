@@ -7,7 +7,6 @@ import org.andrill.conop.core.listeners.ConsoleProgressListener
 import org.andrill.conop.core.listeners.RanksListener
 import org.andrill.conop.core.listeners.SnapshotListener
 import org.andrill.conop.core.listeners.StoppingListener
-import org.andrill.conop.core.mutators.ConstrainedMutator
 import org.andrill.conop.core.mutators.RandomMutator
 import org.andrill.conop.core.penalties.MatrixPenalty
 import org.andrill.conop.core.penalties.PlacementPenalty
@@ -15,6 +14,8 @@ import org.andrill.conop.core.penalties.RelativeOrderingPenalty
 import org.andrill.conop.core.schedules.ExponentialSchedule
 import org.andrill.conop.core.schedules.LinearSchedule
 import org.andrill.conop.core.schedules.TemperingSchedule
+import org.andrill.conop.core.solver.QueueSolver
+import org.andrill.conop.core.solver.StandardSolver
 
 class SolverDelegate {
 	def config = new DefaultSolverConfiguration()
@@ -24,8 +25,7 @@ class SolverDelegate {
 		'event': EventConstraints.class.canonicalName
 	]
 	static MUTATORS = [
-		'random': RandomMutator.class.canonicalName,
-		'constrained': ConstrainedMutator.class.canonicalName
+		'random': RandomMutator.class.canonicalName
 	]
 	static SCHEDULES = [
 		'linear': LinearSchedule.class.canonicalName,
@@ -42,6 +42,10 @@ class SolverDelegate {
 		'snapshot': SnapshotListener.class.canonicalName,
 		'console': ConsoleProgressListener.class.canonicalName,
 		'ranks': RanksListener.class.canonicalName
+	]
+	static SOLVERS = [
+		'conop': StandardSolver.class.canonicalName,
+		'qnop': QueueSolver.class.canonicalName
 	]
 
 	protected classFor(name, lookup) {
@@ -67,5 +71,9 @@ class SolverDelegate {
 
 	def listener(Map params = [:], String name) {
 		config.configureListener(classFor(name, LISTENERS), params)
+	}
+
+	def solver(Map params = [:], String name) {
+		config.configureSolver(classFor(name, SOLVERS), params)
 	}
 }

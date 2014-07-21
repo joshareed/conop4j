@@ -65,9 +65,9 @@ public abstract class AbstractParallelPenalty extends AbstractConfigurable imple
 			try {
 				penalty += r.get();
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				// ignore
 			} catch (ExecutionException e) {
-				e.printStackTrace();
+				// ignore
 			}
 		}
 		return penalty;

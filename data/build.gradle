@@ -1,6 +1,9 @@
+archivesBaseName = 'conop4j-data'
+
 manifest.mainAttributes(
 	'Implementation-Title': 'CONOP4J Data Library',
-	'Implementation-Version': version
+	'Implementation-Version': version,
+	'Main-Class': 'org.andrill.conop.data.simulation.SimulationDSL'
 )
 
 dependencies {

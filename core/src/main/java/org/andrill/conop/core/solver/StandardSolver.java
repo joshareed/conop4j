@@ -71,7 +71,7 @@ public class StandardSolver extends AbstractSolver {
 				if (next.getScore() < best.getScore()) {
 					best = next;
 					if (best.getScore() == 0) {
-						throw new RuntimeException("Score reached 0");
+						throw new HaltedException("Score reached 0");
 					}
 				}
 
@@ -95,7 +95,6 @@ public class StandardSolver extends AbstractSolver {
 			} else if ((e instanceof InterruptedException) || (e instanceof RejectedExecutionException)) {
 				halt = new HaltedException("User Interrupt");
 			} else {
-				e.printStackTrace();
 				halt = new HaltedException("Unexpected Error: " + e.getMessage());
 			}
 			stopped(best);

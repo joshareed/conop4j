@@ -1,3 +1,5 @@
+archivesBaseName = 'conop4j-ui'
+
 dependencies {
 	compile project(':core')
 	compile project(':analysis')

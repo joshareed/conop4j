@@ -2,11 +2,33 @@ package org.andrill.conop.core;
 
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
 public class Configuration {
 	protected Map<Object, Object> properties;
 
 	public Configuration(final Map<Object, Object> properties) {
-		this.properties = properties;
+		if (properties == null) {
+			this.properties = Maps.newHashMap();
+		} else {
+			this.properties = properties;
+		}
+	}
+
+	public boolean get(final String key, final boolean defaultValue) {
+		Object result = properties.get(key);
+		if (result == null) {
+			return defaultValue;
+		}
+		if (result instanceof Boolean) {
+			return (boolean) result;
+		}
+
+		try {
+			return Boolean.parseBoolean(result.toString());
+		} catch (RuntimeException e) {
+			return defaultValue;
+		}
 	}
 
 	public double get(final String key, final double defaultValue) {

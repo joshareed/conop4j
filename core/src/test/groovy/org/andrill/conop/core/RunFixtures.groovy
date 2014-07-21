@@ -1,19 +1,19 @@
 package org.andrill.conop.core
 
-import org.andrill.conop.core.internal.DefaultEvent;
-import org.andrill.conop.core.internal.DefaultObservation;
-import org.andrill.conop.core.internal.DefaultRun;
-import org.andrill.conop.core.internal.DefaultLocation;
+import org.andrill.conop.core.internal.DefaultEvent
+import org.andrill.conop.core.internal.DefaultLocation
+import org.andrill.conop.core.internal.DefaultObservation
+import org.andrill.conop.core.internal.DefaultRun
 
 class RunFixtures {
 
 	static Run simpleRun() {
 
 		// events
-		DefaultEvent e1 = DefaultEvent.createPaired("Fossil 1 LAD", "Fossil 1 FAD")
-		DefaultEvent e2 = e1.beforeConstraint
-		DefaultEvent e3 = DefaultEvent.createPaired("Fossil 2 LAD", "Fossil 2 FAD")
-		DefaultEvent e4 = e3.beforeConstraint
+		DefaultEvent e1 = new DefaultEvent("Fossil 1 LAD")
+		DefaultEvent e2 = new DefaultEvent("Fossil 1 FAD")
+		DefaultEvent e3 = new DefaultEvent("Fossil 2 LAD")
+		DefaultEvent e4 = new DefaultEvent("Fossil 2 FAD")
 		DefaultEvent e5 = new DefaultEvent("Ash")
 
 		// section

@@ -2,7 +2,6 @@ package org.andrill.conop.data.simulation
 
 import org.andrill.conop.core.Run
 import org.andrill.conop.core.solver.SolverConfiguration
-import org.andrill.conop.core.solver.StandardSolver
 import org.andrill.conop.data.simulation.internal.SimulationScript
 import org.codehaus.groovy.control.CompilerConfiguration
 
@@ -26,19 +25,22 @@ class SimulationDSL {
 		script.solverConfiguration
 	}
 
-	static void main(args) {
-		if (!args || args.length == 0) {
-			println "Missing required parameter: <file>"
+	static main(args) {
+		if (!args) {
+			println "Usage: <simulation file>"
 			System.exit(0)
 		}
 
-		def dsl = new SimulationDSL()
-		dsl.parse(new File(args[0]).text)
-		def run = dsl.run
-		def config = dsl.solverConfiguration
-
-		def solver = new StandardSolver()
-		solver.solve(config, run)
+		try {
+			def dsl = new SimulationDSL()
+			dsl.parse(new File(args[0]).text)
+			def run = dsl.run
+			def config = dsl.solverConfiguration
+			def solver = config.solver
+			solver.solve(config, run)
+		} catch (e) {
+			println "Halted: ${e.message}"
+		}
 
 		System.exit(0)
 	}

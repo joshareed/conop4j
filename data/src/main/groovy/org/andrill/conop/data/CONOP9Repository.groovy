@@ -91,8 +91,8 @@ class CONOP9Repository implements Repository {
 			if (event == null) {
 				String name = eventNames.get(id).replaceAll("  ", " ");
 				if (type.equals("1")) {	// 1 = FAD, 2 = LAD
-					Event lad = DefaultEvent.createPaired(name + " LAD", name + " FAD");
-					event = lad.getBeforeConstraint();
+					Event lad = new DefaultEvent(name + " LAD");
+					event = new DefaultEvent(name + " FAD");
 					events.put(id + "_2", lad);
 				} else if (type.equals("3")) {
 					event = new DefaultEvent(name + " MID", events.get(id + "_1"), events.get(id + "_2"));
