@@ -15,10 +15,18 @@ import com.google.common.collect.Maps
 import com.google.common.collect.Multimap
 
 class CONOP9Repository implements Repository {
+	protected Run run
+
+	CONOP9Repository(File root) {
+		run = loadCONOP9Run(root)
+	}
+
+	CONOP9Repository(File locations, File events, File observations) {
+		run = loadCONOP9Run(locations, events, observations)
+	}
 
 	Location getLocation(String locationId) {
-		// TODO Auto-generated method stub
-		return null;
+		run.locations.find { it.name == locationId }
 	}
 
 	/**
