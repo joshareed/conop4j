@@ -43,9 +43,11 @@ abstract class AbstractJsonRepository implements Repository {
 
 	protected double getWeightUp(Event e) {
 		if (e.name.endsWith("AGE")) {
-			return 100000
+			return 1000000
+		} else if (e.name.endsWith("ASH")) {
+			return 1000000
 		} else if (e.name.endsWith("FAD")) {
-			return 100000
+			return 1000000
 		} else {
 			return 1
 		}
@@ -53,9 +55,11 @@ abstract class AbstractJsonRepository implements Repository {
 
 	protected double getWeightDown(Event e) {
 		if (e.name.endsWith("AGE")) {
-			return 100000
+			return 1000000
+		} else if (e.name.endsWith("ASH")) {
+			return 1000000
 		} else if (e.name.endsWith("LAD")) {
-			return 100000
+			return 1000000
 		} else {
 			return 1
 		}

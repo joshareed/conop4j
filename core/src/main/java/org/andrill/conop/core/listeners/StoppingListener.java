@@ -1,7 +1,7 @@
 package org.andrill.conop.core.listeners;
 
-import org.andrill.conop.core.HaltedException;
 import org.andrill.conop.core.Configuration;
+import org.andrill.conop.core.HaltedException;
 import org.andrill.conop.core.Solution;
 import org.andrill.conop.core.util.TimerUtils;
 
@@ -33,13 +33,13 @@ public class StoppingListener extends AbstractListener {
 		super.configure(config);
 
 		// parse stopping conditions
-		stopTime = config.get("stop.time", -1l) * 1000l * 60l;
-		stopIteration = config.get("stop.steps", -1l);
-		stopProgressTime = config.get("stop.progress.time", -1l) * 1000l * 60l;
-		stopProgressIteration = config.get("stop.progress.steps", -1l);
-		stopThreshold = config.get("stop.threshold", -1.0);
-		stopThresholdTime = config.get("stop.threshold.time", -1l) * 1000 * 60;
-		stopThresholdIteration = config.get("stop.threshold.steps", -1l);
+		stopTime = config.get("time", -1l) * 1000l * 60l;
+		stopIteration = config.get("steps", -1l);
+		stopProgressTime = config.get("progressTime", -1l) * 1000l * 60l;
+		stopProgressIteration = config.get("progressSteps", -1l);
+		stopThreshold = config.get("threshold", -1.0);
+		stopThresholdTime = config.get("thresholdTime", -1l) * 1000 * 60;
+		stopThresholdIteration = config.get("thresholdSteps", -1l);
 	}
 
 	protected int minutes(final long time) {

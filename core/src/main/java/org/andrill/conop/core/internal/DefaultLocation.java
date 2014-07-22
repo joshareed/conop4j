@@ -2,7 +2,6 @@ package org.andrill.conop.core.internal;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
-import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +11,7 @@ import org.andrill.conop.core.Observation;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
 /**
  * Represents a location.
@@ -35,7 +35,7 @@ public class DefaultLocation implements Location {
 	public DefaultLocation(final String name, final List<Observation> list) {
 		this.name = name;
 		observations = ImmutableSet.copyOf(list);
-		events = new IdentityHashMap<Event, Observation>();
+		events = Maps.newHashMap();
 
 		// index the observations by event and level
 		ImmutableMultimap.Builder<BigDecimal, Observation> levelBuilder = ImmutableMultimap.builder();
@@ -62,12 +62,12 @@ public class DefaultLocation implements Location {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		DefaultLocation other = (DefaultLocation) obj;
+		Location other = (Location) obj;
 		if (name == null) {
-			if (other.name != null) {
+			if (other.getName() != null) {
 				return false;
 			}
-		} else if (!name.equals(other.name)) {
+		} else if (!name.equals(other.getName())) {
 			return false;
 		}
 		return true;
@@ -75,7 +75,7 @@ public class DefaultLocation implements Location {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.andrill.conop.core.Location#getEvents()
 	 */
 	@Override
@@ -85,7 +85,7 @@ public class DefaultLocation implements Location {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.andrill.conop.core.Location#getLevels()
 	 */
 	@Override
@@ -95,7 +95,7 @@ public class DefaultLocation implements Location {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.andrill.conop.core.Location#getName()
 	 */
 	@Override
@@ -105,7 +105,7 @@ public class DefaultLocation implements Location {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.andrill.conop.core.Location#getObservation(org.andrill.conop.core.
 	 * Event)
@@ -117,7 +117,7 @@ public class DefaultLocation implements Location {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.andrill.conop.core.Location#getObservations()
 	 */
 	@Override
