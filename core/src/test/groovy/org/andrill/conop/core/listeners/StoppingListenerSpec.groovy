@@ -37,13 +37,13 @@ class StoppingListenerSpec extends Specification {
 
 		and: 'a simulation'
 		def config = new Configuration(
-				"stop.time": 1,
-				"stop.steps": 2,
-				"stop.progress.time": 3,
-				"stop.progress.steps": 4,
-				"stop.threshold": 5,
-				"stop.threshold.time": 6,
-				"stop.threshold.steps": 7
+				"time": 1,
+				"steps": 2,
+				"progressTime": 3,
+				"progressSteps": 4,
+				"threshold": 5,
+				"thresholdTime": 6,
+				"thresholdSteps": 7
 				)
 
 		when: 'configure'
