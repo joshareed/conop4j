@@ -68,12 +68,12 @@ public class DefaultEvent implements Event {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		DefaultEvent other = (DefaultEvent) obj;
+		Event other = (Event) obj;
 		if (name == null) {
-			if (other.name != null) {
+			if (other.getName() != null) {
 				return false;
 			}
-		} else if (!name.equals(other.name)) {
+		} else if (!name.equals(other.getName())) {
 			return false;
 		}
 		return true;
@@ -81,7 +81,7 @@ public class DefaultEvent implements Event {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see org.andrill.conop.core.Event#getName()
 	 */
 	@Override

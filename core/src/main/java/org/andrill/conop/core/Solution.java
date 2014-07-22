@@ -1,11 +1,11 @@
 package org.andrill.conop.core;
 
-import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * A solution contains a set of events in a particular order.
@@ -44,7 +44,7 @@ public class Solution {
 		this.run = run;
 
 		// index our events
-		positions = new IdentityHashMap<Event, Integer>();
+		positions = Maps.newHashMap();
 		for (int i = 0; i < events.size(); i++) {
 			positions.put(events.get(i), i);
 		}
