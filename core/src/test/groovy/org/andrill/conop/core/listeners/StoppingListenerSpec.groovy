@@ -52,11 +52,11 @@ class StoppingListenerSpec extends Specification {
 		then: 'initial configuration'
 		listener.stopIteration == 2
 		listener.stopProgressIteration == 4
-		listener.stopProgressTime == 180000
+		listener.stopProgressTime == 180
 		listener.stopThreshold == 5
 		listener.stopThresholdIteration == 7
-		listener.stopThresholdTime == 360000
-		listener.stopTime == 60000
+		listener.stopThresholdTime == 360
+		listener.stopTime == 60
 	}
 
 	def "test abort"() {

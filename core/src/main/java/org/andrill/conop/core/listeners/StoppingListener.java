@@ -33,12 +33,12 @@ public class StoppingListener extends AbstractListener {
 		super.configure(config);
 
 		// parse stopping conditions
-		stopTime = config.get("time", -1l) * 1000l * 60l;
+		stopTime = config.get("time", -1l) * 60l;
 		stopIteration = config.get("steps", -1l);
-		stopProgressTime = config.get("progressTime", -1l) * 1000l * 60l;
+		stopProgressTime = config.get("progressTime", -1l) * 60l;
 		stopProgressIteration = config.get("progressSteps", -1l);
 		stopThreshold = config.get("threshold", -1.0);
-		stopThresholdTime = config.get("thresholdTime", -1l) * 1000 * 60;
+		stopThresholdTime = config.get("thresholdTime", -1l) * 60;
 		stopThresholdIteration = config.get("thresholdSteps", -1l);
 	}
 
@@ -54,7 +54,7 @@ public class StoppingListener extends AbstractListener {
 	}
 
 	protected void stop(final String message) {
-		throw new RuntimeException(message);
+		throw new HaltedException(message);
 	}
 
 	@Override
@@ -84,10 +84,10 @@ public class StoppingListener extends AbstractListener {
 		}
 		if ((stopThreshold > 0) && (bestScore > stopThreshold)) {
 			if ((stopThresholdIteration > 0) && (currentIteration >= stopThresholdIteration)) {
-				abort("Stopped because simulation did not reach score threshold of " + stopThreshold + " in " + stopThresholdIteration + " iterations");
+				stop("Stopped because simulation did not reach score threshold of " + stopThreshold + " in " + stopThresholdIteration + " iterations");
 			}
 			if ((stopThresholdTime > 0) && (time >= stopThresholdTime)) {
-				abort("Stopped because simulation did not reach score threshold of " + stopThreshold + " in " + minutes(stopThresholdTime) + " minutes");
+				stop("Stopped because simulation did not reach score threshold of " + stopThreshold + " in " + minutes(stopThresholdTime) + " minutes");
 			}
 		}
 	}
