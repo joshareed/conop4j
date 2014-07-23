@@ -4,6 +4,4 @@
 .gradle
 bin/
 build/
-out.xls
 
-/diff.png

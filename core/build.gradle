@@ -1,0 +1,18 @@
+archivesBaseName = 'conop4j-core'
+
+manifest.mainAttributes(
+	'Implementation-Title': 'CONOP4J Core Library',
+	'Implementation-Version': version,
+	'Main-Class': 'org.andrill.conop.core.CLI'
+)
+
+dependencies {
+	compile 'com.google.guava:guava:17.0'
+	compile 'net.sf.opencsv:opencsv:2.3'
+	compile "org.slf4j:slf4j-api:1.7.7"
+
+	runtime "org.slf4j:slf4j-simple:1.7.7"
+
+	testCompile "org.codehaus.groovy:groovy-all:$groovyVersion"
+	testCompile "org.spockframework:spock-core:1.0-groovy-2.0-SNAPSHOT"
+}

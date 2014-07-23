@@ -1,0 +1,8 @@
+archivesBaseName = 'conop4j-ui'
+
+dependencies {
+	compile project(':core')
+	compile project(':analysis')
+
+	compile 'com.miglayout:miglayout:3.7.4:swing@jar'
+}

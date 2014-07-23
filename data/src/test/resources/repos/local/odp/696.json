@@ -1,0 +1,294 @@
+{
+    "name": "ODP 696",
+    "program": "odp",
+    "id": "odp-696",
+    "observations": [
+        {
+            "event": {
+                "id": "b48b7a49",
+                "name": "Denticulopsis simonsenii MID"
+            },
+            "level": -213.9000
+        },
+        {
+            "event": {
+                "id": "20efb154",
+                "name": "Fragilariopsis arcula LAD"
+            },
+            "level": -22.4000
+        },
+        {
+            "event": {
+                "id": "b852a1f4",
+                "name": "Thalassiosira complicata LAD"
+            },
+            "level": -12.5000
+        },
+        {
+            "event": {
+                "id": "6d552ae2",
+                "name": "Fragilariopsis praeinterfrigidaria FAD"
+            },
+            "level": -22.7500
+        },
+        {
+            "event": {
+                "id": "67044c59",
+                "name": "Denticulopsis maccollumii FAD"
+            },
+            "level": -522.1500
+        },
+        {
+            "event": {
+                "id": "30732f13",
+                "name": "Thalassiosira oliverana sparsa LAD"
+            },
+            "level": -22.7500
+        },
+        {
+            "event": {
+                "id": "85c02911",
+                "name": "Denticulopsis dimorpha LAD"
+            },
+            "level": -235.7000
+        },
+        {
+            "event": {
+                "id": "738858f2",
+                "name": "Fragilariopsis donahuensis LAD"
+            },
+            "level": -221.8000
+        },
+        {
+            "event": {
+                "id": "b60dd1a2",
+                "name": "Actinocyclus ingens FAD"
+            },
+            "level": -512.1500
+        },
+        {
+            "event": {
+                "id": "5d5f4e4e",
+                "name": "Fragilariopsis claviceps LAD"
+            },
+            "level": -293.9200
+        },
+        {
+            "event": {
+                "id": "df486d1f",
+                "name": "Fragilariopsis claviceps FAD"
+            },
+            "level": -338.0200
+        },
+        {
+            "event": {
+                "id": "9f469fef",
+                "name": "Fragilariopsis donahuensis FAD"
+            },
+            "level": -301.3500
+        },
+        {
+            "event": {
+                "id": "c5becadd",
+                "name": "Fragilariopsis efferans LAD"
+            },
+            "level": -301.3500
+        },
+        {
+            "event": {
+                "id": "93b8c794",
+                "name": "Nitzschia grossepunctata FAD"
+            },
+            "level": -522.1500
+        },
+        {
+            "event": {
+                "id": "99041931",
+                "name": "Fragilariopsis aurica FAD"
+            },
+            "level": -69.6000
+        },
+        {
+            "event": {
+                "id": "7192abea",
+                "name": "Denticulopsis maccollumii LAD"
+            },
+            "level": -493.0200
+        },
+        {
+            "event": {
+                "id": "802c16d3",
+                "name": "Fragilariopsis januaria FAD"
+            },
+            "level": -504.5500
+        },
+        {
+            "event": {
+                "id": "542e3db8",
+                "name": "Eucampia antarctica LAD"
+            },
+            "level": -2.0500
+        },
+        {
+            "event": {
+                "id": "aa583b48",
+                "name": "Fragilariopsis clementia LAD"
+            },
+            "level": -60.0000
+        },
+        {
+            "event": {
+                "id": "932d1632",
+                "name": "Fragilariopsis clementia FAD"
+            },
+            "level": -64.7000
+        },
+        {
+            "event": {
+                "id": "2973f21d",
+                "name": "Thalassiosira oestrupii FAD"
+            },
+            "level": -75.3000
+        },
+        {
+            "event": {
+                "id": "756cb7ba",
+                "name": "Denticulopsis dimorpha FAD"
+            },
+            "level": -272.4000
+        },
+        {
+            "event": {
+                "id": "010344f4",
+                "name": "Fragilariopsis arcula FAD"
+            },
+            "level": -75.3000
+        },
+        {
+            "event": {
+                "id": "cf7d7f18",
+                "name": "Denticulopsis simonsenii FAD"
+            },
+            "level": -482.7000
+        },
+        {
+            "event": {
+                "id": "98fb4783",
+                "name": "Fragilariopsis januaria LAD"
+            },
+            "level": -146.4000
+        },
+        {
+            "event": {
+                "id": "dcb591d4",
+                "name": "Denticulopsis simonsenii LAD"
+            },
+            "level": -95.9000
+        },
+        {
+            "event": {
+                "id": "8b439135",
+                "name": "Fragilariopsis praecurta LAD"
+            },
+            "level": -12.5000
+        },
+        {
+            "event": {
+                "id": "ce7d6471",
+                "name": "Denticulopsis praedimorpha FAD"
+            },
+            "level": -293.9200
+        },
+        {
+            "event": {
+                "id": "da029baa",
+                "name": "Thalassiosira oestrupii LAD"
+            },
+            "level": -2.0500
+        },
+        {
+            "event": {
+                "id": "0cd51377",
+                "name": "Thalassiosira complicata FAD"
+            },
+            "level": -46.5000
+        },
+        {
+            "event": {
+                "id": "5dbafe7d",
+                "name": "Thalassiosira oliverana sparsa FAD"
+            },
+            "level": -213.1900
+        },
+        {
+            "event": {
+                "id": "39042166",
+                "name": "Eucampia antarctica FAD"
+            },
+            "level": -474.4000
+        },
+        {
+            "event": {
+                "id": "1c52750d",
+                "name": "Fragilariopsis aurica LAD"
+            },
+            "level": -12.5000
+        },
+        {
+            "event": {
+                "id": "2ad1c0bf",
+                "name": "Actinocyclus ingens LAD"
+            },
+            "level": -77.5000
+        },
+        {
+            "event": {
+                "id": "44d34fe1",
+                "name": "Denticulopsis lauta FAD"
+            },
+            "level": -504.5500
+        },
+        {
+            "event": {
+                "id": "02148576",
+                "name": "Fragilariopsis praecurta FAD"
+            },
+            "level": -281.0000
+        },
+        {
+            "event": {
+                "id": "8517f7d1",
+                "name": "Nitzschia grossepunctata LAD"
+            },
+            "level": -482.7000
+        },
+        {
+            "event": {
+                "id": "cf0a857d",
+                "name": "Fragilariopsis praeinterfrigidaria LAD"
+            },
+            "level": -12.7400
+        },
+        {
+            "event": {
+                "id": "10285644",
+                "name": "Denticulopsis lauta LAD"
+            },
+            "level": -301.3500
+        },
+        {
+            "event": {
+                "id": "db3f64b8",
+                "name": "Fragilariopsis efferans FAD"
+            },
+            "level": -482.3500
+        },
+        {
+            "event": {
+                "id": "ab75d136",
+                "name": "Denticulopsis praedimorpha LAD"
+            },
+            "level": -272.4000
+        }
+    ]
+}
