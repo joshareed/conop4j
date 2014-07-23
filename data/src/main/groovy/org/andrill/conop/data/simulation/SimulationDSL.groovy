@@ -39,7 +39,7 @@ class SimulationDSL {
 			def solver = config.solver
 			solver.solve(config, run)
 		} catch (e) {
-			println "Halted: ${e.message}"
+			println "Halted: ${e.message.padRight(80)}"
 		}
 
 		System.exit(0)
