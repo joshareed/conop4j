@@ -14,7 +14,7 @@ subprojects {
 	sourceCompatibility = 1.7
 	targetCompatibility = 1.7
 
-	version = '0.10.1'
+	version = '0.10.2'
 	group = 'org.andrill.conop'
 
 	repositories {
