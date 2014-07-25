@@ -1,5 +1,6 @@
 package org.andrill.conop.core.internal;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -71,6 +72,16 @@ public class DefaultSolverConfiguration implements SolverConfiguration {
 
 	public void configureSolver(final Class<? extends Solver> clazz, final Map<Object, Object> config) {
 		solver = new ClassConfig<Solver>(clazz, config);
+	}
+
+	public void filterListeners(final Class<? extends Listener> clazz) {
+		Iterator<ClassConfig<? extends Listener>> i = listeners.iterator();
+		while (i.hasNext()) {
+			ClassConfig<? extends Listener> config = i.next();
+			if (config.clazz.equals(clazz)) {
+				i.remove();
+			}
+		}
 	}
 
 	@Override
