@@ -2,6 +2,7 @@ package org.andrill.conop.core.solver;
 
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.RejectedExecutionException;
 
 import org.andrill.conop.core.HaltedException;
 import org.andrill.conop.core.Run;
@@ -31,6 +32,19 @@ public abstract class AbstractSolver implements Solver {
 				stopped(best);
 			}
 		});
+	}
+
+	protected void handleError(final Exception e) throws HaltedException {
+		HaltedException halt;
+		if (e instanceof HaltedException) {
+			halt = new HaltedException(e.getMessage(), best);
+		} else if ((e instanceof InterruptedException) || (e instanceof RejectedExecutionException)) {
+			halt = new HaltedException("User Interrupt", best);
+		} else {
+			halt = new HaltedException("Unexpected Error: " + e.getMessage(), best);
+		}
+		stopped(best);
+		throw halt;
 	}
 
 	protected void initialize(final SolverConfiguration config) {
