@@ -2,17 +2,18 @@ import static ratpack.groovy.Groovy.groovyTemplate
 import static ratpack.groovy.Groovy.ratpack
 import static ratpack.jackson.Jackson.json
 import io.conop.JobService
+import io.conop.TrackerModule
 import ratpack.form.Form
 import ratpack.jackson.JacksonModule
 
 ratpack {
-	def service = new JobService()
 
 	bindings {
 		add new JacksonModule()
+		add new TrackerModule()
 	}
 
-	handlers {
+	handlers { JobService service ->
 		assets "public"
 
 		get {

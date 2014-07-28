@@ -1,9 +1,11 @@
 package io.conop
 
 import groovy.json.JsonSlurper
+import groovy.util.logging.Slf4j
 
 import java.security.SecureRandom
 
+@Slf4j
 class JobService {
 	protected SecureRandom random = new SecureRandom()
 	protected jobs = []
