@@ -15,13 +15,14 @@ ratpack {
 	handlers {
 		assets "public"
 
-		get {	//-> /
+		get {
 			render groovyTemplate("index.html")
 		}
 
-		prefix("api") {	//-> /api
-			prefix("jobs") {	//-> /api/jobs
-				prefix(":id") {	//-> /api/jobs/:id
+		prefix("api") {
+			prefix("jobs") {
+				prefix(":id") {
+					// job-specific handler
 					handler {
 						byMethod {
 							get {
@@ -32,10 +33,23 @@ ratpack {
 									clientError(404)
 								}
 							}
+							post {
+								try {
+									def job = service.update(pathTokens?.id, request.body)
+									if (job) {
+										render json(job)
+									} else {
+										clientError(404)
+									}
+								} catch (e) {
+									e.printStackTrace()
+								}
+							}
 							delete {
 								def job = service.get(pathTokens?.id)
 								if (job) {
 									service.delete(job.id)
+									render "OK"
 								} else {
 									clientError(404)
 								}
@@ -43,17 +57,21 @@ ratpack {
 						}
 					}
 				}
+
+				// job list handler
 				handler {
 					byMethod {
 						get {
-							render json(service.activeJobs)
+							render json(service.allJobs)
 						}
 						post {
 							Form form = parse(Form.class)
 							if (form.source) {
 								def job = service.add(form.source)
+								job.url = "${launchConfig.publicAddress}/api/jobs/${job.id}".toString()
+
 								response.status(201)
-								response.headers.set("Location", "${launchConfig.publicAddress}/api/jobs/${job.id}")
+								response.headers.set("Location", job.url)
 								render json(job)
 							} else {
 								clientError(400)

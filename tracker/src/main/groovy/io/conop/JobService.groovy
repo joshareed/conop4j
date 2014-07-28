@@ -1,5 +1,7 @@
 package io.conop
 
+import groovy.json.JsonSlurper
+
 import java.security.SecureRandom
 
 class JobService {
@@ -10,7 +12,12 @@ class JobService {
 		def job = [
 			id: id(),
 			active: true,
-			source: source
+			source: source,
+			stats: [
+				created: null,
+				updated: null,
+				iterations: 0
+			]
 		]
 		jobs << job
 		job
@@ -26,6 +33,29 @@ class JobService {
 
 	List getActiveJobs() {
 		jobs.findAll { it.active } ?: []
+	}
+
+	boolean update(id, body) {
+		def job = get(id)
+		if (job) {
+			def json = new JsonSlurper().parse(body.inputStream)
+
+			// update
+			job.stats.updated = System.currentTimeMillis()
+			if (!job.stats.created) {
+				job.stats.created = job.stats.updated
+			}
+			if (json.iterations) {
+				job.stats.iterations += json.iterations
+			}
+			if (!job.solution || json.solution.score <= job.solution.score) {
+				job.solution = json.solution
+			}
+
+			return job
+		} else {
+			return null
+		}
 	}
 
 	void delete(String id) {
