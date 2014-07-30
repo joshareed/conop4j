@@ -46,7 +46,10 @@ class Agent extends Thread {
 
 				def jobs = new JsonSlurper().parse(api)
 				if (jobs) {
-					runJob(jobs.min { it?.stats?.iterations })
+					def active = jobs.findAll { it?.active }
+					if (active) {
+						runJob(active.min { it?.stats?.iterations })
+					}
 				}
 			} catch(e) {
 				log.info "Error while fetching jobs: {}", e.message
