@@ -11,27 +11,27 @@ class JobServiceSpec extends Specification {
 
 	@Before
 	void setup() {
-		jobService = new JobService()
+		jobService = new JobService(null)
 	}
 
 	def "can get a list of jobs"() {
 		expect: "empty list"
-		assert []== jobService.allJobs
-		assert []== jobService.activeJobs
+		assert [] == jobService.allJobs
+		assert [] == jobService.activeJobs
 
 		when: "add a job"
 		def job = jobService.add("job source code here")
 
 		then:
-		assert [job]== jobService.allJobs
-		assert [job]== jobService.activeJobs
+		assert [job] == jobService.allJobs
+		assert [job] == jobService.activeJobs
 
 		when: "mark as inactive"
 		jobService.delete(job.id)
 
 		then:
-		assert [job]== jobService.allJobs
-		assert []== jobService.activeJobs
+		assert [job] == jobService.allJobs
+		assert [] == jobService.activeJobs
 	}
 
 	def "can get a job by id"() {

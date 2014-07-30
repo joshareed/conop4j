@@ -18,7 +18,7 @@ class JobService {
 
 	@Inject
 	JobService(LaunchConfig config) {
-		String path = config.getOther("jobs", null)
+		String path = config?.getOther("jobs", null)
 		if (path) {
 			db = new File(path)
 			readJobs()
