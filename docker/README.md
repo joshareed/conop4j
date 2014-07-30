@@ -21,6 +21,6 @@ To run a computation agent to that grabs jobs from the tracker:
 
 Finally, you can add jobs to the tracker by POSTing to the api with curl:
 
-	curl -X POST --data-binary @/path/to/simulation/file http:<ip of docker host>:5050/api/jobs
+	curl -X POST --data-binary @/path/to/simulation/file http://<ip of docker host>:5050/api/jobs
 	
 
