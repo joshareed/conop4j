@@ -24,24 +24,4 @@ class SimulationDSL {
 	SolverConfiguration getSolverConfiguration() {
 		script.solverConfiguration
 	}
-
-	static main(args) {
-		if (!args) {
-			println "Usage: <simulation file>"
-			System.exit(0)
-		}
-
-		try {
-			def dsl = new SimulationDSL()
-			dsl.parse(new File(args[0]).text)
-			def run = dsl.run
-			def config = dsl.solverConfiguration
-			def solver = config.solver
-			solver.solve(config, run)
-		} catch (e) {
-			println "Halted: ${e.message.padRight(80)}"
-		}
-
-		System.exit(0)
-	}
 }

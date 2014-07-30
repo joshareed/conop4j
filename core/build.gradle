@@ -3,7 +3,7 @@ archivesBaseName = 'conop4j-core'
 manifest.mainAttributes(
 	'Implementation-Title': 'CONOP4J Core Library',
 	'Implementation-Version': version,
-	'Main-Class': 'org.andrill.conop.core.CLI'
+	'Main-Class': 'org.andrill.conop.core.cli.Conop4jMain'
 )
 
 dependencies {

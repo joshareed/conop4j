@@ -1,11 +1,11 @@
 buildscript {
 	repositories { jcenter() }
 	dependencies {
-		classpath 'com.github.jengelman.gradle.plugins:shadow:1.0.2'
+		classpath 'com.github.jengelman.gradle.plugins:shadow:1.0.3'
 	}
 }
 
-subprojects {
+allprojects {
 	apply plugin: 'java'
 	apply plugin: 'groovy'
 	apply plugin: 'eclipse'
@@ -14,7 +14,7 @@ subprojects {
 	sourceCompatibility = 1.7
 	targetCompatibility = 1.7
 
-	version = '0.10.1'
+	version = '0.10.3'
 	group = 'org.andrill.conop'
 
 	repositories {
@@ -23,4 +23,21 @@ subprojects {
 		maven { url "http://oss.sonatype.org/content/repositories/snapshots/" }
 	}
 }
+
+dependencies {
+	compile project(':core')
+	compile project(':data')
+	compile project(':tracker')
+}
+
+shadowJar {
+	archiveName = "conop4j-all-${version}.jar"
+}
+
+manifest.mainAttributes(
+	'Implementation-Title': 'CONOP4J',
+	'Implementation-Version': version,
+	'Main-Class': 'org.andrill.conop.core.cli.Conop4jMain'
+)
+
 
