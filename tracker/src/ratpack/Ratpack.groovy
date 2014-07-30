@@ -2,14 +2,14 @@ import static ratpack.groovy.Groovy.groovyTemplate
 import static ratpack.groovy.Groovy.ratpack
 import static ratpack.jackson.Jackson.json
 import io.conop.JobService
-import io.conop.TrackerModule
+import io.conop.JobApiModule
 import ratpack.jackson.JacksonModule
 
 ratpack {
 
 	bindings {
 		add new JacksonModule()
-		add new TrackerModule()
+		add new JobApiModule()
 	}
 
 	handlers { JobService service ->

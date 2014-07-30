@@ -4,7 +4,7 @@ import static com.google.inject.Scopes.SINGLETON
 
 import com.google.inject.AbstractModule
 
-class TrackerModule extends AbstractModule {
+class JobApiModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
