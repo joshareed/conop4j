@@ -58,14 +58,4 @@ class Agent extends Thread {
 			Thread.sleep(DELAY)
 		}
 	}
-
-	static main(args) {
-		if (!args) {
-			println "Error: please specify tracker URL"
-			System.exit(0)
-		}
-
-		def agent = new Agent(args[0])
-		agent.start()
-	}
 }
