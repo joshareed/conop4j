@@ -13,11 +13,6 @@ ratpack {
 	}
 
 	handlers { JobService service ->
-		assets "public"
-
-		get {
-			render groovyTemplate("index.html")
-		}
 
 		handler("api/jobs") {
 			byMethod {
