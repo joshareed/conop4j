@@ -21,8 +21,6 @@ ratpack {
 				}
 				post {
 					def job = service.add(request.body.text)
-					job.url = "${launchConfig.publicAddress}/api/jobs/${job.id}".toString()
-
 					response.status 201
 					response.headers.set "Location", job.url
 					render json(job)
