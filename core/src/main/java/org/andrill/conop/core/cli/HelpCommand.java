@@ -7,7 +7,7 @@ public class HelpCommand implements CliCommand {
 	@Override
 	public void execute(final List<String> args) {
 		if (args.size() == 0) {
-			System.out.println("Usage: help <command>");
+			printAvailableCommands();
 			return;
 		}
 
@@ -49,6 +49,22 @@ public class HelpCommand implements CliCommand {
 	@Override
 	public String getName() {
 		return "help";
+	}
+
+	protected void printAvailableCommands() {
+		String version = Conop4jMain.getVersion();
+		List<? extends CliCommand> commands = Conop4jMain.getCommands();
+		System.out.println("");
+		System.out.println("CONOP4J - " + version);
+		System.out.println("");
+		System.out.println("Usage: java -jar conop4j-all-" + version + ".jar <command> [args...]");
+		System.out.println("");
+		System.out.println("Available commands:");
+		for (CliCommand cmd : commands) {
+			System.out.println(String.format("       %-10s %s", cmd.getName(), cmd.getDescription()));
+		}
+		System.out.println("");
+		return;
 	}
 
 }
