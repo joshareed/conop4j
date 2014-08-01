@@ -49,7 +49,7 @@ public class StandardSolver extends AbstractSolver {
 		// get our initial temperature and score
 		double temp = schedule.getInitial();
 		initial.setScore(penalty.score(initial));
-		Solution best = initial;
+		best = initial;
 
 		// initialize the listeners
 		started(initial);
