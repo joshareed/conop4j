@@ -15,6 +15,7 @@ class JobService {
 	protected SecureRandom random = new SecureRandom()
 	protected jobs = []
 	protected File db = null
+	protected String publicAddress = null
 
 	@Inject
 	JobService(LaunchConfig config) {
@@ -23,6 +24,8 @@ class JobService {
 			db = new File(path)
 			readJobs()
 		}
+		publicAddress = config?.getPublicAddress().toString()
+		log.info "Using public address {}", publicAddress
 	}
 
 	protected void readJobs() {
@@ -32,7 +35,7 @@ class JobService {
 			def json = new JsonSlurper().parse(db)
 			jobs = json.collect { it }
 		} catch (e) {
-			log.error "Unable to parse ${db.absolutePath}", e
+			log.error "Unable to parse ${db.absolutePath}"
 		}
 	}
 
@@ -54,6 +57,7 @@ class JobService {
 				score: -1
 			]
 		]
+		job.url = "${publicAddress}/api/jobs/${job.id}".toString()
 		jobs << job
 
 		writeJobs()

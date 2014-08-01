@@ -8,13 +8,22 @@ class RunCommand implements CliCommand {
 	@Override
 	void execute(List<String> args) {
 		if (!args) {
-			println "Usage: run <simulation file>"
+			println "Usage: run <simulation file or URL>"
 			System.exit(0)
 		}
 
 		try {
 			def dsl = new SimulationDSL()
-			dsl.parse(new File(args[0]).text)
+			
+			// check if URL or file
+			def source
+			if (args[0].contains('http')) {
+				source = new URL(args[0]).text
+			} else {
+				source = new File(args[0]).text
+			}
+			dsl.parse(source)
+
 			def run = dsl.run
 			def config = dsl.solverConfiguration
 			def solver = config.solver
@@ -33,7 +42,7 @@ class RunCommand implements CliCommand {
 
 	@Override
 	String getHelp() {
-		"""\trun <simulation file> - runs a CONOP4J simulation"""
+		"""\trun <simulation file or URL> - runs a CONOP4J simulation"""
 	}
 
 	@Override
