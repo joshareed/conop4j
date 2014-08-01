@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.andrill.conop.core.Event;
-import org.andrill.conop.core.Run;
+import org.andrill.conop.core.Dataset;
 import org.andrill.conop.core.Solution;
 import org.andrill.conop.core.mutators.AbstractMutator;
 
@@ -20,17 +20,17 @@ public class MethodicalMutator extends AbstractMutator {
 		super("Methodical");
 	}
 
-	protected void initCache(final Run run) {
+	protected void initCache(final Dataset dataset) {
 		cache = Maps.newHashMap();
-		for (Event e : run.getEvents()) {
-			cache.put(run.getId(e), e);
+		for (Event e : dataset.getEvents()) {
+			cache.put(dataset.getId(e), e);
 		}
 	}
 
 	@Override
 	protected Solution internalMutate(final Solution solution) {
 		if (cache == null) {
-			initCache(solution.getRun());
+			initCache(solution.getDataset());
 		}
 
 		// remove the event
@@ -49,7 +49,7 @@ public class MethodicalMutator extends AbstractMutator {
 		// add the event back in
 		events.add(position, target);
 
-		return new Solution(solution.getRun(), events);
+		return new Solution(solution.getDataset(), events);
 	}
 
 }

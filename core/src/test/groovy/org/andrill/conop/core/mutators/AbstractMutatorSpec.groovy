@@ -1,17 +1,17 @@
 package org.andrill.conop.core.mutators
 
 import org.andrill.conop.core.Configuration
-import org.andrill.conop.core.Run
-import org.andrill.conop.core.RunFixtures
+import org.andrill.conop.core.Dataset
+import org.andrill.conop.core.DatasetFixtures
 import org.andrill.conop.core.Solution
 
 import spock.lang.Specification
 
 class AbstractMutatorSpec extends Specification {
-	private Run run
+	private Dataset dataset
 
 	void setup() {
-		run = RunFixtures.simpleRun()
+		dataset = DatasetFixtures.simpleDataset()
 	}
 
 	def "test initial setup"() {
@@ -42,7 +42,7 @@ class AbstractMutatorSpec extends Specification {
 		def mutator = new TestMutator()
 
 		and: 'a solution'
-		def solution = Solution.initial(run)
+		def solution = Solution.initial(dataset)
 		solution.score = 1000
 
 		when: 'tried 1'
@@ -68,7 +68,7 @@ class AbstractMutatorSpec extends Specification {
 		mutator.reset = 1
 
 		and: 'a solution'
-		def solution = Solution.initial(run)
+		def solution = Solution.initial(dataset)
 		solution.score = 1000
 
 		when: 'tried 1'

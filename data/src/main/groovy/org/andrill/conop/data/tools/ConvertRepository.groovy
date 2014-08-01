@@ -2,7 +2,7 @@ package org.andrill.conop.data.tools
 
 import groovy.json.JsonBuilder
 
-import org.andrill.conop.core.Run
+import org.andrill.conop.core.Dataset
 import org.andrill.conop.data.CONOP9Repository
 
 import com.google.common.base.Charsets
@@ -12,9 +12,9 @@ class ConvertRepository {
 	static IDS = [:]
 
 	static main(args) {
-		Run run = CONOP9Repository.loadCONOP9Run(new File(args[0]))
+		Dataset dataset = CONOP9Repository.loadCONOP9Run(new File(args[0]))
 		def out = new File(args[1])
-		run.locations.each { l ->
+		dataset.locations.each { l ->
 			def (program, site) = l.name.toLowerCase().split(" ")
 			def location = [:]
 			location.name = l.name

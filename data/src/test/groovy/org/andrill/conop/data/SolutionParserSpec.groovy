@@ -2,17 +2,17 @@ package org.andrill.conop.data
 
 import org.andrill.conop.core.Event
 import org.andrill.conop.core.Location
-import org.andrill.conop.core.Run
+import org.andrill.conop.core.Dataset
 import org.andrill.conop.core.internal.DefaultEvent
 import org.andrill.conop.core.internal.DefaultLocation
 import org.andrill.conop.core.internal.DefaultObservation
-import org.andrill.conop.core.internal.DefaultRun
+import org.andrill.conop.core.internal.DefaultDataset
 
 import spock.lang.Specification
 
 class SolutionParserSpec extends Specification {
 
-	private Run getTestRun() {
+	private Dataset getTestDataset() {
 
 		// events
 		Event e1 = new DefaultEvent("Fossil 1 LAD")
@@ -30,18 +30,18 @@ class SolutionParserSpec extends Specification {
 			new DefaultObservation(e2, -5, 10.0, 1.0)
 		])
 
-		return new DefaultRun([s1])
+		return new DefaultDataset([s1])
 	}
 
 	def "can parse a solution"() {
-		given: "a run"
-		def run = testRun
+		given: "a dataset"
+		def dataset = testDataset
 
 		and: 'a solution parser'
 		def parser = new SolutionParser(new File('src/test/resources/solution.csv'))
 
 		when: 'parse the solution'
-		def solution = parser.parse(run)
+		def solution = parser.parse(dataset)
 
 		then: 'the solution was parsed'
 		solution != null

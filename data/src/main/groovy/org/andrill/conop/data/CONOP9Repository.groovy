@@ -3,11 +3,11 @@ package org.andrill.conop.data
 import org.andrill.conop.core.Event
 import org.andrill.conop.core.Location
 import org.andrill.conop.core.Observation
-import org.andrill.conop.core.Run
+import org.andrill.conop.core.Dataset
 import org.andrill.conop.core.internal.DefaultEvent
 import org.andrill.conop.core.internal.DefaultLocation
 import org.andrill.conop.core.internal.DefaultObservation
-import org.andrill.conop.core.internal.DefaultRun
+import org.andrill.conop.core.internal.DefaultDataset
 
 import com.google.common.collect.HashMultimap
 import com.google.common.collect.Lists
@@ -15,49 +15,49 @@ import com.google.common.collect.Maps
 import com.google.common.collect.Multimap
 
 class CONOP9Repository implements Repository {
-	protected Run run
+	protected Dataset dataset
 
 	CONOP9Repository(File root) {
-		run = loadCONOP9Run(root)
+		dataset = loadCONOP9Run(root)
 	}
 
 	CONOP9Repository(File locations, File events, File observations) {
-		run = loadCONOP9Run(locations, events, observations)
+		dataset = loadCONOP9Run(locations, events, observations)
 	}
 
 	Location getLocation(String locationId) {
-		run.locations.find { it.name == locationId }
+		dataset.locations.find { it.name == locationId }
 	}
 
 	/**
-	 * Load a CONOP9 run from the specified directory. This assumes the standard
+	 * Load a CONOP9 dataset from the specified directory. This assumes the standard
 	 * filenames of sections.sct, events.evt, and loadfile.dat.
 	 *
 	 * @param dir
-	 *            the run directory.
-	 * @return the run.
+	 *            the dataset directory.
+	 * @return the dataset.
 	 */
-	public static Run loadCONOP9Run(final File dir) {
+	public static Dataset loadCONOP9Run(final File dir) {
 		return loadCONOP9Run(dir, false);
 	}
 
 	/**
-	 * Load a CONOP9 run from the specified directory. This assumes the standard
+	 * Load a CONOP9 dataset from the specified directory. This assumes the standard
 	 * filenames of sections.sct, events.evt, and loadfile.dat.
 	 *
 	 * @param dir
-	 *            the run directory.
+	 *            the dataset directory.
 	 * @param overrideWeights
 	 *            override the specified weights.
-	 * @return the run.
+	 * @return the dataset.
 	 */
-	public static Run loadCONOP9Run(final File dir, final boolean overrideWeights) {
+	public static Dataset loadCONOP9Run(final File dir, final boolean overrideWeights) {
 		return loadCONOP9Run(new File(dir, "sections.sct"), new File(dir, "events.evt"), new File(dir, "loadfile.dat"),
 		overrideWeights);
 	}
 
 	/**
-	 * Load a CONOP9 run from the specified files.
+	 * Load a CONOP9 dataset from the specified files.
 	 *
 	 * @param sectionFile
 	 *            the sections file.
@@ -67,9 +67,9 @@ class CONOP9Repository implements Repository {
 	 *            the observations/load file.
 	 * @param overrideWeights
 	 *            override the specified weights.
-	 * @return the run.
+	 * @return the dataset.
 	 */
-	public static Run loadCONOP9Run(final File sectionFile, final File eventFile, final File loadFile,
+	public static Dataset loadCONOP9Run(final File sectionFile, final File eventFile, final File loadFile,
 			final boolean overrideWeights) {
 
 		// parse section names
@@ -144,8 +144,8 @@ class CONOP9Repository implements Repository {
 			sections.add(new DefaultLocation(sectionNames.get(key), Lists.newArrayList(observations.get(key))));
 		}
 
-		// create the run
-		return new DefaultRun(sections);
+		// create the dataset
+		return new DefaultDataset(sections);
 	}
 
 	/**

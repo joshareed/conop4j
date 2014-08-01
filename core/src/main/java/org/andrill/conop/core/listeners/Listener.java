@@ -8,7 +8,7 @@ import org.andrill.conop.core.Solution;
  * 
  * Note: Unless the listener specifically requires the ability to throw an
  * exception and stop the simulation, it is recommended that listeners extend
- * {@link AsyncListener} to run asynchonously.
+ * {@link AsyncListener} to dataset asynchonously.
  */
 public interface Listener {
 	/**
@@ -37,7 +37,7 @@ public interface Listener {
 	 * Called at the end of a simulation.
 	 * 
 	 * @param solution
-	 *            the solution or null if the run was aborted.
+	 *            the solution or null if the dataset was aborted.
 	 */
 	void stopped(Solution solution);
 

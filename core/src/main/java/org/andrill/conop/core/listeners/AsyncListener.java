@@ -10,7 +10,7 @@ import org.andrill.conop.core.Solution;
 import com.google.common.util.concurrent.MoreExecutors;
 
 /**
- * An abstract base class for listeners that can run asynchronously.
+ * An abstract base class for listeners that can dataset asynchronously.
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
@@ -26,7 +26,7 @@ public abstract class AsyncListener extends AbstractConfigurable implements List
 	}
 
 	/**
-	 * Run the listener method.
+	 * Dataset the listener method.
 	 * 
 	 * @param temp
 	 *            the current temperature.
@@ -50,7 +50,7 @@ public abstract class AsyncListener extends AbstractConfigurable implements List
 	}
 
 	/**
-	 * Tests whether this listener should be run.
+	 * Tests whether this listener should be dataset.
 	 * 
 	 * @param temp
 	 *            the temperature.

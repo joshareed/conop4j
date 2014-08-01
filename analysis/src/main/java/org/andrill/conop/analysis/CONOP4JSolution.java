@@ -13,7 +13,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
- * A solution from a CONOP4J run.
+ * A solution from a CONOP4J dataset.
  * 
  * @author Josh Reed (jareed@andrill.org)
  */

@@ -3,13 +3,13 @@ package org.andrill.conop.core.listeners;
 import java.util.Arrays;
 
 import org.andrill.conop.core.Event;
-import org.andrill.conop.core.Run;
+import org.andrill.conop.core.Dataset;
 import org.andrill.conop.core.Solution;
 
 public class RanksListener extends AbstractListener {
 	protected double min = Double.MAX_VALUE;
 	protected double[][] ranks;
-	protected Run run;
+	protected Dataset dataset;
 
 	/**
 	 * Gets the max rank for the specified event.
@@ -19,7 +19,7 @@ public class RanksListener extends AbstractListener {
 	 * @return the max rank.
 	 */
 	public int getMaxRank(final Event e) {
-		double[] array = ranks[run.getId(e)];
+		double[] array = ranks[dataset.getId(e)];
 		if (array == null) {
 			return -1;
 		}
@@ -39,7 +39,7 @@ public class RanksListener extends AbstractListener {
 	 * @return the min rank.
 	 */
 	public int getMinRank(final Event e) {
-		double[] array = ranks[run.getId(e)];
+		double[] array = ranks[dataset.getId(e)];
 		if (array == null) {
 			return -1;
 		}
@@ -51,11 +51,11 @@ public class RanksListener extends AbstractListener {
 		return array.length - i;
 	}
 
-	protected void initialize(final Run run) {
-		this.run = run;
+	protected void initialize(final Dataset dataset) {
+		this.dataset = dataset;
 
 		// pre-populate our matrix
-		int events = run.getEvents().size();
+		int events = dataset.getEvents().size();
 		ranks = new double[events][events];
 		for (int i = 0; i < events; i++) {
 			Arrays.fill(ranks[i], -1);
@@ -64,14 +64,14 @@ public class RanksListener extends AbstractListener {
 
 	@Override
 	public void tried(final double temp, final Solution current, final Solution best) {
-		if (run == null) {
-			initialize(best.getRun());
+		if (dataset == null) {
+			initialize(best.getDataset());
 		}
 
 		double score = best.getScore();
 		if (score <= min) {
 			for (Event e : best.getEvents()) {
-				ranks[run.getId(e)][best.getPosition(e)] = score;
+				ranks[dataset.getId(e)][best.getPosition(e)] = score;
 			}
 		}
 	}

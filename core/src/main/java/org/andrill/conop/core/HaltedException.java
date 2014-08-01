@@ -1,7 +1,7 @@
 package org.andrill.conop.core;
 
 /**
- * Thrown when a run should be aborted. Aborted runs should not be saved.
+ * Thrown when a simulation has been halted.
  *
  * @author Josh Reed (jareed@andrill.org)
  */

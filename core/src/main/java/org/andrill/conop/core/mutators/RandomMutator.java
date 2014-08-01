@@ -34,6 +34,6 @@ public class RandomMutator extends AbstractMutator {
 		// build a new solution
 		Event e = events.remove(cur);
 		events.add(pos, e);
-		return new Solution(solution.getRun(), events);
+		return new Solution(solution.getDataset(), events);
 	}
 }

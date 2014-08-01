@@ -1,7 +1,7 @@
 package org.andrill.conop.data.simulation.internal
 
-import org.andrill.conop.core.Run
-import org.andrill.conop.core.internal.DefaultRun
+import org.andrill.conop.core.Dataset
+import org.andrill.conop.core.internal.DefaultDataset
 import org.andrill.conop.core.solver.SolverConfiguration
 import org.andrill.conop.data.Repository
 
@@ -14,9 +14,9 @@ class SimulationScript extends Script {
 		// do nothing
 	}
 
-	Run getRun() {
+	Dataset getDataset() {
 		def locations = locs.collect { getLocation(it) }
-		new DefaultRun(locations)
+		new DefaultDataset(locations)
 	}
 
 	protected getLocation(id) {

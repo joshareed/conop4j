@@ -2,10 +2,10 @@ package org.andrill.conop.core;
 
 import com.google.common.collect.ImmutableSet;
 
-public interface Run {
+public interface Dataset {
 
 	/**
-	 * Gets all events in this run.
+	 * Gets all events in this dataset.
 	 *
 	 * @return the events.
 	 */
@@ -14,7 +14,7 @@ public interface Run {
 	public abstract int getId(Event e);
 
 	/**
-	 * Gets all locations in this run.
+	 * Gets all locations in this dataset.
 	 *
 	 * @return the locations.
 	 */

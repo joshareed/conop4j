@@ -114,8 +114,8 @@ class StoppingListenerSpec extends Specification {
 		given: 'a listener'
 		def listener = new StoppingListener()
 
-		and: 'a run'
-		def run = RunFixtures.simpleRun()
+		and: 'a dataset'
+		def run = DatasetFixtures.simpleDataset()
 
 		expect:
 		listener.currentIteration == -1
