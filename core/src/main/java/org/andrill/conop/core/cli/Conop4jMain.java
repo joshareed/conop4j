@@ -51,35 +51,21 @@ public class Conop4jMain {
 	}
 
 	protected static String getVersion() {
-		return "0.10.3";
+		return "0.10.4";
 	}
 
 	public static void main(final String[] args) {
+		String name = null;
 		if ((args == null) || (args.length == 0)) {
-			printAvailableCommands();
+			name = "help";
+		} else {
+			name = args[0];
 		}
 
-		String name = args[0];
 		List<String> params = Lists.newArrayList();
 		for (int i = 1; i < args.length; i++) {
 			params.add(args[i]);
 		}
 		execute(name, params);
-	}
-
-	protected static void printAvailableCommands() {
-		String version = getVersion();
-		List<? extends CliCommand> commands = getCommands();
-		System.out.println("");
-		System.out.println("CONOP4J - " + version);
-		System.out.println("");
-		System.out.println("Usage: java -jar conop4j-all-" + version + ".jar <command> [args...]");
-		System.out.println("");
-		System.out.println("Available commands:");
-		for (CliCommand cmd : commands) {
-			System.out.println(String.format("       %-10s %s", cmd.getName(), cmd.getDescription()));
-		}
-		System.out.println("");
-		System.exit(0);
 	}
 }

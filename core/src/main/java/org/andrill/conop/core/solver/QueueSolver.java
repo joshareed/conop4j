@@ -30,7 +30,7 @@ public class QueueSolver extends AbstractSolver {
 					next.setScore(objective.score(next));
 					complete.put(next);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					// ignore
 				}
 			}
 		}
