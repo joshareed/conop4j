@@ -1,1 +1,1 @@
-include 'core', 'data', 'tracker', 'analysis', 'ui'
+include 'core', 'data', 'tracker', 'analysis'
