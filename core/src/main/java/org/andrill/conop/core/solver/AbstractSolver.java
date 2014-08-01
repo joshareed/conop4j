@@ -5,7 +5,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.andrill.conop.core.HaltedException;
-import org.andrill.conop.core.Run;
+import org.andrill.conop.core.Dataset;
 import org.andrill.conop.core.Solution;
 import org.andrill.conop.core.listeners.Listener;
 
@@ -25,7 +25,7 @@ public abstract class AbstractSolver implements Solver {
 	}
 
 	private void addShutdownHook() {
-		// add our shutdown hook so we can make an effort to run stopped
+		// add our shutdown hook so we can make an effort to dataset stopped
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
 			public void run() {
@@ -63,13 +63,13 @@ public abstract class AbstractSolver implements Solver {
 	protected abstract Solution solve(Solution initial);
 
 	@Override
-	public Solution solve(final SolverConfiguration config, final Run run) throws HaltedException {
+	public Solution solve(final SolverConfiguration config, final Dataset dataset) throws HaltedException {
 		addShutdownHook();
 		initialize(config);
 
 		Solution initial = config.getInitialSolution();
 		if (initial == null) {
-			initial = Solution.initial(run);
+			initial = Solution.initial(dataset);
 		}
 		return solve(initial);
 	}

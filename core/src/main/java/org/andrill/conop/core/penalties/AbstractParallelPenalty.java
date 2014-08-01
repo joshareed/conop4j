@@ -10,7 +10,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import org.andrill.conop.core.AbstractConfigurable;
 import org.andrill.conop.core.Configuration;
-import org.andrill.conop.core.Run;
+import org.andrill.conop.core.Dataset;
 import org.andrill.conop.core.Solution;
 
 import com.google.common.util.concurrent.Futures;
@@ -47,7 +47,7 @@ public abstract class AbstractParallelPenalty extends AbstractConfigurable imple
 		}
 	}
 
-	protected void initialize(final Run run) {
+	protected void initialize(final Dataset dataset) {
 		// do nothing
 	}
 
@@ -57,7 +57,7 @@ public abstract class AbstractParallelPenalty extends AbstractConfigurable imple
 	public double score(final Solution solution) {
 		if (first) {
 			first = false;
-			initialize(solution.getRun());
+			initialize(solution.getDataset());
 		}
 
 		double penalty = 0;

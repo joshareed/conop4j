@@ -1,15 +1,15 @@
 package org.andrill.conop.core.objectives
 
-import org.andrill.conop.core.RunFixtures
+import org.andrill.conop.core.DatasetFixtures
 import org.andrill.conop.core.penalties.MatrixPenalty;
 
 import spock.lang.Specification
 
 class MatrixPenaltySpec extends Specification {
 
-	def "scoring a simple run"() {
+	def "scoring a simple dataset"() {
 		given: 'a possible solution'
-		def initial = RunFixtures.simpleRunBest()
+		def initial = DatasetFixtures.simpleDatasetBest()
 
 		and: 'the objective function'
 		def objective = new MatrixPenalty()

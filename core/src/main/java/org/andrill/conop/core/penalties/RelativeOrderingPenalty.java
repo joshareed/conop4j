@@ -6,7 +6,7 @@ import java.util.concurrent.Future;
 
 import org.andrill.conop.core.Event;
 import org.andrill.conop.core.Observation;
-import org.andrill.conop.core.Run;
+import org.andrill.conop.core.Dataset;
 import org.andrill.conop.core.Location;
 import org.andrill.conop.core.Solution;
 
@@ -19,19 +19,19 @@ public class RelativeOrderingPenalty extends AbstractParallelPenalty {
 		protected Event event;
 		protected int[][] penalties;
 
-		public EventOrdering(final Event event, final Run run) {
+		public EventOrdering(final Event event, final Dataset dataset) {
 			this.event = event;
 
 			// initialize our penalties
-			ImmutableSet<Event> events = run.getEvents();
+			ImmutableSet<Event> events = dataset.getEvents();
 			penalties = new int[events.size()][2];
 
 			for (Event e : events) {
-				int i = run.getId(e);
+				int i = dataset.getId(e);
 				penalties[i][0] = 0;
 				penalties[i][1] = 0;
 
-				for (Location s : run.getLocations()) {
+				for (Location s : dataset.getLocations()) {
 					Observation o1 = s.getObservation(event);
 					Observation o2 = s.getObservation(e);
 
@@ -53,7 +53,7 @@ public class RelativeOrderingPenalty extends AbstractParallelPenalty {
 			int me = solution.getRank(event);
 			for (Event e : solution.getEvents()) {
 				int them = solution.getRank(e);
-				int id = solution.getRun().getId(e);
+				int id = solution.getDataset().getId(e);
 				if (me < them) {
 					score += penalties[id][1];
 				} else if (me > them) {
@@ -72,10 +72,10 @@ public class RelativeOrderingPenalty extends AbstractParallelPenalty {
 	}
 
 	@Override
-	public void initialize(final Run run) {
+	public void initialize(final Dataset dataset) {
 		orderings = Maps.newHashMap();
-		for (Event e : run.getEvents()) {
-			orderings.put(e, new EventOrdering(e, run));
+		for (Event e : dataset.getEvents()) {
+			orderings.put(e, new EventOrdering(e, dataset));
 		}
 	}
 

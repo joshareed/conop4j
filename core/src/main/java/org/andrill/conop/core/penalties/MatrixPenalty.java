@@ -10,7 +10,7 @@ import java.util.concurrent.Future;
 import org.andrill.conop.core.Event;
 import org.andrill.conop.core.Location;
 import org.andrill.conop.core.Observation;
-import org.andrill.conop.core.Run;
+import org.andrill.conop.core.Dataset;
 import org.andrill.conop.core.Solution;
 
 import com.google.common.collect.Lists;
@@ -42,7 +42,7 @@ public class MatrixPenalty extends AbstractParallelPenalty {
 		 * @param location
 		 *            the location.
 		 */
-		public LocationMatrix(final Location location, final Run run) {
+		public LocationMatrix(final Location location, final Dataset dataset) {
 			this.location = location;
 
 			// get our sorted levels
@@ -50,11 +50,11 @@ public class MatrixPenalty extends AbstractParallelPenalty {
 			Collections.sort(levels, REVERSE);
 
 			// initialize
-			init(run);
+			init(dataset);
 		}
 
-		private void init(final Run run) {
-			int eventCount = run.getEvents().size();
+		private void init(final Dataset dataset) {
+			int eventCount = dataset.getEvents().size();
 			int levelCount = levels.size();
 
 			// initialize our work matrix
@@ -62,8 +62,8 @@ public class MatrixPenalty extends AbstractParallelPenalty {
 
 			// initialize our penalty matrix
 			penalties = new double[eventCount][levelCount];
-			for (Event e : run.getEvents()) {
-				int i = run.getId(e);
+			for (Event e : dataset.getEvents()) {
+				int i = dataset.getId(e);
 				Observation o = location.getObservation(e);
 				for (int j = 0; j < levelCount; j++) {
 					if (o == null) {
@@ -92,12 +92,12 @@ public class MatrixPenalty extends AbstractParallelPenalty {
 		public double score(final Solution solution) {
 			int eventCount = solution.getEvents().size();
 			int levelCount = levels.size();
-			Run run = solution.getRun();
+			Dataset dataset = solution.getDataset();
 
 			// initialize our score matrix with the penalties
 			for (int i = 0; i < eventCount; i++) {
 				Event e = solution.getEvent(i);
-				System.arraycopy(penalties[run.getId(e)], 0, matrix[i], 0, levelCount);
+				System.arraycopy(penalties[dataset.getId(e)], 0, matrix[i], 0, levelCount);
 			}
 
 			// accumulate penalties
@@ -127,17 +127,17 @@ public class MatrixPenalty extends AbstractParallelPenalty {
 	}
 
 	@Override
-	protected void initialize(final Run run) {
+	protected void initialize(final Dataset dataset) {
 		matrices = Maps.newHashMap();
-		for (Location location : run.getLocations()) {
-			matrices.put(location, new LocationMatrix(location, run));
+		for (Location location : dataset.getLocations()) {
+			matrices.put(location, new LocationMatrix(location, dataset));
 		}
 	}
 
 	@Override
 	protected List<Future<Double>> internalScore(final Solution solution) {
 		List<Future<Double>> results = Lists.newArrayList();
-		for (Location location : solution.getRun().getLocations()) {
+		for (Location location : solution.getDataset().getLocations()) {
 			results.add(execute(matrices.get(location), solution));
 		}
 		return results;

@@ -16,7 +16,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 public class SummarySpreadsheet {
 
 	/**
-	 * Generates one or more summary sheets for the specified run.
+	 * Generates one or more summary sheets for the specified dataset.
 	 */
 	public interface Summary {
 		void generate(Workbook workbook, Solution... run);

@@ -17,31 +17,31 @@ public class Solution {
 	/**
 	 * Creates an initial solution.
 	 *
-	 * @param run
-	 *            the run.
+	 * @param dataset
+	 *            the dataset.
 	 * @return the initial solution.
 	 */
-	public static Solution initial(final Run run) {
-		final List<Event> events = Lists.newArrayList(run.getEvents());
-		return new Solution(run, events);
+	public static Solution initial(final Dataset dataset) {
+		final List<Event> events = Lists.newArrayList(dataset.getEvents());
+		return new Solution(dataset, events);
 	}
 
 	protected final ImmutableList<Event> events;
 	protected final Map<Event, Integer> positions;
-	protected final Run run;
+	protected final Dataset dataset;
 	protected double score = 0.0;
 
 	/**
 	 * Create a new Solution with the specified ordered list of events.
 	 *
-	 * @param run
-	 *            the run.
+	 * @param dataset
+	 *            the dataset.
 	 * @param events
 	 *            the list of events.
 	 */
-	public Solution(final Run run, final List<Event> events) {
+	public Solution(final Dataset dataset, final List<Event> events) {
 		this.events = ImmutableList.copyOf(events);
-		this.run = run;
+		this.dataset = dataset;
 
 		// index our events
 		positions = Maps.newHashMap();
@@ -93,12 +93,12 @@ public class Solution {
 	}
 
 	/**
-	 * Gets the run this solution belongs to.
+	 * Gets the dataset this solution belongs to.
 	 *
-	 * @return the run.
+	 * @return the dataset.
 	 */
-	public Run getRun() {
-		return run;
+	public Dataset getDataset() {
+		return dataset;
 	}
 
 	/**
@@ -112,7 +112,7 @@ public class Solution {
 
 	/**
 	 * Generates a hash representation of this solution. This hash is only
-	 * guaranteed to be unique for a single run.
+	 * guaranteed to be unique for a single dataset.
 	 *
 	 * @return the hash.
 	 */

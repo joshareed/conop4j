@@ -1,7 +1,7 @@
 package org.andrill.conop.core.constraints
 
 import org.andrill.conop.core.Solution
-import org.andrill.conop.core.RunFixtures
+import org.andrill.conop.core.DatasetFixtures
 
 import spock.lang.Specification
 
@@ -14,11 +14,11 @@ class NullConstraintsSpec extends Specification {
 		expect: 'null is valid'
 		checker.isValid(null)
 
-		when: 'a run'
-		def run = RunFixtures.simpleRun()
+		when: 'a dataset'
+		def dataset = DatasetFixtures.simpleDataset()
 
 		then: 'any solution is valid'
-		checker.isValid(Solution.initial(run))
+		checker.isValid(Solution.initial(dataset))
 	}
 
 	def "toString returns as expected"() {

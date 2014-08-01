@@ -23,12 +23,12 @@ class SimulationDSLSpec extends Specification {
 		when: "parse the simulation"
 		parser.parse(source)
 
-		then: "run"
-		assert parser.run
-		assert parser.run.events.size() == 296
-		assert parser.run.locations.size() == 29
-		assert parser.run.locations.find { it.name == 'ANDRILL 1B' }
-		assert parser.run.locations.find { it.name == 'ANDRILL 2A' }
+		then: "dataset"
+		assert parser.dataset
+		assert parser.dataset.events.size() == 296
+		assert parser.dataset.locations.size() == 29
+		assert parser.dataset.locations.find { it.name == 'ANDRILL 1B' }
+		assert parser.dataset.locations.find { it.name == 'ANDRILL 2A' }
 
 		and: "solver configuration"
 		assert parser.solverConfiguration

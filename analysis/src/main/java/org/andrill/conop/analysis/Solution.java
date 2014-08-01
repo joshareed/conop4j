@@ -13,7 +13,7 @@ public interface Solution {
 	public List<Map<String, String>> getEvents();
 
 	/**
-	 * Gets the name of this run.
+	 * Gets the name of this dataset.
 	 * 
 	 * @return the name.
 	 */

@@ -22,7 +22,7 @@ class Agent extends Thread {
 		try {
 			def dsl = new SimulationDSL()
 			dsl.parse(job.source)
-			def run = dsl.run
+			def dataset = dsl.dataset
 
 			def config = dsl.solverConfiguration
 			config.filterListeners ConsoleProgressListener.class
@@ -30,7 +30,7 @@ class Agent extends Thread {
 			config.configureListener(AgentListener.class, [api: job.url])
 
 			def solver = config.solver
-			solver.solve(config, run)
+			solver.solve(config, dataset)
 		} catch (e) {
 			log.info "Halted: {}", e.message
 			log.debug "Halted", e

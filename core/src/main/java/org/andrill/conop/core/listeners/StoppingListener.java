@@ -6,7 +6,7 @@ import org.andrill.conop.core.Solution;
 import org.andrill.conop.core.util.TimerUtils;
 
 /**
- * A listener responsible for stopping a run under various conditions.
+ * A listener responsible for stopping a dataset under various conditions.
  *
  * @author Josh Reed (jareed@andrill.org)
  */
