@@ -1,6 +1,6 @@
 package org.andrill.conop.core
 
-import org.andrill.conop.core.test.DatasetFixtures;
+import org.andrill.conop.core.test.DatasetFixtures
 
 import spock.lang.Specification
 
@@ -25,10 +25,7 @@ class SolutionSpec extends Specification {
 		solution.dataset == dataset
 
 		and: 'score is 0'
-		solution.score == 0.0
-
-		and: 'the hash is not null'
-		solution.hash() != null
+		solution.score == -1
 	}
 
 	def "setScore updates ranks"() {
