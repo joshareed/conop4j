@@ -24,7 +24,7 @@ class SolutionSpec extends Specification {
 		and: 'the dataset is set'
 		solution.dataset == dataset
 
-		and: 'score is 0'
+		and: 'score is -1'
 		solution.score == -1
 	}
 
