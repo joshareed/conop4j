@@ -83,7 +83,6 @@ public class QueueSolver extends AbstractSolver {
 		for (Listener l : config.getListeners()) {
 			addListener(l);
 		}
-		setContext(listeners);
 	}
 
 	@Override

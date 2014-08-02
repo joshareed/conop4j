@@ -24,6 +24,7 @@ public abstract class AbstractSolver implements Solver {
 	 */
 	public void addListener(final Listener l) {
 		listeners.add(l);
+		setContext(l);
 	}
 
 	protected Solution getBest() {
@@ -31,7 +32,7 @@ public abstract class AbstractSolver implements Solver {
 	}
 
 	private void addShutdownHook() {
-		// add our shutdown hook so we can make an effort to dataset stopped
+		// add our shutdown hook so we can make an effort to call stopped()
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
 			public void run() {

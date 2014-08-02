@@ -22,7 +22,8 @@ import au.com.bytecode.opencsv.CSVWriter;
 public class SnapshotListener extends AsyncListener {
 	private static final DecimalFormat I = new DecimalFormat("0");
 	private static final DecimalFormat D = new DecimalFormat("0.00");
-	private static final String[] HEADER = new String[] { "Event", "Position" };
+	private static final String[] HEADER = new String[] { "Event", "Position",
+			"Min", "Max" };
 
 	protected static File getFile(final String file) {
 		File f = new File(file);
@@ -107,13 +108,27 @@ public class SnapshotListener extends AsyncListener {
 			// write the header
 			csv.writeNext(HEADER);
 
+			PositionsMatrix matrix = null;
+			if (context != null) {
+				matrix = context.get(PositionsMatrix.class);
+			}
+
 			// write the events
 			int total = solution.getEvents().size();
 			String[] next = new String[4];
 			for (int i = 0; i < total; i++) {
 				Event e = solution.getEvent(i);
+
 				next[0] = e.getName();
-				next[1] = I.format(total - i);
+				next[1] = I.format(i);
+				if (matrix == null) {
+					next[2] = I.format(i);
+					next[3] = I.format(i);
+				} else {
+					int[] range = matrix.getRange(e);
+					next[2] = I.format(range[0]);
+					next[3] = I.format(range[1]);
+				}
 				csv.writeNext(next);
 			}
 		} catch (IOException e) {
