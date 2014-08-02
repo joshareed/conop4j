@@ -8,6 +8,7 @@ import java.util.concurrent.locks.ReentrantLock
 import org.andrill.conop.core.Configuration
 import org.andrill.conop.core.Solution
 import org.andrill.conop.core.listeners.AsyncListener
+import org.andrill.conop.core.listeners.PositionsMatrix
 import org.andrill.conop.core.util.TimerUtils
 
 @Slf4j
@@ -39,18 +40,47 @@ class AgentListener extends AsyncListener {
 		}
 	}
 
+	protected buildStatsJson(temp, iterations, best) {
+		[
+			temperature: temp,
+			iterations: (iterations - this.iterations),
+			score: best.score
+		]
+	}
+
+	protected buildSolutionJson(Solution best) {
+		def json = [
+			score: best.score,
+			events: []]
+		def matrix = context.get(PositionsMatrix)
+
+		best.events.each { event ->
+			def e = [
+				name: event.name,
+				positions: [
+					'final': best.getPosition(event),
+					min: best.getPosition(event),
+					max: best.getPosition(event)
+				]
+			]
+
+			if (matrix) {
+				def range = matrix.getRange(event)
+				e.positions.min = range[0]
+				e.positions.max = range[1]
+			}
+		}
+
+		json
+	}
+
 	protected void updateTracker(double temp, long iterations, Solution best) {
 		log.info "Sending best solution to ${api}"
 		def payload = [
-			temp: temp,
-			iterations: (iterations - this.iterations),
-			solution: [
-				score: best.score,
-				events: best.events.collect {
-					[name: it.name]
-				}
-			]
+			stats: buildStatsJson(temp, iterations),
+			solution: buildSolutionJson(best)
 		]
+
 		this.iterations = iterations
 
 		try {
@@ -75,5 +105,4 @@ class AgentListener extends AsyncListener {
 	protected boolean test(double temp, long iteration, Solution current, Solution best) {
 		api != null && TimerUtils.counter > next
 	}
-
 }
