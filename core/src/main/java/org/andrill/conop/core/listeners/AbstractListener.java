@@ -24,11 +24,6 @@ public abstract class AbstractListener implements Listener, Configurable {
 	}
 
 	@Override
-	public Mode getMode() {
-		return Mode.ANY;
-	}
-
-	@Override
 	public void started(final Solution initial) {
 		// do nothing
 	}

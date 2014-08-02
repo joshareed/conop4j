@@ -16,21 +16,19 @@ public class ConsoleProgressListener extends AsyncListener {
 	private double score = Double.MAX_VALUE;
 
 	@Override
-	public Mode getMode() {
-		return Mode.TUI;
-	}
-
-	@Override
-	protected void run(final double temp, final long iteration, final Solution current, final Solution best) {
-		score = current.getScore();
+	protected void run(final double temp, final long iteration,
+			final Solution current, final Solution best) {
+		score = best.getScore();
 		long elapsed = (System.currentTimeMillis() - start);
 		System.out.print(CLEAR);
-		System.out.print(String.format(FORMAT, DEC.format(score), DEC.format(best.getScore()), (elapsed / 60000),
+		System.out.print(String.format(FORMAT, DEC.format(score),
+				DEC.format(best.getScore()), (elapsed / 60000),
 				DEC.format(temp), iteration, (iteration / (elapsed / 1000))));
 	}
 
 	@Override
-	protected boolean test(final double temp, final long iteration, final Solution current, final Solution best) {
-		return (current.getScore() < score) || ((iteration % 10000) == 0);
+	protected boolean test(final double temp, final long iteration,
+			final Solution current, final Solution best) {
+		return (best.getScore() < score) || ((iteration % 10000) == 0);
 	}
 }

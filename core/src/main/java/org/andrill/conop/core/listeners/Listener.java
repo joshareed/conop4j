@@ -11,19 +11,6 @@ import org.andrill.conop.core.Solution;
  * {@link AsyncListener} to dataset asynchonously.
  */
 public interface Listener {
-	/**
-	 * The mode this listener operates in.
-	 */
-	enum Mode {
-		ANY, GUI, TUI
-	}
-
-	/**
-	 * Gets the mode of this listener.
-	 * 
-	 * @return the mode.
-	 */
-	Mode getMode();
 
 	/**
 	 * Called at the beginning of a simulation.
