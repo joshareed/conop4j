@@ -50,7 +50,7 @@ public class PositionsMatrix {
 		double[] row = positions[dataset.getId(e)];
 		for (int i = 0; i < row.length; i++) {
 			double d = row[i];
-			if (d <= score) {
+			if (d >= 0 && d <= score) {
 				if (range[0] == -1) {
 					range[0] = i;
 				}
