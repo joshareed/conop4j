@@ -30,7 +30,7 @@ public abstract class AbstractMutator extends AbstractListener implements
 	public final Solution mutate(final Solution solution) {
 		if ((reset > 0) && (counter > reset)) {
 			counter = 0;
-			return internalMutate(context.get(Solution.class));
+			return internalMutate(context.getBest());
 		} else {
 			return internalMutate(solution);
 		}

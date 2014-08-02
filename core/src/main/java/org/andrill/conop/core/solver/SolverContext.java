@@ -1,5 +1,7 @@
 package org.andrill.conop.core.solver;
 
+import org.andrill.conop.core.Solution;
+
 /**
  * Defines a simple interface for solver components to publish results from the
  * solver run.
@@ -7,6 +9,22 @@ package org.andrill.conop.core.solver;
  * @author Josh Reed (jareed@andrill.org)
  */
 public interface SolverContext {
+
+	/**
+	 * Gets the best solution found.
+	 * 
+	 * @return the best solution or null.
+	 */
+	Solution getBest();
+
+	/**
+	 * Sets the best solution.
+	 * 
+	 * @param best
+	 *            the best solution.
+	 * @return the best solution.
+	 */
+	Solution setBest(Solution best);
 
 	/**
 	 * Get a result by type.

@@ -27,7 +27,7 @@ public abstract class AbstractSolver implements Solver {
 	}
 
 	protected Solution getBest() {
-		return context.get(Solution.class);
+		return context.getBest();
 	}
 
 	private void addShutdownHook() {
@@ -105,13 +105,13 @@ public abstract class AbstractSolver implements Solver {
 	}
 
 	protected void updateBest(Solution next) {
-		Solution best = context.get(Solution.class);
+		Solution best = context.getBest();
 
 		// save as best if the penalty is less
 		if (best == null || next.getScore() < best.getScore()) {
 
 			// publish the best solution in the context
-			context.put(Solution.class, next);
+			context.setBest(next);
 
 			if (next.getScore() == 0) {
 				throw new HaltedException("Score reached 0", best);
