@@ -4,15 +4,17 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.RejectedExecutionException;
 
-import org.andrill.conop.core.HaltedException;
+import org.andrill.conop.core.Configurable;
 import org.andrill.conop.core.Dataset;
+import org.andrill.conop.core.HaltedException;
 import org.andrill.conop.core.Solution;
+import org.andrill.conop.core.internal.DefaultSolverContext;
 import org.andrill.conop.core.listeners.Listener;
 
 public abstract class AbstractSolver implements Solver {
 	protected Set<Listener> listeners = new CopyOnWriteArraySet<Listener>();
-	protected Solution best = null;
 	protected boolean stopped = false;
+	protected SolverContext context = new DefaultSolverContext();
 
 	/**
 	 * Add a new listener.
@@ -24,30 +26,39 @@ public abstract class AbstractSolver implements Solver {
 		listeners.add(l);
 	}
 
+	protected Solution getBest() {
+		return context.get(Solution.class);
+	}
+
 	private void addShutdownHook() {
 		// add our shutdown hook so we can make an effort to dataset stopped
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
 			public void run() {
-				stopped(best);
+				stopped(getBest());
 			}
 		});
 	}
 
 	protected void handleError(final Exception e) throws HaltedException {
+		Solution best = getBest();
+
 		HaltedException halt;
 		if (e instanceof HaltedException) {
 			halt = new HaltedException(e.getMessage(), best);
-		} else if ((e instanceof InterruptedException) || (e instanceof RejectedExecutionException)) {
+		} else if ((e instanceof InterruptedException)
+				|| (e instanceof RejectedExecutionException)) {
 			halt = new HaltedException("User Interrupt", best);
 		} else {
-			halt = new HaltedException("Unexpected Error: " + e.getMessage(), best);
+			halt = new HaltedException("Unexpected Error: " + e.getMessage(),
+					best);
 		}
 		stopped(best);
 		throw halt;
 	}
 
 	protected void initialize(final SolverConfiguration config) {
+		// override
 	}
 
 	/**
@@ -60,10 +71,11 @@ public abstract class AbstractSolver implements Solver {
 		listeners.remove(l);
 	}
 
-	protected abstract Solution solve(Solution initial);
+	protected abstract void solve(Solution initial);
 
 	@Override
-	public Solution solve(final SolverConfiguration config, final Dataset dataset) throws HaltedException {
+	public SolverContext solve(final SolverConfiguration config,
+			final Dataset dataset) throws HaltedException {
 		addShutdownHook();
 		initialize(config);
 
@@ -71,7 +83,10 @@ public abstract class AbstractSolver implements Solver {
 		if (initial == null) {
 			initial = Solution.initial(dataset);
 		}
-		return solve(initial);
+
+		solve(initial);
+
+		return context;
 	}
 
 	protected void started(final Solution initial) {
@@ -89,4 +104,30 @@ public abstract class AbstractSolver implements Solver {
 		}
 	}
 
+	protected void updateBest(Solution next) {
+		Solution best = context.get(Solution.class);
+
+		// save as best if the penalty is less
+		if (best == null || next.getScore() < best.getScore()) {
+
+			// publish the best solution in the context
+			context.put(Solution.class, next);
+
+			if (next.getScore() == 0) {
+				throw new HaltedException("Score reached 0", best);
+			}
+		}
+	}
+
+	public SolverContext getContext() {
+		return context;
+	}
+
+	protected void setContext(Object... objs) {
+		for (Object o : objs) {
+			if (o instanceof Configurable) {
+				((Configurable) o).setContext(context);
+			}
+		}
+	}
 }

@@ -1,4 +1,4 @@
-package org.andrill.conop.core.mutators.internal;
+package org.andrill.conop.core.internal;
 
 import java.util.List;
 import java.util.Map;

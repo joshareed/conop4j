@@ -18,7 +18,6 @@ import org.andrill.conop.core.schedules.ExponentialSchedule;
 import org.andrill.conop.core.schedules.Schedule;
 import org.andrill.conop.core.solver.Solver;
 import org.andrill.conop.core.solver.SolverConfiguration;
-import org.andrill.conop.core.solver.StandardSolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

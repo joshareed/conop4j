@@ -9,11 +9,10 @@ import org.andrill.conop.core.listeners.AbstractListener;
  *
  * @author Josh Reed (jareed@andrill.org)
  */
-public abstract class AbstractMutator extends AbstractListener implements Mutator {
+public abstract class AbstractMutator extends AbstractListener implements
+		Mutator {
 	protected long counter;
-	protected Solution local;
 	protected long reset = -1;
-	protected double temp = -1;
 	protected final String name;
 
 	protected AbstractMutator(final String name) {
@@ -31,7 +30,7 @@ public abstract class AbstractMutator extends AbstractListener implements Mutato
 	public final Solution mutate(final Solution solution) {
 		if ((reset > 0) && (counter > reset)) {
 			counter = 0;
-			return internalMutate(local);
+			return internalMutate(context.get(Solution.class));
 		} else {
 			return internalMutate(solution);
 		}
@@ -43,13 +42,8 @@ public abstract class AbstractMutator extends AbstractListener implements Mutato
 	}
 
 	@Override
-	public void tried(final double temp, final Solution current, final Solution best) {
-		this.temp = temp;
-		if ((local == null) || (best.getScore() < local.getScore())) {
-			local = best;
-			counter = 0;
-		} else {
-			counter++;
-		}
+	public void tried(final double temp, final Solution current,
+			final Solution best) {
+		counter++;
 	}
 }

@@ -1,5 +1,7 @@
 package org.andrill.conop.core
 
+import org.andrill.conop.core.test.DatasetFixtures;
+
 import spock.lang.Specification
 
 class SolutionSpec extends Specification {

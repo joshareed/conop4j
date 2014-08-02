@@ -1,17 +1,18 @@
-package org.andrill.conop.core.solver;
+package org.andrill.conop.core.internal;
 
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.andrill.conop.core.HaltedException;
 import org.andrill.conop.core.Solution;
 import org.andrill.conop.core.constraints.Constraints;
 import org.andrill.conop.core.listeners.Listener;
 import org.andrill.conop.core.mutators.Mutator;
 import org.andrill.conop.core.penalties.Penalty;
 import org.andrill.conop.core.schedules.Schedule;
+import org.andrill.conop.core.solver.AbstractSolver;
+import org.andrill.conop.core.solver.SolverConfiguration;
 
 public class QueueSolver extends AbstractSolver {
 
@@ -54,6 +55,7 @@ public class QueueSolver extends AbstractSolver {
 		constraints = config.getConstraints();
 		mutator = config.getMutator();
 		schedule = config.getSchedule();
+		setContext(constraints, mutator, schedule);
 
 		// check for listeners
 		if (constraints instanceof Listener) {
@@ -70,6 +72,7 @@ public class QueueSolver extends AbstractSolver {
 		scorers = new HashSet<>();
 		for (int i = 0; i < procs; i++) {
 			Penalty penalty = config.getPenalty();
+			setContext(penalty);
 			scorers.add(new ScorerThread(penalty));
 			if (penalty instanceof Listener) {
 				addListener((Listener) penalty);
@@ -80,16 +83,16 @@ public class QueueSolver extends AbstractSolver {
 		for (Listener l : config.getListeners()) {
 			addListener(l);
 		}
+		setContext(listeners);
 	}
 
 	@Override
-	protected Solution solve(final Solution initial) {
+	protected void solve(final Solution initial) {
 		Solution current = initial;
 
 		// get our initial temperature and score
 		double temp = schedule.getInitial();
 		initial.setScore(Double.MAX_VALUE);
-		best = initial;
 
 		started(initial);
 
@@ -116,23 +119,19 @@ public class QueueSolver extends AbstractSolver {
 			while (temp > 0) {
 				Solution next = complete.take();
 
-				// save as best if the penalty is less
-				if (next.getScore() < best.getScore()) {
-					best = next;
-
-					if (best.getScore() == 0) {
-						throw new HaltedException("Score reached 0", best);
-					}
-				}
+				// check if new best
+				updateBest(next);
 
 				// notify listeners
 				for (Listener l : listeners) {
-					l.tried(temp, current, best);
+					l.tried(temp, current, getBest());
 				}
 
 				// accept the new solution if it is better than the current
 				// or randomly based on score and temperature
-				if ((next.getScore() < current.getScore()) || (Math.exp(-(next.getScore() - current.getScore()) / temp) > random.nextDouble())) {
+				if ((next.getScore() < current.getScore())
+						|| (Math.exp(-(next.getScore() - current.getScore())
+								/ temp) > random.nextDouble())) {
 					current = next;
 				}
 
@@ -151,8 +150,7 @@ public class QueueSolver extends AbstractSolver {
 		}
 
 		// clean up
-		stopped(best);
-		return best;
+		stopped(getBest());
 	}
 
 	@Override

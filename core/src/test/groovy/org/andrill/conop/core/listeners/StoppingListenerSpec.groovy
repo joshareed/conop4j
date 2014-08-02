@@ -2,6 +2,7 @@ package org.andrill.conop.core.listeners
 
 import org.andrill.conop.core.*
 import org.andrill.conop.core.listeners.Listener.Mode
+import org.andrill.conop.core.test.DatasetFixtures;
 import org.andrill.conop.core.util.TimerUtils
 
 import spock.lang.Specification

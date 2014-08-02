@@ -1,10 +1,10 @@
-package org.andrill.conop.core.mutators
+package org.andrill.conop.core.internal
 
 import org.andrill.conop.core.Dataset;
 import org.andrill.conop.core.Solution
-import org.andrill.conop.core.DatasetFixtures
+import org.andrill.conop.core.internal.AnnealingMutator;
 import org.andrill.conop.core.internal.DefaultEvent;
-import org.andrill.conop.core.mutators.internal.AnnealingMutator;
+import org.andrill.conop.core.test.DatasetFixtures;
 
 import spock.lang.Specification
 
