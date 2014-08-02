@@ -14,7 +14,7 @@ class RunCommand implements CliCommand {
 
 		try {
 			def dsl = new SimulationDSL()
-			
+
 			// check if URL or file
 			def source
 			if (args[0].contains('http')) {
@@ -29,6 +29,7 @@ class RunCommand implements CliCommand {
 			def solver = config.solver
 			solver.solve(config, dataset)
 		} catch (e) {
+			e.printStackTrace()
 			println "Halted: ${e.message.padRight(80)}"
 		}
 

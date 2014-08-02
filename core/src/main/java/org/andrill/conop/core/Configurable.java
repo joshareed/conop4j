@@ -1,5 +1,6 @@
 package org.andrill.conop.core;
 
+import org.andrill.conop.core.solver.SolverContext;
 
 /**
  * Defines the interface for a configurable object.
@@ -15,4 +16,12 @@ public interface Configurable {
 	 *            the configuration.
 	 */
 	public void configure(Configuration config);
+
+	/**
+	 * Sets the solver context for this object.
+	 * 
+	 * @param context
+	 *            the solver context.
+	 */
+	public void setContext(SolverContext context);
 }

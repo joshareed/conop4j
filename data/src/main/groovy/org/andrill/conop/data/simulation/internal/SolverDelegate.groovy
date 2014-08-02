@@ -3,8 +3,10 @@ package org.andrill.conop.data.simulation.internal
 import org.andrill.conop.core.constraints.EventConstraints
 import org.andrill.conop.core.constraints.NullConstraints
 import org.andrill.conop.core.internal.DefaultSolverConfiguration
+import org.andrill.conop.core.internal.QueueSolver
+import org.andrill.conop.core.internal.StandardSolver
 import org.andrill.conop.core.listeners.ConsoleProgressListener
-import org.andrill.conop.core.listeners.RanksListener
+import org.andrill.conop.core.listeners.PositionsListener
 import org.andrill.conop.core.listeners.SnapshotListener
 import org.andrill.conop.core.listeners.StoppingListener
 import org.andrill.conop.core.mutators.RandomMutator
@@ -14,8 +16,6 @@ import org.andrill.conop.core.penalties.RelativeOrderingPenalty
 import org.andrill.conop.core.schedules.ExponentialSchedule
 import org.andrill.conop.core.schedules.LinearSchedule
 import org.andrill.conop.core.schedules.TemperingSchedule
-import org.andrill.conop.core.solver.QueueSolver
-import org.andrill.conop.core.solver.StandardSolver
 
 class SolverDelegate {
 	def config = new DefaultSolverConfiguration()
@@ -41,7 +41,7 @@ class SolverDelegate {
 		'stopping': StoppingListener.class.canonicalName,
 		'snapshot': SnapshotListener.class.canonicalName,
 		'console': ConsoleProgressListener.class.canonicalName,
-		'ranks': RanksListener.class.canonicalName
+		'positions': PositionsListener.class.canonicalName
 	]
 	static SOLVERS = [
 		'conop': StandardSolver.class.canonicalName,

@@ -2,8 +2,9 @@ package org.andrill.conop.core.mutators
 
 import org.andrill.conop.core.Configuration
 import org.andrill.conop.core.Dataset
-import org.andrill.conop.core.DatasetFixtures
 import org.andrill.conop.core.Solution
+import org.andrill.conop.core.internal.DefaultSolverContext
+import org.andrill.conop.core.test.DatasetFixtures;
 
 import spock.lang.Specification
 
@@ -49,23 +50,20 @@ class AbstractMutatorSpec extends Specification {
 		mutator.tried(1000, solution, solution)
 
 		then:
-		mutator.temp == 1000
-		mutator.local == solution
-		mutator.counter == 0
+		mutator.counter == 1
 
 		when: 'tried 2'
 		mutator.tried(500, solution, solution)
 
 		then:
-		mutator.temp == 500
-		mutator.local == solution
-		mutator.counter == 1
+		mutator.counter == 2
 	}
 
 	def "test reset"() {
 		given: 'a mutator'
 		def mutator = new TestMutator()
 		mutator.reset = 1
+		mutator.context = new DefaultSolverContext()
 
 		and: 'a solution'
 		def solution = Solution.initial(dataset)
@@ -78,7 +76,7 @@ class AbstractMutatorSpec extends Specification {
 		mutator.mutate(solution)
 
 		then:
-		mutator.counter == 0
+		mutator.counter == 1
 
 		and:
 		mutator.called == 1

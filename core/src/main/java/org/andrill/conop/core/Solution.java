@@ -29,7 +29,7 @@ public class Solution {
 	protected final ImmutableList<Event> events;
 	protected final Map<Event, Integer> positions;
 	protected final Dataset dataset;
-	protected double score = 0.0;
+	protected double score = -1.0;
 
 	/**
 	 * Create a new Solution with the specified ordered list of events.
@@ -111,27 +111,15 @@ public class Solution {
 	}
 
 	/**
-	 * Generates a hash representation of this solution. This hash is only
-	 * guaranteed to be unique for a single dataset.
-	 *
-	 * @return the hash.
-	 */
-	public String hash() {
-		StringBuilder hash = new StringBuilder();
-		for (Event e : events) {
-			hash.append(e);
-			hash.append(':');
-		}
-		return hash.toString();
-	}
-
-	/**
 	 * Sets the score for this solution.
 	 *
 	 * @param score
 	 *            the score.
 	 */
 	public void setScore(final double score) {
+		if (this.score >= 0.0) {
+			throw new RuntimeException("Solution may only be scored once");
+		}
 		this.score = score;
 	}
 }

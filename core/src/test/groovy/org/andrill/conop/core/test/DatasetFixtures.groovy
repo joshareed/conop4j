@@ -1,5 +1,7 @@
-package org.andrill.conop.core
+package org.andrill.conop.core.test
 
+import org.andrill.conop.core.Dataset;
+import org.andrill.conop.core.Solution;
 import org.andrill.conop.core.internal.DefaultEvent
 import org.andrill.conop.core.internal.DefaultLocation
 import org.andrill.conop.core.internal.DefaultObservation

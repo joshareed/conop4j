@@ -1,8 +1,7 @@
 package org.andrill.conop.core.solver;
 
-import org.andrill.conop.core.HaltedException;
 import org.andrill.conop.core.Dataset;
-import org.andrill.conop.core.Solution;
+import org.andrill.conop.core.HaltedException;
 
 public interface Solver {
 
@@ -13,8 +12,9 @@ public interface Solver {
 	 *            the solver configuration.
 	 * @param dataset
 	 *            the dataset.
-	 * @return the best solution found.
+	 * @return the solver context.
 	 * @throws HaltedException
 	 */
-	public Solution solve(SolverConfiguration config, Dataset dataset) throws HaltedException;
+	public SolverContext solve(SolverConfiguration config, Dataset dataset)
+			throws HaltedException;
 }

@@ -1,7 +1,7 @@
 package org.andrill.conop.core.objectives
 
-import org.andrill.conop.core.DatasetFixtures
 import org.andrill.conop.core.penalties.MatrixPenalty;
+import org.andrill.conop.core.test.DatasetFixtures;
 
 import spock.lang.Specification
 

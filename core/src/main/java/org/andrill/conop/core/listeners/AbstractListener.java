@@ -3,6 +3,7 @@ package org.andrill.conop.core.listeners;
 import org.andrill.conop.core.Configurable;
 import org.andrill.conop.core.Configuration;
 import org.andrill.conop.core.Solution;
+import org.andrill.conop.core.solver.SolverContext;
 
 /**
  * An abstract implementation of the {@link Listener} interface.
@@ -10,6 +11,7 @@ import org.andrill.conop.core.Solution;
  * @author Josh Reed (jareed@andrill.org)
  */
 public abstract class AbstractListener implements Listener, Configurable {
+	protected SolverContext context = null;
 
 	@Override
 	public void configure(final Configuration config) {
@@ -17,8 +19,8 @@ public abstract class AbstractListener implements Listener, Configurable {
 	}
 
 	@Override
-	public Mode getMode() {
-		return Mode.ANY;
+	public void setContext(SolverContext context) {
+		this.context = context;
 	}
 
 	@Override
