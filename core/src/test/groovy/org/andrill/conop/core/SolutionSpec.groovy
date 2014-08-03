@@ -21,9 +21,6 @@ class SolutionSpec extends Specification {
 		and: 'same number of events'
 		dataset.events.size() == solution.events.size()
 
-		and: 'the dataset is set'
-		solution.dataset == dataset
-
 		and: 'score is -1'
 		solution.score == -1
 	}

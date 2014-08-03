@@ -57,7 +57,7 @@ public abstract class AbstractParallelPenalty extends AbstractConfigurable imple
 	public double score(final Solution solution) {
 		if (first) {
 			first = false;
-			initialize(solution.getDataset());
+			initialize(context.getDataset());
 		}
 
 		double penalty = 0;

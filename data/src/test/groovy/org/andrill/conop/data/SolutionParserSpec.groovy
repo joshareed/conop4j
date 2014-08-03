@@ -1,12 +1,12 @@
 package org.andrill.conop.data
 
+import org.andrill.conop.core.Dataset
 import org.andrill.conop.core.Event
 import org.andrill.conop.core.Location
-import org.andrill.conop.core.Dataset
+import org.andrill.conop.core.internal.DefaultDataset
 import org.andrill.conop.core.internal.DefaultEvent
 import org.andrill.conop.core.internal.DefaultLocation
 import org.andrill.conop.core.internal.DefaultObservation
-import org.andrill.conop.core.internal.DefaultDataset
 
 import spock.lang.Specification
 
@@ -57,6 +57,5 @@ class SolutionParserSpec extends Specification {
 
 		and: 'position and rank is correct'
 		solution.getPosition(event) == 4
-		solution.getRank(event) == 1
 	}
 }

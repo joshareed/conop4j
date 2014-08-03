@@ -1,11 +1,11 @@
 package org.andrill.conop.core.test
 
-import org.andrill.conop.core.Dataset;
-import org.andrill.conop.core.Solution;
+import org.andrill.conop.core.Dataset
+import org.andrill.conop.core.Solution
+import org.andrill.conop.core.internal.DefaultDataset
 import org.andrill.conop.core.internal.DefaultEvent
 import org.andrill.conop.core.internal.DefaultLocation
 import org.andrill.conop.core.internal.DefaultObservation
-import org.andrill.conop.core.internal.DefaultDataset
 
 class DatasetFixtures {
 
@@ -37,7 +37,7 @@ class DatasetFixtures {
 		DefaultEvent e4 = dataset.events.find { it.name == "Fossil 2 FAD" }
 		DefaultEvent e5 = dataset.events.find { it.name == "Ash" }
 
-		return new Solution(dataset, [e1, e3, e5, e4, e2])
+		return new Solution([e1, e3, e5, e4, e2])
 	}
 
 	static Solution simpleDatasetWorst(Dataset dataset = DatasetFixtures.simpleDataset()) {
@@ -47,6 +47,6 @@ class DatasetFixtures {
 		DefaultEvent e4 = dataset.events.find { it.name == "Fossil 2 FAD" }
 		DefaultEvent e5 = dataset.events.find { it.name == "Ash" }
 
-		return new Solution(dataset, [e5, e2, e4, e3, e1])
+		return new Solution([e5, e2, e4, e3, e1])
 	}
 }

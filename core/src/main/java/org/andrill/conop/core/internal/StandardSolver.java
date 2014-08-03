@@ -77,8 +77,7 @@ public class StandardSolver extends AbstractSolver {
 				// accept the new solution if it is better than the current
 				// or randomly based on score and temperature
 				if ((next.getScore() < current.getScore())
-						|| (Math.exp(-(next.getScore() - current.getScore())
-								/ temp) > random.nextDouble())) {
+						|| (Math.exp(-(next.getScore() - current.getScore()) / temp) > random.nextDouble())) {
 					current = next;
 				}
 

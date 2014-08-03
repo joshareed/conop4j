@@ -11,10 +11,10 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.concurrent.Future;
 
+import org.andrill.conop.core.Dataset;
 import org.andrill.conop.core.Event;
 import org.andrill.conop.core.Location;
 import org.andrill.conop.core.Observation;
-import org.andrill.conop.core.Dataset;
 import org.andrill.conop.core.Solution;
 
 import com.google.common.collect.Lists;
@@ -216,7 +216,7 @@ public class PlacementPenalty extends AbstractParallelPenalty {
 	@Override
 	protected List<Future<Double>> internalScore(final Solution solution) {
 		List<Future<Double>> results = Lists.newArrayList();
-		for (final Location location : solution.getDataset().getLocations()) {
+		for (final Location location : context.getDataset().getLocations()) {
 			results.add(execute(placements.get(location), solution));
 		}
 		return results;

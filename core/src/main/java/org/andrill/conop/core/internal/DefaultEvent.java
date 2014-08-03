@@ -9,26 +9,6 @@ import org.andrill.conop.core.Event;
  */
 public class DefaultEvent implements Event {
 
-	/**
-	 * Create a paired event.
-	 *
-	 * @param name1
-	 *            the first event.
-	 * @param name2
-	 *            the second event.
-	 * @return the first event which has the second event set as its before
-	 *         constraint.
-	 */
-	public static DefaultEvent createPaired(final String name1, final String name2) {
-		DefaultEvent first = new DefaultEvent(name1);
-		DefaultEvent second = new DefaultEvent(name2);
-		first.before = second;
-		second.after = first;
-		return first;
-	}
-
-	protected DefaultEvent after;
-	protected DefaultEvent before;
 	protected final String name;
 
 	/**
@@ -38,23 +18,7 @@ public class DefaultEvent implements Event {
 	 *            the name.
 	 */
 	public DefaultEvent(final String name) {
-		this(name, null, null);
-	}
-
-	/**
-	 * Create a new event with the specified constraints.
-	 *
-	 * @param name
-	 *            the name.
-	 * @param before
-	 *            the before constraint.
-	 * @param after
-	 *            the after constraint.
-	 */
-	public DefaultEvent(final String name, final DefaultEvent before, final DefaultEvent after) {
 		this.name = name;
-		this.before = before;
-		this.after = after;
 	}
 
 	@Override

@@ -89,7 +89,7 @@ class ExponentialScheduleSpec extends Specification {
 	}
 
 	private sol(double score) {
-		def solution = new Solution(null, [])
+		def solution = new Solution([])
 		solution.score = score
 		solution
 	}

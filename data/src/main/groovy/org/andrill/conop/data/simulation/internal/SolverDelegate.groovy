@@ -12,7 +12,6 @@ import org.andrill.conop.core.listeners.StoppingListener
 import org.andrill.conop.core.mutators.RandomMutator
 import org.andrill.conop.core.penalties.MatrixPenalty
 import org.andrill.conop.core.penalties.PlacementPenalty
-import org.andrill.conop.core.penalties.RelativeOrderingPenalty
 import org.andrill.conop.core.schedules.ExponentialSchedule
 import org.andrill.conop.core.schedules.LinearSchedule
 import org.andrill.conop.core.schedules.TemperingSchedule
@@ -34,8 +33,7 @@ class SolverDelegate {
 	]
 	static PENALTIES = [
 		'matrix': MatrixPenalty.class.canonicalName,
-		'placement': PlacementPenalty.class.canonicalName,
-		'ordering': RelativeOrderingPenalty.class.canonicalName
+		'placement': PlacementPenalty.class.canonicalName
 	]
 	static LISTENERS = [
 		'stopping': StoppingListener.class.canonicalName,

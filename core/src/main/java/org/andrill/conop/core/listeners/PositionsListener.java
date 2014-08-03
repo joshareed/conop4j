@@ -8,7 +8,7 @@ public class PositionsListener extends AbstractListener {
 	@Override
 	public void tried(double temp, Solution current, Solution best) {
 		if (matrix == null) {
-			matrix = new PositionsMatrix(current.getDataset());
+			matrix = new PositionsMatrix(context.getDataset());
 			context.put(PositionsMatrix.class, matrix);
 		}
 
