@@ -98,6 +98,14 @@ class JobService {
 			if (!job.solution || json?.solution?.score <= job.solution.score) {
 				job.solution = json.solution
 				job.stats.score = json.solution.score
+			} else if (json?.solution?.score == job.solution.score) {
+				// merge
+				json.solution.events.each { e ->
+					def existing = job.solution.events.find { it.name == e.name }
+					e.positions.min = Math.min(e.positions.min, existing.positions.min)
+					e.positions.max = Math.max(e.positions.max, existing.positions.max)
+				}
+				job.solution = json.solution
 			}
 
 			writeJobs()
