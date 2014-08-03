@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.andrill.conop.core.Dataset;
 import org.andrill.conop.core.Solution;
 import org.andrill.conop.core.solver.SolverContext;
 
@@ -36,6 +37,16 @@ public class DefaultSolverContext implements SolverContext {
 		} finally {
 			bestLock.writeLock().unlock();
 		}
+	}
+
+	@Override
+	public Dataset getDataset() {
+		return get(Dataset.class);
+	}
+
+	@Override
+	public Dataset setDataset(Dataset dataset) {
+		return put(Dataset.class, dataset);
 	}
 
 	@Override

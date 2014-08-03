@@ -5,8 +5,8 @@ import java.util.TreeSet;
 
 import org.andrill.conop.core.AbstractConfigurable;
 import org.andrill.conop.core.Configuration;
-import org.andrill.conop.core.Event;
 import org.andrill.conop.core.Dataset;
+import org.andrill.conop.core.Event;
 import org.andrill.conop.core.Solution;
 
 /**
@@ -14,7 +14,8 @@ import org.andrill.conop.core.Solution;
  *
  * @author Josh Reed (jareed@andrill.org)
  */
-public class EventConstraints extends AbstractConfigurable implements Constraints {
+public class EventConstraints extends AbstractConfigurable implements
+		Constraints {
 	protected class Constraint implements Comparable<Constraint> {
 		Event before;
 		Event after;
@@ -73,7 +74,7 @@ public class EventConstraints extends AbstractConfigurable implements Constraint
 	@Override
 	public boolean isValid(final Solution solution) {
 		if (constraints == null) {
-			calculateConstraints(solution.getDataset());
+			calculateConstraints(context.getDataset());
 		}
 		for (Constraint c : constraints) {
 			if (!c.check(solution)) {

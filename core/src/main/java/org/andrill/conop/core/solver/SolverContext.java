@@ -1,5 +1,6 @@
 package org.andrill.conop.core.solver;
 
+import org.andrill.conop.core.Dataset;
 import org.andrill.conop.core.Solution;
 
 /**
@@ -25,6 +26,22 @@ public interface SolverContext {
 	 * @return the best solution.
 	 */
 	Solution setBest(Solution best);
+
+	/**
+	 * Gets the dataset.
+	 * 
+	 * @return the dataset.
+	 */
+	Dataset getDataset();
+
+	/**
+	 * Sets the dataset.
+	 * 
+	 * @param dataset
+	 *            the dataset.
+	 * @return the dataset.
+	 */
+	Dataset setDataset(Dataset dataset);
 
 	/**
 	 * Get a result by type.

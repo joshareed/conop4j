@@ -16,7 +16,8 @@ import org.andrill.conop.core.Solution;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.MoreExecutors;
 
-public abstract class AbstractParallelPenalty extends AbstractConfigurable implements Penalty {
+public abstract class AbstractParallelPenalty extends AbstractConfigurable
+		implements Penalty {
 	protected ExecutorService pool;
 	protected int procs = 1;
 	protected final String name;
@@ -28,9 +29,12 @@ public abstract class AbstractParallelPenalty extends AbstractConfigurable imple
 
 	@Override
 	public void configure(final Configuration config) {
-		this.procs = config.get("processors", Runtime.getRuntime().availableProcessors());
+		this.procs = config.get("processors", Runtime.getRuntime()
+				.availableProcessors());
 		if (procs > 1) {
-			pool = MoreExecutors.getExitingExecutorService((ThreadPoolExecutor) Executors.newFixedThreadPool(procs));
+			pool = MoreExecutors
+					.getExitingExecutorService((ThreadPoolExecutor) Executors
+							.newFixedThreadPool(procs));
 		}
 	}
 
@@ -57,7 +61,7 @@ public abstract class AbstractParallelPenalty extends AbstractConfigurable imple
 	public double score(final Solution solution) {
 		if (first) {
 			first = false;
-			initialize(solution.getDataset());
+			initialize(context.getDataset());
 		}
 
 		double penalty = 0;

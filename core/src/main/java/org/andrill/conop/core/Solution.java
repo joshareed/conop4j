@@ -23,25 +23,21 @@ public class Solution {
 	 */
 	public static Solution initial(final Dataset dataset) {
 		final List<Event> events = Lists.newArrayList(dataset.getEvents());
-		return new Solution(dataset, events);
+		return new Solution(events);
 	}
 
 	protected final ImmutableList<Event> events;
 	protected final Map<Event, Integer> positions;
-	protected final Dataset dataset;
 	protected double score = -1.0;
 
 	/**
 	 * Create a new Solution with the specified ordered list of events.
 	 *
-	 * @param dataset
-	 *            the dataset.
 	 * @param events
 	 *            the list of events.
 	 */
-	public Solution(final Dataset dataset, final List<Event> events) {
+	public Solution(final List<Event> events) {
 		this.events = ImmutableList.copyOf(events);
-		this.dataset = dataset;
 
 		// index our events
 		positions = Maps.newHashMap();
@@ -79,26 +75,6 @@ public class Solution {
 	 */
 	public int getPosition(final Event event) {
 		return positions.get(event);
-	}
-
-	/**
-	 * Gets the rank for a specified event.
-	 *
-	 * @param e
-	 *            the event.
-	 * @return the rank.
-	 */
-	public int getRank(final Event e) {
-		return events.size() - getPosition(e);
-	}
-
-	/**
-	 * Gets the dataset this solution belongs to.
-	 *
-	 * @return the dataset.
-	 */
-	public Dataset getDataset() {
-		return dataset;
 	}
 
 	/**

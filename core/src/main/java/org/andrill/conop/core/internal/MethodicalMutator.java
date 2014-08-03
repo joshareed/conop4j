@@ -3,8 +3,8 @@ package org.andrill.conop.core.internal;
 import java.util.List;
 import java.util.Map;
 
-import org.andrill.conop.core.Event;
 import org.andrill.conop.core.Dataset;
+import org.andrill.conop.core.Event;
 import org.andrill.conop.core.Solution;
 import org.andrill.conop.core.mutators.AbstractMutator;
 
@@ -30,7 +30,7 @@ public class MethodicalMutator extends AbstractMutator {
 	@Override
 	protected Solution internalMutate(final Solution solution) {
 		if (cache == null) {
-			initCache(solution.getDataset());
+			initCache(context.getDataset());
 		}
 
 		// remove the event
@@ -49,7 +49,7 @@ public class MethodicalMutator extends AbstractMutator {
 		// add the event back in
 		events.add(position, target);
 
-		return new Solution(solution.getDataset(), events);
+		return new Solution(events);
 	}
 
 }

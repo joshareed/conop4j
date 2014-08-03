@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
+import org.andrill.conop.core.Dataset;
 import org.andrill.conop.core.Event;
 import org.andrill.conop.core.Location;
 import org.andrill.conop.core.Observation;
-import org.andrill.conop.core.Dataset;
 import org.andrill.conop.core.Solution;
 
 import com.google.common.collect.Lists;
@@ -35,6 +35,7 @@ public class MatrixPenalty extends AbstractParallelPenalty {
 		protected double[][] matrix;
 		protected double[][] penalties;
 		protected final Location location;
+		protected Dataset dataset;
 
 		/**
 		 * Create a new LocationMatrix.
@@ -44,6 +45,7 @@ public class MatrixPenalty extends AbstractParallelPenalty {
 		 */
 		public LocationMatrix(final Location location, final Dataset dataset) {
 			this.location = location;
+			this.dataset = dataset;
 
 			// get our sorted levels
 			levels = Lists.newArrayList(location.getLevels());
@@ -70,7 +72,8 @@ public class MatrixPenalty extends AbstractParallelPenalty {
 						penalties[i][j] = 0.0;
 					} else {
 						BigDecimal level = levels.get(j);
-						double diff = level.subtract(o.getLevel()).doubleValue();
+						double diff = level.subtract(o.getLevel())
+								.doubleValue();
 						if (diff > 0) {
 							penalties[i][j] = diff * o.getWeightUp();
 						} else {
@@ -92,12 +95,12 @@ public class MatrixPenalty extends AbstractParallelPenalty {
 		public double score(final Solution solution) {
 			int eventCount = solution.getEvents().size();
 			int levelCount = levels.size();
-			Dataset dataset = solution.getDataset();
 
 			// initialize our score matrix with the penalties
 			for (int i = 0; i < eventCount; i++) {
 				Event e = solution.getEvent(i);
-				System.arraycopy(penalties[dataset.getId(e)], 0, matrix[i], 0, levelCount);
+				System.arraycopy(penalties[dataset.getId(e)], 0, matrix[i], 0,
+						levelCount);
 			}
 
 			// accumulate penalties
@@ -137,7 +140,7 @@ public class MatrixPenalty extends AbstractParallelPenalty {
 	@Override
 	protected List<Future<Double>> internalScore(final Solution solution) {
 		List<Future<Double>> results = Lists.newArrayList();
-		for (Location location : solution.getDataset().getLocations()) {
+		for (Location location : context.getDataset().getLocations()) {
 			results.add(execute(matrices.get(location), solution));
 		}
 		return results;
