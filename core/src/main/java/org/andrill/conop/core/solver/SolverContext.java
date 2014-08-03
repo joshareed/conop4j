@@ -44,6 +44,22 @@ public interface SolverContext {
 	Dataset setDataset(Dataset dataset);
 
 	/**
+	 * Get next potential solution.
+	 * 
+	 * @return the next solution or null.
+	 */
+	Solution getNext();
+
+	/**
+	 * Set the next solution to try.
+	 * 
+	 * @param next
+	 *            the next solution.
+	 * @return the next solution.
+	 */
+	Solution setNext(Solution next);
+
+	/**
 	 * Get a result by type.
 	 * 
 	 * @param type

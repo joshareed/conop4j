@@ -105,9 +105,8 @@ class AgentListener extends AsyncListener {
 					new DefaultEvent(it.name)
 				}
 
-				def next = new Solution(context.get(Dataset), events)
-				next.score = json.solution.score
-				context.best = next
+				def next = new Solution(events)
+				context.next = next
 			}
 		} catch (e) {
 			log.info "Error posting update to {}", api

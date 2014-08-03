@@ -137,7 +137,10 @@ public class QueueSolver extends AbstractSolver {
 				temp = schedule.next(current);
 
 				// get a new solution that satisfies the constraints
-				next = mutator.mutate(current);
+				next = context.getNext();
+				if (next == null) {
+					next = mutator.mutate(current);
+				}
 				while (!constraints.isValid(next)) {
 					next = mutator.mutate(current);
 				}

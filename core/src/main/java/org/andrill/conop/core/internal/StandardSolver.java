@@ -58,7 +58,10 @@ public class StandardSolver extends AbstractSolver {
 			// anneal
 			while (temp > 0) {
 				// get a new solution that satisfies the constraints
-				Solution next = mutator.mutate(current);
+				Solution next = context.getNext();
+				if (next == null) {
+					next = mutator.mutate(current);
+				}
 				while (!constraints.isValid(next)) {
 					next = mutator.mutate(current);
 				}
