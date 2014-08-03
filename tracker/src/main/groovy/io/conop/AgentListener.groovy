@@ -7,7 +7,6 @@ import groovy.util.logging.Slf4j
 import java.util.concurrent.locks.ReentrantLock
 
 import org.andrill.conop.core.Configuration
-import org.andrill.conop.core.Dataset
 import org.andrill.conop.core.Solution
 import org.andrill.conop.core.internal.DefaultEvent
 import org.andrill.conop.core.listeners.AsyncListener
@@ -20,6 +19,7 @@ class AgentListener extends AsyncListener {
 	protected ReentrantLock lock = new ReentrantLock()
 	protected URL api = null
 	protected long iterations = 0
+	protected int frequency = 60
 
 	@Override
 	public void configure(Configuration config) {
@@ -27,13 +27,14 @@ class AgentListener extends AsyncListener {
 		if (url) {
 			api = new URL(url)
 		}
+		frequency = config.get "frequency", 60
 	}
 
 	@Override
 	protected void run(double temp, long iteration, Solution current, Solution best) {
 		if (lock.tryLock()) {
 			try {
-				next = TimerUtils.counter + 60
+				next = TimerUtils.counter + frequency
 				updateTracker(temp, iteration, best)
 			} catch (e) {
 				log.debug "Error in AgentListener", e
