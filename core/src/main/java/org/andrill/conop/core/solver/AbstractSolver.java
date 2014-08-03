@@ -10,11 +10,14 @@ import org.andrill.conop.core.HaltedException;
 import org.andrill.conop.core.Solution;
 import org.andrill.conop.core.internal.DefaultSolverContext;
 import org.andrill.conop.core.listeners.Listener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractSolver implements Solver {
 	protected Set<Listener> listeners = new CopyOnWriteArraySet<Listener>();
 	protected boolean stopped = false;
 	protected SolverContext context = new DefaultSolverContext();
+	protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
 	 * Add a new listener.
@@ -47,12 +50,12 @@ public abstract class AbstractSolver implements Solver {
 		HaltedException halt;
 		if (e instanceof HaltedException) {
 			halt = new HaltedException(e.getMessage(), best);
-		} else if ((e instanceof InterruptedException)
-				|| (e instanceof RejectedExecutionException)) {
+		} else if ((e instanceof InterruptedException) || (e instanceof RejectedExecutionException)) {
 			halt = new HaltedException("User Interrupt", best);
 		} else {
-			halt = new HaltedException("Unexpected Error: " + e.getMessage(),
-					best);
+			log.error("Unexpected error", e);
+
+			halt = new HaltedException("Unexpected Error: " + e.getMessage(), best);
 		}
 		stopped(best);
 		throw halt;
@@ -75,10 +78,11 @@ public abstract class AbstractSolver implements Solver {
 	protected abstract void solve(Solution initial);
 
 	@Override
-	public SolverContext solve(final SolverConfiguration config,
-			final Dataset dataset) throws HaltedException {
+	public SolverContext solve(final SolverConfiguration config, final Dataset dataset) throws HaltedException {
 		addShutdownHook();
 		initialize(config);
+
+		context.setDataset(dataset);
 
 		Solution initial = config.getInitialSolution();
 		if (initial == null) {
