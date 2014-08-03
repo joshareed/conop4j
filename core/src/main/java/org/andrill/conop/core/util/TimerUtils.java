@@ -1,5 +1,7 @@
 package org.andrill.conop.core.util;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 public class TimerUtils {
 
 	private static class CounterThread extends Thread {
@@ -18,6 +20,7 @@ public class TimerUtils {
 	}
 
 	private static CounterThread thread = new CounterThread();
+	private static ReentrantLock lock = new ReentrantLock();
 
 	/**
 	 * Gets a counter to avoid having to call System.currentTimeMillis().
@@ -26,7 +29,14 @@ public class TimerUtils {
 	 */
 	public static long getCounter() {
 		if (!thread.isAlive()) {
-			thread.start();
+			try {
+				lock.lock();
+				if (!thread.isAlive()) {
+					thread.start();
+				}
+			} finally {
+				lock.unlock();
+			}
 		}
 		return thread.counter;
 	}
