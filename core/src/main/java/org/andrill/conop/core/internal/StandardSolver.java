@@ -71,7 +71,7 @@ public class StandardSolver extends AbstractSolver {
 
 				// notify listeners
 				for (Listener l : listeners) {
-					l.tried(temp, current, getBest());
+					l.tried(temp, next, getBest());
 				}
 
 				// accept the new solution if it is better than the current
