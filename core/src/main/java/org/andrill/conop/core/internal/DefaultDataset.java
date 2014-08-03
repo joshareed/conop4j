@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.andrill.conop.core.Event;
 import org.andrill.conop.core.Location;
-import org.andrill.conop.core.Run;
+import org.andrill.conop.core.Dataset;
 import org.andrill.conop.core.Solution;
 
 import com.google.common.collect.ImmutableMap;
@@ -12,23 +12,23 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 
 /**
- * Represents a CONOP run.
+ * Represents a CONOP dataset.
  *
  * @author Josh Reed (jareed@andrill.org)
  */
-public class DefaultRun implements Run {
+public class DefaultDataset implements Dataset {
 	protected final ImmutableSet<Event> events;
 	protected final ImmutableSet<Location> locations;
 	protected final ImmutableMap<Event, Integer> ids;
 	protected Solution best = null;
 
 	/**
-	 * Create a new run from the specified locations.
+	 * Create a new dataset from the specified locations.
 	 *
 	 * @param list
 	 *            the locations.
 	 */
-	public DefaultRun(final List<Location> list) {
+	public DefaultDataset(final List<Location> list) {
 		locations = ImmutableSet.copyOf(list);
 
 		// build our immutable set of events
@@ -50,7 +50,7 @@ public class DefaultRun implements Run {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.andrill.conop.core.Run#getEvents()
+	 * @see org.andrill.conop.core.Dataset#getEvents()
 	 */
 	@Override
 	public ImmutableSet<Event> getEvents() {
@@ -60,7 +60,7 @@ public class DefaultRun implements Run {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.andrill.conop.core.Run#getId(org.andrill.conop.core.Event)
+	 * @see org.andrill.conop.core.Dataset#getId(org.andrill.conop.core.Event)
 	 */
 	@Override
 	public int getId(final Event e) {
@@ -70,7 +70,7 @@ public class DefaultRun implements Run {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.andrill.conop.core.Run#getLocations()
+	 * @see org.andrill.conop.core.Dataset#getLocations()
 	 */
 	@Override
 	public ImmutableSet<Location> getLocations() {

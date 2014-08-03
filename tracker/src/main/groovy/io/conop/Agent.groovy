@@ -3,7 +3,6 @@ package io.conop
 import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
 
-import org.andrill.conop.core.listeners.ConsoleProgressListener
 import org.andrill.conop.core.listeners.SnapshotListener
 import org.andrill.conop.data.simulation.SimulationDSL
 
@@ -22,15 +21,15 @@ class Agent extends Thread {
 		try {
 			def dsl = new SimulationDSL()
 			dsl.parse(job.source)
-			def run = dsl.run
+			def dataset = dsl.dataset
 
 			def config = dsl.solverConfiguration
-			config.filterListeners ConsoleProgressListener.class
+			//config.filterListeners ConsoleProgressListener.class
 			config.filterListeners SnapshotListener.class
-			config.configureListener(AgentListener.class, [api: job.url])
+			config.configureListener(AgentListener.class, [api: job.url, frequency: 60])
 
 			def solver = config.solver
-			solver.solve(config, run)
+			solver.solve(config, dataset)
 		} catch (e) {
 			log.info "Halted: {}", e.message
 			log.debug "Halted", e

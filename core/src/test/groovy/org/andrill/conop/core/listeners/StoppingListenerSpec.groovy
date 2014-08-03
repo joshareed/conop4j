@@ -1,7 +1,7 @@
 package org.andrill.conop.core.listeners
 
 import org.andrill.conop.core.*
-import org.andrill.conop.core.listeners.Listener.Mode
+import org.andrill.conop.core.test.DatasetFixtures
 import org.andrill.conop.core.util.TimerUtils
 
 import spock.lang.Specification
@@ -26,9 +26,6 @@ class StoppingListenerSpec extends Specification {
 		listener.currentIteration == -1
 		listener.lastProgressIteration == -1
 		listener.lastProgressTime == -1
-
-		and: 'mode'
-		listener.mode == Mode.ANY
 	}
 
 	def "test configure"() {
@@ -114,8 +111,8 @@ class StoppingListenerSpec extends Specification {
 		given: 'a listener'
 		def listener = new StoppingListener()
 
-		and: 'a run'
-		def run = RunFixtures.simpleRun()
+		and: 'a dataset'
+		def run = DatasetFixtures.simpleDataset()
 
 		expect:
 		listener.currentIteration == -1

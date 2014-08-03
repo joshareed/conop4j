@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.andrill.conop.core.Configuration;
 import org.andrill.conop.core.Event;
@@ -21,7 +22,8 @@ import au.com.bytecode.opencsv.CSVWriter;
 public class SnapshotListener extends AsyncListener {
 	private static final DecimalFormat I = new DecimalFormat("0");
 	private static final DecimalFormat D = new DecimalFormat("0.00");
-	private static final String[] HEADER = new String[] { "Event", "Rank" };
+	private static final String[] HEADER = new String[] { "Event", "Position",
+			"Min", "Max" };
 
 	protected static File getFile(final String file) {
 		File f = new File(file);
@@ -38,7 +40,8 @@ public class SnapshotListener extends AsyncListener {
 		return f;
 	}
 
-	protected int next = 60;
+	protected ReentrantLock lock = new ReentrantLock();
+	protected long next = 60;
 	protected File snapshotFile;
 	protected File solutionFile;
 	protected CSVWriter writer;
@@ -52,13 +55,23 @@ public class SnapshotListener extends AsyncListener {
 	}
 
 	@Override
-	protected void run(final double temp, final long iteration, final Solution current, final Solution best) {
-		try {
-			writeResults(solutionFile, best);
-			writer.writeNext(new String[] { I.format((next / 60) - 1), I.format(iteration), D.format(temp), D.format(best.getScore()) });
-			writer.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
+	protected void run(final double temp, final long iteration,
+			final Solution current, final Solution best) {
+		if (lock.tryLock()) {
+			try {
+				next = TimerUtils.getCounter() + 60;
+
+				// write out our results
+				writeResults(solutionFile, best);
+				writer.writeNext(new String[] { I.format((next / 60) - 1),
+						I.format(iteration), D.format(temp),
+						D.format(best.getScore()) });
+				writer.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				lock.unlock();
+			}
 		}
 	}
 
@@ -67,7 +80,8 @@ public class SnapshotListener extends AsyncListener {
 		super.started(initial);
 
 		try {
-			writer = new CSVWriter(new BufferedWriter(new FileWriter(snapshotFile)), '\t');
+			writer = new CSVWriter(new BufferedWriter(new FileWriter(
+					snapshotFile)), '\t');
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -83,27 +97,38 @@ public class SnapshotListener extends AsyncListener {
 	}
 
 	@Override
-	protected boolean test(final double temp, final long iteration, final Solution current, final Solution best) {
-		if (TimerUtils.getCounter() >= next) {
-			next += 60;
-			return true;
-		} else {
-			return false;
-		}
+	protected boolean test(final double temp, final long iteration,
+			final Solution current, final Solution best) {
+		return (TimerUtils.getCounter() > next);
 	}
 
 	protected void writeResults(final File file, final Solution solution) {
-		try (CSVWriter csv = new CSVWriter(new BufferedWriter(new FileWriter(file)), '\t')) {
+		try (CSVWriter csv = new CSVWriter(new BufferedWriter(new FileWriter(
+				file)), '\t')) {
 			// write the header
 			csv.writeNext(HEADER);
+
+			PositionsMatrix matrix = null;
+			if (context != null) {
+				matrix = context.get(PositionsMatrix.class);
+			}
 
 			// write the events
 			int total = solution.getEvents().size();
 			String[] next = new String[4];
 			for (int i = 0; i < total; i++) {
 				Event e = solution.getEvent(i);
+
 				next[0] = e.getName();
-				next[1] = I.format(total - i);
+				next[1] = I.format(i);
+				if (matrix == null) {
+					next[2] = I.format(i);
+					next[3] = I.format(i);
+				} else {
+					int[] range = matrix.getRange(e);
+					next[2] = I.format(range[0]);
+					next[3] = I.format(range[1]);
+				}
 				csv.writeNext(next);
 			}
 		} catch (IOException e) {

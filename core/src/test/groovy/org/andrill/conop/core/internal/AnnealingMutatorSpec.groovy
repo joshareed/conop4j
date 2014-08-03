@@ -1,18 +1,18 @@
-package org.andrill.conop.core.mutators
+package org.andrill.conop.core.internal
 
-import org.andrill.conop.core.Run;
+import org.andrill.conop.core.Dataset;
 import org.andrill.conop.core.Solution
-import org.andrill.conop.core.RunFixtures
+import org.andrill.conop.core.internal.AnnealingMutator;
 import org.andrill.conop.core.internal.DefaultEvent;
-import org.andrill.conop.core.mutators.internal.AnnealingMutator;
+import org.andrill.conop.core.test.DatasetFixtures;
 
 import spock.lang.Specification
 
 class AnnealingMutatorSpec extends Specification {
-	private Run run;
+	private Dataset dataset;
 
 	void setup() {
-		run = RunFixtures.simpleRun()
+		dataset = DatasetFixtures.simpleDataset()
 	}
 
 	def "test mutate"() {
@@ -21,7 +21,7 @@ class AnnealingMutatorSpec extends Specification {
 		mutator.reset = 1
 
 		and: 'a solution'
-		def solution = Solution.initial(run)
+		def solution = Solution.initial(dataset)
 
 		when: 'mutate'
 		def mutated = mutator.mutate(solution)

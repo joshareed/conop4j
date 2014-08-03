@@ -8,13 +8,13 @@ class RunCommand implements CliCommand {
 	@Override
 	void execute(List<String> args) {
 		if (!args) {
-			println "Usage: run <simulation file or URL>"
+			println "Usage: dataset <simulation file or URL>"
 			System.exit(0)
 		}
 
 		try {
 			def dsl = new SimulationDSL()
-			
+
 			// check if URL or file
 			def source
 			if (args[0].contains('http')) {
@@ -24,10 +24,10 @@ class RunCommand implements CliCommand {
 			}
 			dsl.parse(source)
 
-			def run = dsl.run
+			def dataset = dsl.dataset
 			def config = dsl.solverConfiguration
 			def solver = config.solver
-			solver.solve(config, run)
+			solver.solve(config, dataset)
 		} catch (e) {
 			println "Halted: ${e.message.padRight(80)}"
 		}

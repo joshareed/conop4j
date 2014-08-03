@@ -22,7 +22,7 @@ public class PostProcess {
 		// define our option parser
 		OptionParser parser = new OptionParser() {
 			{
-				accepts("in", "the run directory").withRequiredArg().ofType(File.class).defaultsTo(new File("."));
+				accepts("in", "the dataset directory").withRequiredArg().ofType(File.class).defaultsTo(new File("."));
 				accepts("out", "the output file").withRequiredArg().ofType(File.class).defaultsTo(new File("out.xls"));
 				accepts("summary", "a comma-separated list of summary sheets").withRequiredArg().ofType(String.class)
 						.withValuesSeparatedBy(',').defaultsTo("AgeAndPlacements");

@@ -1,8 +1,8 @@
 import static ratpack.groovy.Groovy.groovyTemplate
 import static ratpack.groovy.Groovy.ratpack
 import static ratpack.jackson.Jackson.json
-import io.conop.JobService
 import io.conop.JobApiModule
+import io.conop.JobService
 import ratpack.jackson.JacksonModule
 
 ratpack {

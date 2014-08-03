@@ -17,31 +17,27 @@ public class Solution {
 	/**
 	 * Creates an initial solution.
 	 *
-	 * @param run
-	 *            the run.
+	 * @param dataset
+	 *            the dataset.
 	 * @return the initial solution.
 	 */
-	public static Solution initial(final Run run) {
-		final List<Event> events = Lists.newArrayList(run.getEvents());
-		return new Solution(run, events);
+	public static Solution initial(final Dataset dataset) {
+		final List<Event> events = Lists.newArrayList(dataset.getEvents());
+		return new Solution(events);
 	}
 
 	protected final ImmutableList<Event> events;
 	protected final Map<Event, Integer> positions;
-	protected final Run run;
-	protected double score = 0.0;
+	protected double score = -1.0;
 
 	/**
 	 * Create a new Solution with the specified ordered list of events.
 	 *
-	 * @param run
-	 *            the run.
 	 * @param events
 	 *            the list of events.
 	 */
-	public Solution(final Run run, final List<Event> events) {
+	public Solution(final List<Event> events) {
 		this.events = ImmutableList.copyOf(events);
-		this.run = run;
 
 		// index our events
 		positions = Maps.newHashMap();
@@ -82,26 +78,6 @@ public class Solution {
 	}
 
 	/**
-	 * Gets the rank for a specified event.
-	 *
-	 * @param e
-	 *            the event.
-	 * @return the rank.
-	 */
-	public int getRank(final Event e) {
-		return events.size() - getPosition(e);
-	}
-
-	/**
-	 * Gets the run this solution belongs to.
-	 *
-	 * @return the run.
-	 */
-	public Run getRun() {
-		return run;
-	}
-
-	/**
 	 * Gets the score for this solution.
 	 *
 	 * @return the score.
@@ -111,27 +87,15 @@ public class Solution {
 	}
 
 	/**
-	 * Generates a hash representation of this solution. This hash is only
-	 * guaranteed to be unique for a single run.
-	 *
-	 * @return the hash.
-	 */
-	public String hash() {
-		StringBuilder hash = new StringBuilder();
-		for (Event e : events) {
-			hash.append(e);
-			hash.append(':');
-		}
-		return hash.toString();
-	}
-
-	/**
 	 * Sets the score for this solution.
 	 *
 	 * @param score
 	 *            the score.
 	 */
 	public void setScore(final double score) {
+		if (this.score >= 0.0) {
+			throw new RuntimeException("Solution may only be scored once");
+		}
 		this.score = score;
 	}
 }

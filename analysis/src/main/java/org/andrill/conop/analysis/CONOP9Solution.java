@@ -14,7 +14,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
- * A solution from a CONOP9 run.
+ * A solution from a CONOP9 dataset.
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
@@ -102,34 +102,34 @@ public class CONOP9Solution implements Solution {
 	protected List<Map<String, String>> sections;
 
 	/**
-	 * Create a new RunInfo for the specified run directory.
+	 * Create a new RunInfo for the specified dataset directory.
 	 * 
 	 * @param dir
-	 *            the run directory.
+	 *            the dataset directory.
 	 */
 	public CONOP9Solution(final File dir) {
 		this(dir.getName(), dir, new Config());
 	}
 
 	/**
-	 * Create a new RunInfo for the specified run directory.
+	 * Create a new RunInfo for the specified dataset directory.
 	 * 
 	 * @param name
-	 *            the run name.
+	 *            the dataset name.
 	 * @param dir
-	 *            the run directory.
+	 *            the dataset directory.
 	 */
 	public CONOP9Solution(final String name, final File dir) {
 		this(name, dir, new Config());
 	}
 
 	/**
-	 * Create a new RunInfo for the specified run directory.
+	 * Create a new RunInfo for the specified dataset directory.
 	 * 
 	 * @param name
-	 *            the run name.
+	 *            the dataset name.
 	 * @param dir
-	 *            the run directory.
+	 *            the dataset directory.
 	 * @param config
 	 *            the config.
 	 */

@@ -1,17 +1,16 @@
 package org.andrill.conop.core.mutators
 
-import org.andrill.conop.core.Run;
+import org.andrill.conop.core.Dataset
 import org.andrill.conop.core.Solution
-import org.andrill.conop.core.RunFixtures
-import org.andrill.conop.core.internal.DefaultEvent;
+import org.andrill.conop.core.test.DatasetFixtures
 
 import spock.lang.Specification
 
 class RandomMutatorSpec extends Specification {
-	private Run run;
+	private Dataset dataset;
 
 	void setup() {
-		run = RunFixtures.simpleRun()
+		dataset = DatasetFixtures.simpleDataset()
 	}
 
 	def "test mutate"() {
@@ -20,13 +19,13 @@ class RandomMutatorSpec extends Specification {
 		mutator.reset = 1
 
 		and: 'a solution'
-		def solution = Solution.initial(run)
+		def solution = Solution.initial(dataset)
 
 		when: 'mutate'
 		def mutated = mutator.mutate(solution)
 
 		then: 'solution differs'
 		mutated != solution
-		mutated.hash() != solution.hash()
+		mutated.events != solution.events
 	}
 }

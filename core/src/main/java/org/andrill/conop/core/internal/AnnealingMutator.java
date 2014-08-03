@@ -1,4 +1,4 @@
-package org.andrill.conop.core.mutators.internal;
+package org.andrill.conop.core.internal;
 
 import java.util.List;
 import java.util.Random;
@@ -42,11 +42,12 @@ public class AnnealingMutator extends AbstractMutator implements Listener {
 		// build a new solution
 		Event e = events.remove(cur);
 		events.add(pos, e);
-		return new Solution(solution.getRun(), events);
+		return new Solution(events);
 	}
 
 	@Override
-	public void tried(final double temp, final Solution current, final Solution best) {
+	public void tried(final double temp, final Solution current,
+			final Solution best) {
 		if (temp != this.temp) {
 			this.temp = temp;
 			delta = (int) Math.max(1, Math.ceil(Math.log(temp)));

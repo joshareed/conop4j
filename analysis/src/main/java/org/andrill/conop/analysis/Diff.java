@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.andrill.conop.core.Event;
-import org.andrill.conop.core.Run;
+import org.andrill.conop.core.Dataset;
 
 import com.google.common.collect.Maps;
 
@@ -27,7 +27,7 @@ public class Diff {
 		int rank;
 	}
 
-	private static Event find(final Run run, final String col1, final String col2) {
+	private static Event find(final Dataset run, final String col1, final String col2) {
 		String name = col1;
 		if (col1.startsWith("'") || col1.startsWith("\"")) {
 			name = name.substring(1, name.length() - 1);
@@ -55,13 +55,13 @@ public class Diff {
 	/**
 	 * Load a solution from a CSV file.
 	 *
-	 * @param run
-	 *            the run.
+	 * @param dataset
+	 *            the dataset.
 	 * @param csv
 	 *            the CSV file.
 	 * @return the solution.
 	 */
-	public static Map<Event, Rank> fromCSV(final Run run, final File csv) {
+	public static Map<Event, Rank> fromCSV(final Dataset run, final File csv) {
 		String line = null;
 		Map<Event, Rank> map = Maps.newLinkedHashMap();
 		try (BufferedReader reader = new BufferedReader(new FileReader(csv))) {
@@ -93,9 +93,9 @@ public class Diff {
 	 *            the args.
 	 */
 	public static void main(final String[] args) {
-		// load our run
-		// Run run = Run.loadCONOP9Run(new File(args[0]), false);
-		Run run = null;
+		// load our dataset
+		// Dataset dataset = Dataset.loadCONOP9Run(new File(args[0]), false);
+		Dataset run = null;
 
 		// load our first solution
 		Map<Event, Rank> s1 = fromCSV(run, new File(args[1]));

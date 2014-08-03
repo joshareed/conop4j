@@ -1,37 +1,33 @@
 package org.andrill.conop.core
 
+import org.andrill.conop.core.test.DatasetFixtures
+
 import spock.lang.Specification
 
 class SolutionSpec extends Specification {
-	private Run run;
+	private Dataset dataset;
 
 	void setup() {
-		run = RunFixtures.simpleRun()
+		dataset = DatasetFixtures.simpleDataset()
 	}
 
-	def "creating an initial solution for a run works"() {
+	def "creating an initial solution for a dataset works"() {
 		when:
-		def solution = Solution.initial(run)
+		def solution = Solution.initial(dataset)
 
 		then: 'the solution exists'
 		solution != null
 
 		and: 'same number of events'
-		run.events.size() == solution.events.size()
+		dataset.events.size() == solution.events.size()
 
-		and: 'the run is set'
-		solution.run == run
-
-		and: 'score is 0'
-		solution.score == 0.0
-
-		and: 'the hash is not null'
-		solution.hash() != null
+		and: 'score is -1'
+		solution.score == -1
 	}
 
 	def "setScore updates ranks"() {
 		given: 'a solution'
-		def solution = Solution.initial(run)
+		def solution = Solution.initial(dataset)
 
 		when: 'set score'
 		solution.setScore(1000.0)
