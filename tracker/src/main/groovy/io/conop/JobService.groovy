@@ -29,7 +29,9 @@ class JobService {
 	}
 
 	protected void readJobs() {
-		if (db == null) { return }
+		if (db == null) {
+			return
+		}
 
 		try {
 			def json = new JsonSlurper().parse(db)
@@ -40,7 +42,9 @@ class JobService {
 	}
 
 	protected void writeJobs() {
-		if (db == null) { return }
+		if (db == null) {
+			return
+		}
 
 		db.write(JsonOutput.toJson(jobs))
 	}
@@ -77,9 +81,10 @@ class JobService {
 		jobs.findAll { it.active } ?: []
 	}
 
-	boolean update(id, body) {
+	def update(id, body) {
 		def job = get(id)
 		if (job) {
+
 			def json = new JsonSlurper().parse(body.inputStream)
 
 			// update
@@ -87,10 +92,10 @@ class JobService {
 			if (!job.stats.created) {
 				job.stats.created = job.stats.updated
 			}
-			if (json.iterations) {
-				job.stats.iterations += json.iterations
+			if (json?.stats?.iterations) {
+				job.stats.iterations += json.stats.iterations
 			}
-			if (!job.solution || json.solution.score <= job.solution.score) {
+			if (!job.solution || json?.solution?.score <= job.solution.score) {
 				job.solution = json.solution
 				job.stats.score = json.solution.score
 			}

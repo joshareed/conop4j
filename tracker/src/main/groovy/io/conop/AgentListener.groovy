@@ -1,12 +1,15 @@
 package io.conop
 
 import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
 
 import java.util.concurrent.locks.ReentrantLock
 
 import org.andrill.conop.core.Configuration
+import org.andrill.conop.core.Dataset
 import org.andrill.conop.core.Solution
+import org.andrill.conop.core.internal.DefaultEvent
 import org.andrill.conop.core.listeners.AsyncListener
 import org.andrill.conop.core.listeners.PositionsMatrix
 import org.andrill.conop.core.util.TimerUtils
@@ -69,6 +72,8 @@ class AgentListener extends AsyncListener {
 				e.positions.min = range[0]
 				e.positions.max = range[1]
 			}
+
+			json.events << e
 		}
 
 		json
@@ -76,14 +81,14 @@ class AgentListener extends AsyncListener {
 
 	protected void updateTracker(double temp, long iterations, Solution best) {
 		log.info "Sending best solution to ${api}"
-		def payload = [
-			stats: buildStatsJson(temp, iterations),
-			solution: buildSolutionJson(best)
-		]
-
-		this.iterations = iterations
 
 		try {
+			def payload = [
+				stats: buildStatsJson(temp, iterations, best),
+				solution: buildSolutionJson(best)
+			]
+			this.iterations = iterations
+
 			// POST to the server
 			def conn = api.openConnection()
 			conn.doInput = true
@@ -93,7 +98,17 @@ class AgentListener extends AsyncListener {
 			conn.setRequestProperty "Content-Type", "application/json"
 			conn.connect()
 			conn.outputStream << JsonOutput.toJson(payload)
-			conn.inputStream.close()
+
+			def json = new JsonSlurper().parse(conn.inputStream)
+			if (json?.solution?.score < best.score) {
+				def events = json?.solution?.events.collect {
+					new DefaultEvent(it.name)
+				}
+
+				def next = new Solution(context.get(Dataset), events)
+				next.score = json.solution.score
+				context.best = next
+			}
 		} catch (e) {
 			log.info "Error posting update to {}", api
 			log.debug "Error posting update", e
