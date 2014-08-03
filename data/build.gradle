@@ -1,10 +1,14 @@
 archivesBaseName = 'conop4j-data'
 
-manifest.mainAttributes(
-	'Implementation-Title': 'CONOP4J Data Library',
-	'Implementation-Version': version,
-	'Main-Class': 'org.andrill.conop.core.cli.Conop4jMain'
-)
+jar {
+	manifest {
+		attributes(
+			'Implementation-Title': 'CONOP4J Data Library',
+			'Implementation-Version': version,
+			'Main-Class': 'org.andrill.conop.core.cli.Conop4jMain'
+		)
+	}
+}
 
 dependencies {
 	compile project(':core')
