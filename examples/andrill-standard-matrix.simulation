@@ -39,7 +39,7 @@ data {
 }
 
 solver {
-	mutator 'random', reset: 50000
+	mutator 'random'
 	constraints 'event', taxa: true
 	schedule 'exponential', initial: 1000, delta: 0.001, steps: 5000
 	penalty 'matrix'
@@ -47,5 +47,5 @@ solver {
 	listener 'console'
 	listener 'snapshot'
 	listener 'positions'
-	listener 'stopping', progressTime: 60
+	listener 'stopping', progressTime: 360
 }
