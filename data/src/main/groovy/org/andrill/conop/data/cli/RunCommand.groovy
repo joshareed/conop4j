@@ -29,7 +29,6 @@ class RunCommand implements CliCommand {
 			def solver = config.solver
 			solver.solve(config, dataset)
 		} catch (e) {
-			e.printStackTrace()
 			println "Halted: ${e.message.padRight(80)}"
 		}
 
