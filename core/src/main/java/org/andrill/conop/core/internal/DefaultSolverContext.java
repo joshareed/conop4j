@@ -15,6 +15,7 @@ public class DefaultSolverContext implements SolverContext {
 	protected Map<Class<?>, Object> cache = Maps.newConcurrentMap();
 	protected ReadWriteLock bestLock = new ReentrantReadWriteLock();
 	protected Solution best = null;
+	protected volatile Solution next = null;
 
 	@Override
 	public Solution getBest() {
@@ -47,6 +48,19 @@ public class DefaultSolverContext implements SolverContext {
 	@Override
 	public Dataset setDataset(Dataset dataset) {
 		return put(Dataset.class, dataset);
+	}
+
+	@Override
+	public Solution getNext() {
+		Solution offer = next;
+		next = null;
+		return offer;
+	}
+
+	@Override
+	public Solution setNext(Solution next) {
+		this.next = next;
+		return next;
 	}
 
 	@Override

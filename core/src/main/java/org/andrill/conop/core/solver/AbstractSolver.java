@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractSolver implements Solver {
 	protected Set<Listener> listeners = new CopyOnWriteArraySet<Listener>();
+	protected boolean started = false;
 	protected boolean stopped = false;
 	protected SolverContext context = new DefaultSolverContext();
 	protected Logger log = LoggerFactory.getLogger(getClass());
@@ -95,8 +96,11 @@ public abstract class AbstractSolver implements Solver {
 	}
 
 	protected void started(final Solution initial) {
-		for (Listener l : listeners) {
-			l.started(initial);
+		if (!started) {
+			started = true;
+			for (Listener l : listeners) {
+				l.started(initial);
+			}
 		}
 	}
 

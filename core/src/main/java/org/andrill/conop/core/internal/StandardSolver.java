@@ -58,7 +58,10 @@ public class StandardSolver extends AbstractSolver {
 			// anneal
 			while (temp > 0) {
 				// get a new solution that satisfies the constraints
-				Solution next = mutator.mutate(current);
+				Solution next = context.getNext();
+				if (next == null) {
+					next = mutator.mutate(current);
+				}
 				while (!constraints.isValid(next)) {
 					next = mutator.mutate(current);
 				}
@@ -71,7 +74,7 @@ public class StandardSolver extends AbstractSolver {
 
 				// notify listeners
 				for (Listener l : listeners) {
-					l.tried(temp, current, getBest());
+					l.tried(temp, next, getBest());
 				}
 
 				// accept the new solution if it is better than the current

@@ -123,7 +123,7 @@ public class QueueSolver extends AbstractSolver {
 
 				// notify listeners
 				for (Listener l : listeners) {
-					l.tried(temp, current, getBest());
+					l.tried(temp, next, getBest());
 				}
 
 				// accept the new solution if it is better than the current
@@ -137,7 +137,10 @@ public class QueueSolver extends AbstractSolver {
 				temp = schedule.next(current);
 
 				// get a new solution that satisfies the constraints
-				next = mutator.mutate(current);
+				next = context.getNext();
+				if (next == null) {
+					next = mutator.mutate(current);
+				}
 				while (!constraints.isValid(next)) {
 					next = mutator.mutate(current);
 				}
