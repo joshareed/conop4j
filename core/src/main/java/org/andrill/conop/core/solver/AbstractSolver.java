@@ -113,7 +113,7 @@ public abstract class AbstractSolver implements Solver {
 		}
 	}
 
-	protected void updateBest(Solution next) {
+	protected boolean updateBest(Solution next) {
 		Solution best = context.getBest();
 
 		// save as best if the penalty is less
@@ -125,7 +125,9 @@ public abstract class AbstractSolver implements Solver {
 			if (next.getScore() == 0) {
 				throw new HaltedException("Score reached 0", best);
 			}
+			return true;
 		}
+		return false;
 	}
 
 	public SolverContext getContext() {

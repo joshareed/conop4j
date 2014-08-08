@@ -13,6 +13,8 @@ import org.andrill.conop.core.penalties.Penalty;
 import org.andrill.conop.core.schedules.Schedule;
 import org.andrill.conop.core.solver.AbstractSolver;
 import org.andrill.conop.core.solver.SolverConfiguration;
+import org.andrill.conop.core.solver.SolverStats;
+import org.andrill.conop.core.util.TimerUtils;
 
 public class QueueSolver extends AbstractSolver {
 
@@ -44,6 +46,7 @@ public class QueueSolver extends AbstractSolver {
 	protected Mutator mutator;
 	protected Schedule schedule;
 	protected Random random = new Random();
+	protected SolverStats stats = new SolverStats();
 
 	@Override
 	protected void initialize(final SolverConfiguration config) {
@@ -83,6 +86,7 @@ public class QueueSolver extends AbstractSolver {
 		for (Listener l : config.getListeners()) {
 			addListener(l);
 		}
+		context.put(SolverStats.class, stats);
 	}
 
 	@Override
@@ -98,8 +102,11 @@ public class QueueSolver extends AbstractSolver {
 		// fill the work queue
 		for (int i = 0; i < scorers.size(); i++) {
 			Solution next = mutator.mutate(current);
+			stats.total++;
 			while (!constraints.isValid(next)) {
 				next = mutator.mutate(current);
+				stats.skipped++;
+				stats.total++;
 			}
 			try {
 				work.put(next);
@@ -117,9 +124,12 @@ public class QueueSolver extends AbstractSolver {
 			// anneal
 			while (temp > 0) {
 				Solution next = complete.take();
+				stats.scored++;
 
 				// check if new best
-				updateBest(next);
+				if (updateBest(next)) {
+					stats.best = getBest().getScore();
+				}
 
 				// notify listeners
 				for (Listener l : listeners) {
@@ -135,14 +145,19 @@ public class QueueSolver extends AbstractSolver {
 
 				// get our next temperature
 				temp = schedule.next(current);
+				stats.temperature = temp;
+				stats.elapsed = TimerUtils.getCounter();
 
 				// get a new solution that satisfies the constraints
 				next = context.getNext();
 				if (next == null) {
 					next = mutator.mutate(current);
 				}
+				stats.total++;
 				while (!constraints.isValid(next)) {
 					next = mutator.mutate(current);
+					stats.skipped++;
+					stats.total++;
 				}
 				work.put(next);
 			}
