@@ -47,6 +47,7 @@ solver {
 	penalty 'matrix', processors: 1
 
 	listener 'console'
+	listener 'stats'
 	listener 'snapshot'
 	listener 'positions'
 	listener 'stopping', progressTime: 360
