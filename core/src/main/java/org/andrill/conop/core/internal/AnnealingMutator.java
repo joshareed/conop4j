@@ -23,7 +23,7 @@ public class AnnealingMutator extends AbstractMutator implements Listener {
 	private double temp = 1000.0;
 
 	public AnnealingMutator() {
-		super("Annealing");
+		super("Annealing Mutator");
 	}
 
 	@Override
@@ -46,8 +46,7 @@ public class AnnealingMutator extends AbstractMutator implements Listener {
 	}
 
 	@Override
-	public void tried(final double temp, final Solution current,
-			final Solution best) {
+	public void tried(final double temp, final Solution current, final Solution best) {
 		if (temp != this.temp) {
 			this.temp = temp;
 			delta = (int) Math.max(1, Math.ceil(Math.log(temp)));

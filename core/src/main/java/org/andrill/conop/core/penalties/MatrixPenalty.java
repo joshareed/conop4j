@@ -72,8 +72,7 @@ public class MatrixPenalty extends AbstractParallelPenalty {
 						penalties[i][j] = 0.0;
 					} else {
 						BigDecimal level = levels.get(j);
-						double diff = level.subtract(o.getLevel())
-								.doubleValue();
+						double diff = level.subtract(o.getLevel()).doubleValue();
 						if (diff > 0) {
 							penalties[i][j] = diff * o.getWeightUp();
 						} else {
@@ -99,8 +98,7 @@ public class MatrixPenalty extends AbstractParallelPenalty {
 			// initialize our score matrix with the penalties
 			for (int i = 0; i < eventCount; i++) {
 				Event e = solution.getEvent(i);
-				System.arraycopy(penalties[dataset.getId(e)], 0, matrix[i], 0,
-						levelCount);
+				System.arraycopy(penalties[dataset.getId(e)], 0, matrix[i], 0, levelCount);
 			}
 
 			// accumulate penalties
@@ -126,7 +124,7 @@ public class MatrixPenalty extends AbstractParallelPenalty {
 	protected Map<Location, LocationMatrix> matrices = null;
 
 	public MatrixPenalty() {
-		super("Matrix");
+		super("Matrix Penalty");
 	}
 
 	@Override

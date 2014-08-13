@@ -17,7 +17,7 @@ public class MethodicalMutator extends AbstractMutator {
 	protected int cycle = 0;
 
 	public MethodicalMutator() {
-		super("Methodical");
+		super("Methodical Mutator");
 	}
 
 	protected void initCache(final Dataset dataset) {

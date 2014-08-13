@@ -14,11 +14,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractSolver implements Solver {
+	protected final Logger log = LoggerFactory.getLogger(getClass());
 	protected Set<Listener> listeners = new CopyOnWriteArraySet<Listener>();
 	protected boolean started = false;
 	protected boolean stopped = false;
 	protected SolverContext context = new DefaultSolverContext();
-	protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
 	 * Add a new listener.
@@ -87,6 +87,7 @@ public abstract class AbstractSolver implements Solver {
 
 		Solution initial = config.getInitialSolution();
 		if (initial == null) {
+			log.info("Using random initial solution");
 			initial = Solution.initial(dataset);
 		}
 

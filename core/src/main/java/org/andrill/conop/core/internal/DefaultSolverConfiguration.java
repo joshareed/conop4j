@@ -100,7 +100,9 @@ public class DefaultSolverConfiguration implements SolverConfiguration {
 	public List<Listener> getListeners() {
 		List<Listener> list = Lists.newArrayList();
 		for (ClassConfig<? extends Listener> l : listeners) {
-			list.add(instantiate(l));
+			Listener listener = instantiate(l);
+			list.add(listener);
+			log.info("Using listener '{}'", listener);
 		}
 		return list;
 	}

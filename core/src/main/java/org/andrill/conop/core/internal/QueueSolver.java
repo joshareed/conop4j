@@ -51,13 +51,21 @@ public class QueueSolver extends AbstractSolver {
 	@Override
 	protected void initialize(final SolverConfiguration config) {
 		int procs = Runtime.getRuntime().availableProcessors();
+		log.debug("Configuring queue size as '{}'", procs);
+
 		work = new LinkedBlockingQueue<>(procs + 1);
 		complete = new LinkedBlockingQueue<>(procs + 1);
 
 		// save our important components
 		constraints = config.getConstraints();
+		log.info("Using constraints '{}'", constraints);
+
 		mutator = config.getMutator();
+		log.info("Using mutator '{}'", mutator);
+
 		schedule = config.getSchedule();
+		log.info("Using schedule '{}'", schedule);
+
 		setContext(constraints, mutator, schedule);
 
 		// check for listeners
@@ -75,6 +83,9 @@ public class QueueSolver extends AbstractSolver {
 		scorers = new HashSet<>();
 		for (int i = 0; i < procs; i++) {
 			Penalty penalty = config.getPenalty();
+			if (i == 0) {
+				log.info("Using penalty '{}'", penalty);
+			}
 			setContext(penalty);
 			scorers.add(new ScorerThread(penalty));
 			if (penalty instanceof Listener) {

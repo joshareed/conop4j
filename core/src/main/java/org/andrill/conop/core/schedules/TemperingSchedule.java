@@ -3,8 +3,11 @@ package org.andrill.conop.core.schedules;
 import org.andrill.conop.core.AbstractConfigurable;
 import org.andrill.conop.core.Configuration;
 import org.andrill.conop.core.Solution;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TemperingSchedule extends AbstractConfigurable implements Schedule {
+	protected Logger log = LoggerFactory.getLogger(TemperingSchedule.class);
 	protected long count = 0;
 	protected double current = 1000;
 	protected double delta = 0.01;
@@ -16,9 +19,15 @@ public class TemperingSchedule extends AbstractConfigurable implements Schedule 
 
 	@Override
 	public void configure(final Configuration config) {
-		initial = config.get("initial", 1000.0);
-		delta = config.get("delta", 0.01);
-		steps = config.get("steps", 100l);
+		this.initial = config.get("initial", 1000.0);
+		log.debug("Configuring initial temperature as '{}C'", initial);
+
+		this.delta = config.get("delta", 0.01);
+		log.debug("Configuring temperature delta as '{}C'", delta);
+
+		this.steps = config.get("steps", 100l);
+		log.debug("Configuring minimum steps per temperature as '{}'", steps);
+
 		current = initial;
 		temperTo = initial / 2;
 		temperWhen = Math.log10(temperTo);
@@ -54,5 +63,10 @@ public class TemperingSchedule extends AbstractConfigurable implements Schedule 
 		} else {
 			return current;
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "Tempering Schedule";
 	}
 }
