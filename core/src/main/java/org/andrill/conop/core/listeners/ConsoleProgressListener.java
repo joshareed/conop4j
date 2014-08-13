@@ -2,7 +2,6 @@ package org.andrill.conop.core.listeners;
 
 import java.text.DecimalFormat;
 
-import org.andrill.conop.core.Configuration;
 import org.andrill.conop.core.Solution;
 import org.andrill.conop.core.util.TimerUtils;
 
@@ -12,15 +11,14 @@ import org.andrill.conop.core.util.TimerUtils;
  * @author Josh Reed (jareed@andrill.org)
  */
 public class ConsoleProgressListener extends PeriodicListener {
-	private static final String CLEAR = "                                                                                    \r";
-	private static final String FORMAT = "CONOP4J: %s [ %d min | %s C | %d ] (%d/s)\r";
+	private static final String CLEAR = "                                                                                          \r";
+	private static final String FORMAT = "Best: %s | Elapsed: %d min | Temperature: %s C | Tried: %d | Throughput: %d/s                    \r";
 	private static final DecimalFormat DEC = new DecimalFormat("0.00");
 	private double score = Double.MAX_VALUE;
 
 	@Override
-	public void configure(Configuration config) {
-		frequency = config.get("frequency", 15);
-		log.debug("Configuring frequency as '{} seconds'", frequency);
+	protected int getDefaultFrequency() {
+		return 15;
 	}
 
 	@Override
@@ -34,8 +32,7 @@ public class ConsoleProgressListener extends PeriodicListener {
 
 	@Override
 	protected boolean test(final double temp, final long iteration, final Solution current, final Solution best) {
-		boolean time = super.test(temp, iteration, current, best);
-		return time || (best.getScore() < score);
+		return super.test(temp, iteration, current, best) || (best.getScore() < score);
 	}
 
 	@Override

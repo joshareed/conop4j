@@ -10,15 +10,19 @@ import org.slf4j.LoggerFactory;
 
 public abstract class PeriodicListener extends AsyncListener {
 	protected final Logger log = LoggerFactory.getLogger(getClass());
-	protected int frequency = 60;
+	protected int frequency = getDefaultFrequency();
 	protected ReentrantLock lock = new ReentrantLock();
-	protected long next = 60;
+	protected volatile long next = 0;
+
+	protected int getDefaultFrequency() {
+		return 60;
+	}
 
 	@Override
 	public void configure(Configuration config) {
 		super.configure(config);
 
-		frequency = config.get("frequency", 60);
+		frequency = config.get("frequency", getDefaultFrequency());
 		log.debug("Configuring frequency as '{} seconds'", frequency);
 	}
 
@@ -26,8 +30,8 @@ public abstract class PeriodicListener extends AsyncListener {
 	protected void run(double temp, long iteration, Solution current, Solution best) {
 		if (lock.tryLock()) {
 			try {
-				next = TimerUtils.getCounter() + frequency;
 				fired(temp, iteration, current, best);
+				next = TimerUtils.getCounter() + frequency;
 			} finally {
 				lock.unlock();
 			}
