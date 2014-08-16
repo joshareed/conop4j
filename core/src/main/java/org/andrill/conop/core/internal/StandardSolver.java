@@ -24,9 +24,17 @@ public class StandardSolver extends AbstractSolver {
 	@Override
 	protected void initialize(final SolverConfiguration config) {
 		constraints = config.getConstraints();
+		log.info("Using constraints '{}'", constraints);
+
 		mutator = config.getMutator();
+		log.info("Using mutator '{}'", mutator);
+
 		penalty = config.getPenalty();
+		log.info("Using penalty '{}'", penalty);
+
 		schedule = config.getSchedule();
+		log.info("Using schedule '{}'", schedule);
+
 		setContext(constraints, mutator, penalty, schedule);
 
 		if (constraints instanceof Listener) {

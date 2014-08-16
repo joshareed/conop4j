@@ -202,7 +202,7 @@ public class PlacementPenalty extends AbstractParallelPenalty {
 	protected Map<Location, LocationPlacement> placements = null;
 
 	public PlacementPenalty() {
-		super("Placement");
+		super("Placement Penalty");
 	}
 
 	@Override

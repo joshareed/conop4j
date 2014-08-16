@@ -3,6 +3,8 @@ package org.andrill.conop.core.schedules;
 import org.andrill.conop.core.AbstractConfigurable;
 import org.andrill.conop.core.Configuration;
 import org.andrill.conop.core.Solution;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An exponential cooling schedule.
@@ -10,6 +12,7 @@ import org.andrill.conop.core.Solution;
  * @author Josh Reed (jareed@andrill.org)
  */
 public class ExponentialSchedule extends AbstractConfigurable implements Schedule {
+	private static final Logger log = LoggerFactory.getLogger(ExponentialSchedule.class);
 	protected long count = 0;
 	protected double current = 1000;
 	protected double delta = 0.01;
@@ -20,8 +23,14 @@ public class ExponentialSchedule extends AbstractConfigurable implements Schedul
 	@Override
 	public void configure(final Configuration config) {
 		this.initial = config.get("initial", 1000.0);
+		log.debug("Configuring initial temperature as '{}C'", initial);
+
 		this.delta = config.get("delta", 0.01);
+		log.debug("Configuring temperature delta as '{}C'", delta);
+
 		this.steps = config.get("steps", 100l);
+		log.debug("Configuring minimum steps per temperature as '{}'", steps);
+
 		this.current = initial;
 	}
 
@@ -49,5 +58,10 @@ public class ExponentialSchedule extends AbstractConfigurable implements Schedul
 		} else {
 			return current;
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "Exponential Schedule";
 	}
 }

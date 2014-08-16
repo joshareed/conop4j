@@ -4,6 +4,8 @@ import org.andrill.conop.core.Configuration;
 import org.andrill.conop.core.HaltedException;
 import org.andrill.conop.core.Solution;
 import org.andrill.conop.core.util.TimerUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A listener responsible for stopping a dataset under various conditions.
@@ -11,6 +13,8 @@ import org.andrill.conop.core.util.TimerUtils;
  * @author Josh Reed (jareed@andrill.org)
  */
 public class StoppingListener extends AbstractListener {
+	protected static final Logger log = LoggerFactory.getLogger(StoppingListener.class);
+
 	protected double bestScore = Double.MAX_VALUE;
 	protected long currentIteration = -1;
 	protected long lastProgressIteration = -1;
@@ -34,12 +38,44 @@ public class StoppingListener extends AbstractListener {
 
 		// parse stopping conditions
 		stopTime = config.get("time", -1l) * 60l;
+		if (stopTime > 0) {
+			log.debug("Configuring stop time as '{} minutes'", stopTime / 60);
+		}
+
 		stopIteration = config.get("steps", -1l);
+		if (stopIteration > 0) {
+			log.debug("Configuring stop iteration as '{}'", stopIteration);
+		}
+
 		stopProgressTime = config.get("progressTime", -1l) * 60l;
+		if (stopProgressTime > 0) {
+			log.debug("Configuring stop if no progress time as '{} minutes'", stopProgressTime / 60);
+		}
+
 		stopProgressIteration = config.get("progressSteps", -1l);
+		if (stopProgressIteration > 0) {
+			log.debug("Configuring stop if no progress iterations as '{}'", stopProgressIteration);
+		}
+
 		stopThreshold = config.get("threshold", -1.0);
+		if (stopThreshold > 0) {
+			log.debug("Configuring stop threshold as '{}'", stopThreshold);
+		}
+
 		stopThresholdTime = config.get("thresholdTime", -1l) * 60;
+		if (stopThresholdTime > 0) {
+			log.debug("Configuring stop threshold time as '{} minutes'", stopThresholdTime / 60);
+		}
+
 		stopThresholdIteration = config.get("thresholdSteps", -1l);
+		if (stopThresholdIteration > 0) {
+			log.debug("Configuring stop threshold iteration as '{}'", stopThresholdIteration);
+		}
+	}
+
+	@Override
+	public String toString() {
+		return "Stopping Listener";
 	}
 
 	protected int minutes(final long time) {
@@ -84,10 +120,12 @@ public class StoppingListener extends AbstractListener {
 		}
 		if ((stopThreshold > 0) && (bestScore > stopThreshold)) {
 			if ((stopThresholdIteration > 0) && (currentIteration >= stopThresholdIteration)) {
-				stop("Stopped because simulation did not reach score threshold of " + stopThreshold + " in " + stopThresholdIteration + " iterations");
+				stop("Stopped because simulation did not reach score threshold of " + stopThreshold + " in "
+						+ stopThresholdIteration + " iterations");
 			}
 			if ((stopThresholdTime > 0) && (time >= stopThresholdTime)) {
-				stop("Stopped because simulation did not reach score threshold of " + stopThreshold + " in " + minutes(stopThresholdTime) + " minutes");
+				stop("Stopped because simulation did not reach score threshold of " + stopThreshold + " in "
+						+ minutes(stopThresholdTime) + " minutes");
 			}
 		}
 	}

@@ -45,6 +45,7 @@ solver {
 	penalty 'placement'
 
 	listener 'console'
+	listener 'stats'
 	listener 'snapshot'
 	listener 'positions'
 	listener 'stopping', progressTime: 360

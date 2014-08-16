@@ -14,4 +14,9 @@ public class PositionsListener extends AbstractListener {
 
 		matrix.update(current);
 	}
+
+	@Override
+	public String toString() {
+		return "Positions Listener";
+	}
 }

@@ -8,14 +8,15 @@ import org.andrill.conop.core.Configuration;
 import org.andrill.conop.core.Dataset;
 import org.andrill.conop.core.Event;
 import org.andrill.conop.core.Solution;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Ensures all event constraints are satisfied.
  *
  * @author Josh Reed (jareed@andrill.org)
  */
-public class EventConstraints extends AbstractConfigurable implements
-		Constraints {
+public class EventConstraints extends AbstractConfigurable implements Constraints {
 	protected class Constraint implements Comparable<Constraint> {
 		Event before;
 		Event after;
@@ -37,6 +38,7 @@ public class EventConstraints extends AbstractConfigurable implements
 		}
 	}
 
+	private static final Logger log = LoggerFactory.getLogger(EventConstraints.class);
 	protected Set<Constraint> constraints;
 	protected boolean taxa = false;
 
@@ -58,6 +60,7 @@ public class EventConstraints extends AbstractConfigurable implements
 						c.before = e;
 						c.after = f;
 						constraints.add(c);
+						log.debug("Configuring new constraint for '{}' before '{}'", e, f);
 					}
 				}
 			}
@@ -69,6 +72,7 @@ public class EventConstraints extends AbstractConfigurable implements
 		super.configure(config);
 
 		taxa = config.get("taxa", true);
+		log.debug("Configuring use taxa constraints as '{}'", taxa);
 	}
 
 	@Override
@@ -86,6 +90,6 @@ public class EventConstraints extends AbstractConfigurable implements
 
 	@Override
 	public String toString() {
-		return "Event";
+		return "Event Constraints";
 	}
 }

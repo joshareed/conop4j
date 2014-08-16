@@ -17,7 +17,7 @@ public class RandomMutator extends AbstractMutator {
 	protected Random random = new Random();
 
 	public RandomMutator() {
-		super("Random");
+		super("Random Mutator");
 	}
 
 	@Override

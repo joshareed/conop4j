@@ -8,6 +8,7 @@ import org.andrill.conop.core.internal.StandardSolver
 import org.andrill.conop.core.listeners.ConsoleProgressListener
 import org.andrill.conop.core.listeners.PositionsListener
 import org.andrill.conop.core.listeners.SnapshotListener
+import org.andrill.conop.core.listeners.StatsLoggerListener
 import org.andrill.conop.core.listeners.StoppingListener
 import org.andrill.conop.core.mutators.RandomMutator
 import org.andrill.conop.core.penalties.MatrixPenalty
@@ -39,7 +40,8 @@ class SolverDelegate {
 		'stopping': StoppingListener.class.canonicalName,
 		'snapshot': SnapshotListener.class.canonicalName,
 		'console': ConsoleProgressListener.class.canonicalName,
-		'positions': PositionsListener.class.canonicalName
+		'positions': PositionsListener.class.canonicalName,
+		'stats': StatsLoggerListener.class.canonicalName
 	]
 	static SOLVERS = [
 		'conop': StandardSolver.class.canonicalName,

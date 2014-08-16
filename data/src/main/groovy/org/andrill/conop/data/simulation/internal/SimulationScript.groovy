@@ -1,10 +1,13 @@
 package org.andrill.conop.data.simulation.internal
 
+import groovy.util.logging.Slf4j
+
 import org.andrill.conop.core.Dataset
 import org.andrill.conop.core.internal.DefaultDataset
 import org.andrill.conop.core.solver.SolverConfiguration
 import org.andrill.conop.data.Repository
 
+@Slf4j
 class SimulationScript extends Script {
 	def repos = []
 	def locs = []

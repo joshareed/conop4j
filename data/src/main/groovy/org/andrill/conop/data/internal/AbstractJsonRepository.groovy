@@ -1,6 +1,7 @@
 package org.andrill.conop.data.internal
 
 import groovy.json.JsonSlurper
+import groovy.util.logging.Slf4j
 
 import org.andrill.conop.core.Event
 import org.andrill.conop.core.Location
@@ -9,6 +10,7 @@ import org.andrill.conop.core.internal.DefaultLocation
 import org.andrill.conop.core.internal.DefaultObservation
 import org.andrill.conop.data.Repository
 
+@Slf4j
 abstract class AbstractJsonRepository implements Repository {
 
 	protected abstract String fetch(String id)
