@@ -3,9 +3,10 @@ package org.andrill.conop.core;
 import java.util.List;
 import java.util.Map;
 
+import org.andrill.conop.core.util.IdentityOptimizedMap;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 /**
  * A solution contains a set of events in a particular order.
@@ -39,8 +40,7 @@ public class Solution {
 	public Solution(final List<Event> events) {
 		this.events = ImmutableList.copyOf(events);
 
-		// index our events
-		positions = Maps.newHashMap();
+		positions = new IdentityOptimizedMap<Event, Integer>();
 		for (int i = 0; i < events.size(); i++) {
 			positions.put(events.get(i), i);
 		}
