@@ -1,15 +1,19 @@
 package org.andrill.conop.core.constraints;
 
+import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.andrill.conop.core.AbstractConfigurable;
 import org.andrill.conop.core.Configuration;
 import org.andrill.conop.core.Dataset;
 import org.andrill.conop.core.Event;
+import org.andrill.conop.core.Location;
+import org.andrill.conop.core.Observation;
 import org.andrill.conop.core.Solution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 /**
  * Ensures all event constraints are satisfied.
@@ -17,37 +21,34 @@ import org.slf4j.LoggerFactory;
  * @author Josh Reed (jareed@andrill.org)
  */
 public class EventConstraints extends AbstractConfigurable implements Constraints {
-	protected class Constraint implements Comparable<Constraint> {
+	protected class Constraint {
 		Event before;
 		Event after;
-		int failed = 0;
 
 		boolean check(final Solution test) {
 			int i1 = test.getPosition(before);
 			int i2 = test.getPosition(after);
-			boolean result = (i1 < i2);
-			if (!result) {
-				failed++;
-			}
-			return result;
-		}
-
-		@Override
-		public int compareTo(final Constraint o) {
-			return Integer.compare(failed, o.failed);
+			return (i1 < i2);
 		}
 	}
 
 	private static final Logger log = LoggerFactory.getLogger(EventConstraints.class);
-	protected Set<Constraint> constraints;
+	protected List<Constraint> constraints;
 	protected boolean taxa = false;
+	protected boolean ages = false;
 
 	protected void calculateConstraints(final Dataset dataset) {
-		constraints = new TreeSet<>();
+		constraints = Lists.newArrayList();
 
 		if (taxa == true) {
 			calculateTaxaConstraints(dataset.getEvents());
 		}
+
+		if (ages == true) {
+			calculateAgeConstraints(dataset);
+		}
+
+		log.info("Configured {} constraints", constraints.size());
 	}
 
 	protected void calculateTaxaConstraints(final Set<Event> events) {
@@ -67,12 +68,52 @@ public class EventConstraints extends AbstractConfigurable implements Constraint
 		}
 	}
 
+	protected void calculateAgeConstraints(Dataset dataset) {
+		// find all of our ages
+		List<Event> ages = Lists.newArrayList();
+		for (Event e : dataset.getEvents()) {
+			if (e.getName().endsWith("AGE") || e.getName().endsWith("ASH")) {
+				ages.add(e);
+			}
+		}
+
+		for (Event before : ages) {
+			for (Event after : ages) {
+				int support = 0;
+
+				for (Location l : dataset.getLocations()) {
+					Observation o1 = l.getObservation(before);
+					Observation o2 = l.getObservation(after);
+					if (o1 != null && o2 != null) {
+						if (o1.getLevel().compareTo(o2.getLevel()) < 0) {
+							support = -1;
+							break;
+						} else if (o1.getLevel().compareTo(o2.getLevel()) > 0 && support >= 0) {
+							support++;
+						}
+					}
+				}
+
+				if (!before.equals(after) && support > 0) {
+					Constraint c = new Constraint();
+					c.before = before;
+					c.after = after;
+					constraints.add(c);
+					log.debug("Configuring new constraint for '{}' before '{}' (support: {})", before, after, support);
+				}
+			}
+		}
+	}
+
 	@Override
 	public void configure(final Configuration config) {
 		super.configure(config);
 
 		taxa = config.get("taxa", true);
 		log.debug("Configuring use taxa constraints as '{}'", taxa);
+
+		ages = config.get("ages", false);
+		log.debug("Configuring use age constraints as '{}'", taxa);
 	}
 
 	@Override
