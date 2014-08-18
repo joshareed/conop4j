@@ -17,6 +17,7 @@ import org.andrill.conop.core.solver.SolverStats;
 import org.andrill.conop.core.util.TimerUtils;
 
 public class QueueSolver extends AbstractSolver {
+	private static final int SKIPPABLE = 100;
 
 	private class ScorerThread extends Thread {
 		private final Penalty objective;
@@ -110,7 +111,7 @@ public class QueueSolver extends AbstractSolver {
 
 		started(initial);
 
-		int skippable = 100;
+		int skippable = SKIPPABLE;
 		double threshold = temp * 0.25;
 		int skipped = 0;
 

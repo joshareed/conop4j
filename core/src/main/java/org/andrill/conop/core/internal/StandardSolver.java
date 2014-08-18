@@ -14,6 +14,8 @@ import org.andrill.conop.core.solver.SolverStats;
 import org.andrill.conop.core.util.TimerUtils;
 
 public class StandardSolver extends AbstractSolver {
+	private static final int SKIPPABLE = 100;
+
 	protected Constraints constraints;
 	protected Mutator mutator;
 	protected Penalty penalty;
@@ -66,7 +68,7 @@ public class StandardSolver extends AbstractSolver {
 		// initialize the listeners
 		started(initial);
 
-		int skippable = 100;
+		int skippable = SKIPPABLE;
 		double threshold = temp * 0.25;
 		int skipped = 0;
 

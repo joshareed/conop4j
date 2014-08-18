@@ -21,6 +21,10 @@ import com.google.common.collect.Lists;
  * @author Josh Reed (jareed@andrill.org)
  */
 public class EventConstraints extends AbstractConfigurable implements Constraints {
+	private static final int DEFAULT_SUPPORT = 2;
+	private static final boolean DEFAULT_TAXA = true;
+	private static final boolean DEFAULT_AGES = true;
+
 	protected class Constraint {
 		Event before;
 		Event after;
@@ -34,8 +38,9 @@ public class EventConstraints extends AbstractConfigurable implements Constraint
 
 	private static final Logger log = LoggerFactory.getLogger(EventConstraints.class);
 	protected List<Constraint> constraints;
-	protected boolean taxa = false;
-	protected boolean ages = false;
+	protected boolean taxa = DEFAULT_TAXA;
+	protected boolean ages = DEFAULT_AGES;
+	protected int support = DEFAULT_SUPPORT;
 
 	protected void calculateConstraints(final Dataset dataset) {
 		constraints = Lists.newArrayList();
@@ -94,7 +99,7 @@ public class EventConstraints extends AbstractConfigurable implements Constraint
 					}
 				}
 
-				if (!before.equals(after) && support > 0) {
+				if (!before.equals(after) && support >= this.support) {
 					Constraint c = new Constraint();
 					c.before = before;
 					c.after = after;
@@ -109,11 +114,14 @@ public class EventConstraints extends AbstractConfigurable implements Constraint
 	public void configure(final Configuration config) {
 		super.configure(config);
 
-		taxa = config.get("taxa", true);
+		taxa = config.get("taxa", DEFAULT_TAXA);
 		log.debug("Configuring use taxa constraints as '{}'", taxa);
 
-		ages = config.get("ages", false);
-		log.debug("Configuring use age constraints as '{}'", taxa);
+		ages = config.get("ages", DEFAULT_AGES);
+		log.debug("Configuring use age constraints as '{}'", ages);
+
+		support = config.get("support", 2);
+		log.debug("Configuring support as '{}'", DEFAULT_SUPPORT);
 	}
 
 	@Override
@@ -121,6 +129,7 @@ public class EventConstraints extends AbstractConfigurable implements Constraint
 		if (constraints == null) {
 			calculateConstraints(context.getDataset());
 		}
+
 		for (Constraint c : constraints) {
 			if (!c.check(solution)) {
 				return false;
