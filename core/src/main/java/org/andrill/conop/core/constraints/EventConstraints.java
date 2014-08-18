@@ -2,6 +2,7 @@ package org.andrill.conop.core.constraints;
 
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.andrill.conop.core.AbstractConfigurable;
 import org.andrill.conop.core.Configuration;
@@ -24,33 +25,55 @@ public class EventConstraints extends AbstractConfigurable implements Constraint
 	private static final int DEFAULT_SUPPORT = 2;
 	private static final boolean DEFAULT_TAXA = true;
 	private static final boolean DEFAULT_AGES = true;
+	private static final boolean DEFAULT_INFER = false;
 
-	protected class Constraint {
+	protected class Constraint implements Comparable<Constraint> {
 		Event before;
 		Event after;
+		int failed = 0;
 
 		boolean check(final Solution test) {
 			int i1 = test.getPosition(before);
 			int i2 = test.getPosition(after);
 			return (i1 < i2);
 		}
+
+		@Override
+		public int compareTo(Constraint o) {
+			int result = Integer.compare(failed, o.failed);
+			if (result != 0) {
+				return result;
+			}
+
+			result = before.getName().compareTo(o.before.getName());
+			if (result != 0) {
+				return result;
+			}
+
+			return after.getName().compareTo(o.after.getName());
+		}
 	}
 
 	private static final Logger log = LoggerFactory.getLogger(EventConstraints.class);
-	protected List<Constraint> constraints;
+	protected Set<Constraint> constraints;
 	protected boolean taxa = DEFAULT_TAXA;
 	protected boolean ages = DEFAULT_AGES;
+	protected boolean infer = DEFAULT_INFER;
 	protected int support = DEFAULT_SUPPORT;
 
 	protected void calculateConstraints(final Dataset dataset) {
-		constraints = Lists.newArrayList();
+		constraints = new TreeSet<>();
 
-		if (taxa == true) {
+		if (taxa) {
 			calculateTaxaConstraints(dataset.getEvents());
 		}
 
-		if (ages == true) {
+		if (ages) {
 			calculateAgeConstraints(dataset);
+		}
+
+		if (infer) {
+			calculateInferredConstraints(dataset, dataset.getEvents().asList());
 		}
 
 		log.info("Configured {} constraints", constraints.size());
@@ -82,8 +105,12 @@ public class EventConstraints extends AbstractConfigurable implements Constraint
 			}
 		}
 
-		for (Event before : ages) {
-			for (Event after : ages) {
+		calculateInferredConstraints(dataset, ages);
+	}
+
+	protected void calculateInferredConstraints(Dataset dataset, List<Event> events) {
+		for (Event before : events) {
+			for (Event after : events) {
 				int support = 0;
 
 				for (Location l : dataset.getLocations()) {
@@ -120,6 +147,9 @@ public class EventConstraints extends AbstractConfigurable implements Constraint
 		ages = config.get("ages", DEFAULT_AGES);
 		log.debug("Configuring use age constraints as '{}'", ages);
 
+		infer = config.get("infer", DEFAULT_INFER);
+		log.debug("Configuring infer constraints as '{}'", infer);
+
 		support = config.get("support", DEFAULT_SUPPORT);
 		log.debug("Configuring support as '{}'", support);
 	}
@@ -132,6 +162,12 @@ public class EventConstraints extends AbstractConfigurable implements Constraint
 
 		for (Constraint c : constraints) {
 			if (!c.check(solution)) {
+				c.failed++;
+
+				// so it stays sorted
+				constraints.remove(c);
+				constraints.add(c);
+
 				return false;
 			}
 		}

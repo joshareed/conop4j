@@ -111,15 +111,13 @@ public class QueueSolver extends AbstractSolver {
 
 		started(initial);
 
-		int skippable = SKIPPABLE;
-		double threshold = temp * 0.25;
 		int skipped = 0;
 
 		// fill the work queue
 		for (int i = 0; i < scorers.size(); i++) {
 			Solution next = mutator.mutate(current);
 			stats.total++;
-			while (!constraints.isValid(next) && (skippable < 0 || skipped < skippable)) {
+			while (!constraints.isValid(next) && (SKIPPABLE < 0 || skipped < SKIPPABLE)) {
 				next = mutator.mutate(current);
 				stats.skipped++;
 				stats.total++;
@@ -147,6 +145,7 @@ public class QueueSolver extends AbstractSolver {
 				// check if new best
 				if (updateBest(next)) {
 					stats.best = getBest().getScore();
+					stats.constraints = constraints.isValid(getBest());
 				}
 
 				// notify listeners
@@ -163,9 +162,6 @@ public class QueueSolver extends AbstractSolver {
 
 				// get our next temperature
 				temp = schedule.next(current);
-				if (temp < threshold) {
-					skippable = -1;
-				}
 				stats.temperature = temp;
 				stats.elapsed = TimerUtils.getCounter();
 
@@ -175,7 +171,7 @@ public class QueueSolver extends AbstractSolver {
 					next = mutator.mutate(current);
 				}
 				stats.total++;
-				while (!constraints.isValid(next) && (skippable < 0 || skipped < skippable)) {
+				while (!constraints.isValid(next) && (SKIPPABLE < 0 || skipped < SKIPPABLE)) {
 					next = mutator.mutate(current);
 					stats.skipped++;
 					stats.total++;
