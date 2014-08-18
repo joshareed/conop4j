@@ -40,7 +40,7 @@ data {
 
 solver {
 	mutator 'random'
-	constraints 'event', taxa: true
+	constraints 'event', taxa: true, ages: true
 	schedule 'exponential', initial: 1000, delta: 0.001, steps: 5000
 	penalty 'matrix'
 
