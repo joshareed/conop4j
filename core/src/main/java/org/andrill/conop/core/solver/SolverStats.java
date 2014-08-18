@@ -7,4 +7,5 @@ public class SolverStats {
 	public long elapsed = 0;
 	public double best = Double.MAX_VALUE;
 	public double temperature = Double.MAX_VALUE;
+	public boolean constraints = false;
 }

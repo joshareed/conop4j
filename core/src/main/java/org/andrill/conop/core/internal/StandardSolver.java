@@ -68,8 +68,6 @@ public class StandardSolver extends AbstractSolver {
 		// initialize the listeners
 		started(initial);
 
-		int skippable = SKIPPABLE;
-		double threshold = temp * 0.25;
 		int skipped = 0;
 
 		try {
@@ -81,7 +79,7 @@ public class StandardSolver extends AbstractSolver {
 					next = mutator.mutate(current);
 				}
 				stats.total++;
-				while (!constraints.isValid(next) && (skippable < 0 || skipped < skippable)) {
+				while (!constraints.isValid(next) && (SKIPPABLE < 0 || skipped < SKIPPABLE)) {
 					next = mutator.mutate(current);
 					skipped++;
 					stats.skipped++;
@@ -96,6 +94,7 @@ public class StandardSolver extends AbstractSolver {
 				// save as best if the penalty is less
 				if (updateBest(next)) {
 					stats.best = getBest().getScore();
+					stats.constraints = constraints.isValid(getBest());
 				}
 
 				// notify listeners
@@ -111,9 +110,6 @@ public class StandardSolver extends AbstractSolver {
 				}
 
 				temp = schedule.next(current);
-				if (temp < threshold) {
-					skippable = -1;
-				}
 				stats.temperature = temp;
 				stats.elapsed = TimerUtils.getCounter();
 			}

@@ -16,8 +16,9 @@ public class StatsLoggerListener extends PeriodicListener {
 	protected void fired(double temp, long iteration, Solution current, Solution best) {
 		SolverStats stats = context.get(SolverStats.class);
 		if (stats != null) {
-			log.info("Best: {} | Elapsed: {} min | Temperature: {} C | Scored: {}/{} | Throughput: {}/s",
-					D.format(stats.best), I.format(stats.elapsed / 60), D.format(stats.temperature),
+			log.info(
+					"Best: {} (constraints: {}) | Elapsed: {} min | Temperature: {} C | Scored: {}/{} | Throughput: {}/s",
+					D.format(stats.best), stats.constraints, I.format(stats.elapsed / 60), D.format(stats.temperature),
 					I.format(stats.scored), I.format(stats.total), I.format(stats.total / stats.elapsed));
 		}
 	}
