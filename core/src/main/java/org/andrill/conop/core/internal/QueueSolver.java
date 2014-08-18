@@ -17,6 +17,7 @@ import org.andrill.conop.core.solver.SolverStats;
 import org.andrill.conop.core.util.TimerUtils;
 
 public class QueueSolver extends AbstractSolver {
+	private static final int SKIPPABLE = 100;
 
 	private class ScorerThread extends Thread {
 		private final Penalty objective;
@@ -110,16 +111,22 @@ public class QueueSolver extends AbstractSolver {
 
 		started(initial);
 
+		int skippable = SKIPPABLE;
+		double threshold = temp * 0.25;
+		int skipped = 0;
+
 		// fill the work queue
 		for (int i = 0; i < scorers.size(); i++) {
 			Solution next = mutator.mutate(current);
 			stats.total++;
-			while (!constraints.isValid(next)) {
+			while (!constraints.isValid(next) && (skippable < 0 || skipped < skippable)) {
 				next = mutator.mutate(current);
 				stats.skipped++;
 				stats.total++;
+				skipped++;
 			}
 			try {
+				skipped = 0;
 				work.put(next);
 			} catch (InterruptedException e) {
 				// ignore
@@ -156,6 +163,9 @@ public class QueueSolver extends AbstractSolver {
 
 				// get our next temperature
 				temp = schedule.next(current);
+				if (temp < threshold) {
+					skippable = -1;
+				}
 				stats.temperature = temp;
 				stats.elapsed = TimerUtils.getCounter();
 
@@ -165,11 +175,13 @@ public class QueueSolver extends AbstractSolver {
 					next = mutator.mutate(current);
 				}
 				stats.total++;
-				while (!constraints.isValid(next)) {
+				while (!constraints.isValid(next) && (skippable < 0 || skipped < skippable)) {
 					next = mutator.mutate(current);
 					stats.skipped++;
 					stats.total++;
+					skipped++;
 				}
+				skipped = 0;
 				work.put(next);
 			}
 		} catch (Exception e) {

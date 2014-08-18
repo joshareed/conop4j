@@ -12,7 +12,7 @@ import org.andrill.conop.core.util.TimerUtils;
  */
 public class ConsoleProgressListener extends PeriodicListener {
 	private static final String CLEAR = "                                                                                          \r";
-	private static final String FORMAT = "Best: %s | Elapsed: %d min | Temperature: %s C | Tried: %d | Throughput: %d/s                    \r";
+	private static final String FORMAT = "Best: %s | Elapsed: %d min | Temperature: %s C | Tried: %d | Scored: %d/s                    \r";
 	private static final DecimalFormat DEC = new DecimalFormat("0.00");
 	private double score = Double.MAX_VALUE;
 

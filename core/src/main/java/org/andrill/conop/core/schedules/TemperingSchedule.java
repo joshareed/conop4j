@@ -7,7 +7,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TemperingSchedule extends AbstractConfigurable implements Schedule {
-	protected Logger log = LoggerFactory.getLogger(TemperingSchedule.class);
+	private static final long DEFAULT_STEPS = 100l;
+	private static final double DEFAULT_DELTA = 0.01;
+	private static final double DEFAULT_INITIAL = 1000.0;
+	private Logger log = LoggerFactory.getLogger(TemperingSchedule.class);
+
 	protected long count = 0;
 	protected double current = 1000;
 	protected double delta = 0.01;
@@ -19,13 +23,13 @@ public class TemperingSchedule extends AbstractConfigurable implements Schedule 
 
 	@Override
 	public void configure(final Configuration config) {
-		this.initial = config.get("initial", 1000.0);
+		this.initial = config.get("initial", DEFAULT_INITIAL);
 		log.debug("Configuring initial temperature as '{}C'", initial);
 
-		this.delta = config.get("delta", 0.01);
+		this.delta = config.get("delta", DEFAULT_DELTA);
 		log.debug("Configuring temperature delta as '{}C'", delta);
 
-		this.steps = config.get("steps", 100l);
+		this.steps = config.get("steps", DEFAULT_STEPS);
 		log.debug("Configuring minimum steps per temperature as '{}'", steps);
 
 		current = initial;

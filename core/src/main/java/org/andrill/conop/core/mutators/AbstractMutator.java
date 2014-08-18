@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
  * @author Josh Reed (jareed@andrill.org)
  */
 public abstract class AbstractMutator extends AbstractListener implements Mutator {
+	private static final long DEFAULT_RESET = -1l;
+
 	protected final Logger log = LoggerFactory.getLogger(getClass());
 	protected long counter;
 	protected long reset = -1;
@@ -23,7 +25,7 @@ public abstract class AbstractMutator extends AbstractListener implements Mutato
 
 	@Override
 	public void configure(final Configuration config) {
-		reset = config.get("reset", -1l);
+		reset = config.get("reset", DEFAULT_RESET);
 		if (reset > 0) {
 			log.debug("Configuring reset to best solution as '{} iterations'", reset);
 		}
