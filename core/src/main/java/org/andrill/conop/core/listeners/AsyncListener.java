@@ -16,7 +16,7 @@ import com.google.common.util.concurrent.MoreExecutors;
  */
 public abstract class AsyncListener extends AbstractConfigurable implements Listener {
 	protected static ExecutorService pool = MoreExecutors.getExitingExecutorService((ThreadPoolExecutor) Executors
-			.newFixedThreadPool(4));
+			.newFixedThreadPool(Runtime.getRuntime().availableProcessors()));
 
 	protected long iteration = 0;
 

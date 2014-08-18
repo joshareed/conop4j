@@ -120,8 +120,8 @@ public class EventConstraints extends AbstractConfigurable implements Constraint
 		ages = config.get("ages", DEFAULT_AGES);
 		log.debug("Configuring use age constraints as '{}'", ages);
 
-		support = config.get("support", 2);
-		log.debug("Configuring support as '{}'", DEFAULT_SUPPORT);
+		support = config.get("support", DEFAULT_SUPPORT);
+		log.debug("Configuring support as '{}'", support);
 	}
 
 	@Override
