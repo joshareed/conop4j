@@ -1,5 +1,5 @@
 repositories {
-	remote url: 'https://raw.githubusercontent.com/joshareed/conop4j/develop/data/src/test/resources/repos/local/'
+	remote url: 'https://raw.githubusercontent.com/joshareed/conop4j/master/data/src/test/resources/repos/local/'
 }
 
 data {

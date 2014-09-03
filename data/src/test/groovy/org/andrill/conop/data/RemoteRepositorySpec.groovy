@@ -7,7 +7,7 @@ class RemoteRepositorySpec extends Specification {
 
 	def "can fetch a file"() {
 		given: "a remote repo"
-		def repo = new RemoteRepository(new URL('https://raw.githubusercontent.com/joshareed/conop4j/develop/data/src/test/resources/repos/local/'))
+		def repo = new RemoteRepository(new URL('https://raw.githubusercontent.com/joshareed/conop4j/master/data/src/test/resources/repos/local/'))
 
 		when: "invalid location"
 		def invalid = repo.getLocation("invalid:id")
