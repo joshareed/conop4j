@@ -1,18 +1,23 @@
 package org.andrill.conop.data.cli
 
+import groovy.util.logging.Slf4j
+
 import org.andrill.conop.core.cli.CliCommand
 import org.andrill.conop.data.simulation.SimulationDSL
 
+@Slf4j
 class RunCommand implements CliCommand {
 
 	@Override
 	void execute(List<String> args) {
 		if (!args) {
-			println "Usage: dataset <simulation file or URL>"
+			println "Usage: run <simulation file or URL>"
 			System.exit(0)
 		}
 
 		try {
+			log.info "Creating new CONOP4J run from '{}'", args[0]
+
 			def dsl = new SimulationDSL()
 
 			// check if URL or file

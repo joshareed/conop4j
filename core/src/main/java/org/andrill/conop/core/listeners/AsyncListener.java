@@ -14,13 +14,11 @@ import com.google.common.util.concurrent.MoreExecutors;
  * 
  * @author Josh Reed (jareed@andrill.org)
  */
-public abstract class AsyncListener extends AbstractConfigurable implements
-		Listener {
-	protected static ExecutorService pool = MoreExecutors
-			.getExitingExecutorService((ThreadPoolExecutor) Executors
-					.newFixedThreadPool(4));
+public abstract class AsyncListener extends AbstractConfigurable implements Listener {
+	protected static ExecutorService pool = MoreExecutors.getExitingExecutorService((ThreadPoolExecutor) Executors
+			.newFixedThreadPool(Runtime.getRuntime().availableProcessors()));
+
 	protected long iteration = 0;
-	protected long start = 0;
 
 	/**
 	 * Dataset the listener method.
@@ -34,8 +32,7 @@ public abstract class AsyncListener extends AbstractConfigurable implements
 	 * @param best
 	 *            the best score.
 	 */
-	protected abstract void run(final double temp, long iteration,
-			final Solution current, final Solution best);
+	protected abstract void run(final double temp, long iteration, final Solution current, final Solution best);
 
 	@Override
 	public void started(final Solution initial) {
@@ -60,16 +57,11 @@ public abstract class AsyncListener extends AbstractConfigurable implements
 	 *            the best score.
 	 * @return
 	 */
-	protected abstract boolean test(final double temp, long iteration,
-			final Solution current, final Solution best);
+	protected abstract boolean test(final double temp, long iteration, final Solution current, final Solution best);
 
 	@Override
-	public final void tried(final double temp, final Solution current,
-			final Solution best) {
+	public final void tried(final double temp, final Solution current, final Solution best) {
 		iteration++;
-		if (iteration == 1) {
-			start = System.currentTimeMillis();
-		}
 		if (test(temp, iteration, current, best)) {
 			pool.submit(new Runnable() {
 				@Override

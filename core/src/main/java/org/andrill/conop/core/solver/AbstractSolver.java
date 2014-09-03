@@ -14,11 +14,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractSolver implements Solver {
+	protected final Logger log = LoggerFactory.getLogger(getClass());
 	protected Set<Listener> listeners = new CopyOnWriteArraySet<Listener>();
 	protected boolean started = false;
 	protected boolean stopped = false;
 	protected SolverContext context = new DefaultSolverContext();
-	protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
 	 * Add a new listener.
@@ -87,6 +87,7 @@ public abstract class AbstractSolver implements Solver {
 
 		Solution initial = config.getInitialSolution();
 		if (initial == null) {
+			log.info("Using random initial solution");
 			initial = Solution.initial(dataset);
 		}
 
@@ -113,7 +114,7 @@ public abstract class AbstractSolver implements Solver {
 		}
 	}
 
-	protected void updateBest(Solution next) {
+	protected boolean updateBest(Solution next) {
 		Solution best = context.getBest();
 
 		// save as best if the penalty is less
@@ -125,7 +126,9 @@ public abstract class AbstractSolver implements Solver {
 			if (next.getScore() == 0) {
 				throw new HaltedException("Score reached 0", best);
 			}
+			return true;
 		}
+		return false;
 	}
 
 	public SolverContext getContext() {

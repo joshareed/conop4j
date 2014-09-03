@@ -14,7 +14,7 @@ allprojects {
 	sourceCompatibility = 1.7
 	targetCompatibility = 1.7
 
-	version = '0.11.0'
+	version = '0.11.1'
 	group = 'org.andrill.conop'
 
 	repositories {
@@ -28,6 +28,8 @@ dependencies {
 	compile project(':core')
 	compile project(':data')
 	compile project(':tracker')
+
+	runtime 'org.slf4j:slf4j-simple:1.7.7'
 }
 
 jar {

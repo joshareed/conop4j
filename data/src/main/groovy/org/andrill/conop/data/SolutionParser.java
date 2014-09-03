@@ -20,8 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class SolutionParser {
-	private static final Logger log = LoggerFactory
-			.getLogger(SolutionParser.class);
+	private static final Logger log = LoggerFactory.getLogger(SolutionParser.class);
 
 	protected final Reader reader;
 

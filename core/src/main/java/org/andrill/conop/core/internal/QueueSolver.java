@@ -13,8 +13,11 @@ import org.andrill.conop.core.penalties.Penalty;
 import org.andrill.conop.core.schedules.Schedule;
 import org.andrill.conop.core.solver.AbstractSolver;
 import org.andrill.conop.core.solver.SolverConfiguration;
+import org.andrill.conop.core.solver.SolverStats;
+import org.andrill.conop.core.util.TimerUtils;
 
 public class QueueSolver extends AbstractSolver {
+	private static final int SKIPPABLE = 100;
 
 	private class ScorerThread extends Thread {
 		private final Penalty objective;
@@ -44,17 +47,26 @@ public class QueueSolver extends AbstractSolver {
 	protected Mutator mutator;
 	protected Schedule schedule;
 	protected Random random = new Random();
+	protected SolverStats stats = new SolverStats();
 
 	@Override
 	protected void initialize(final SolverConfiguration config) {
 		int procs = Runtime.getRuntime().availableProcessors();
+		log.debug("Configuring queue size as '{}'", procs);
+
 		work = new LinkedBlockingQueue<>(procs + 1);
 		complete = new LinkedBlockingQueue<>(procs + 1);
 
 		// save our important components
 		constraints = config.getConstraints();
+		log.info("Using constraints '{}'", constraints);
+
 		mutator = config.getMutator();
+		log.info("Using mutator '{}'", mutator);
+
 		schedule = config.getSchedule();
+		log.info("Using schedule '{}'", schedule);
+
 		setContext(constraints, mutator, schedule);
 
 		// check for listeners
@@ -72,6 +84,9 @@ public class QueueSolver extends AbstractSolver {
 		scorers = new HashSet<>();
 		for (int i = 0; i < procs; i++) {
 			Penalty penalty = config.getPenalty();
+			if (i == 0) {
+				log.info("Using penalty '{}'", penalty);
+			}
 			setContext(penalty);
 			scorers.add(new ScorerThread(penalty));
 			if (penalty instanceof Listener) {
@@ -83,6 +98,7 @@ public class QueueSolver extends AbstractSolver {
 		for (Listener l : config.getListeners()) {
 			addListener(l);
 		}
+		context.put(SolverStats.class, stats);
 	}
 
 	@Override
@@ -95,13 +111,20 @@ public class QueueSolver extends AbstractSolver {
 
 		started(initial);
 
+		int skipped = 0;
+
 		// fill the work queue
 		for (int i = 0; i < scorers.size(); i++) {
 			Solution next = mutator.mutate(current);
-			while (!constraints.isValid(next)) {
+			stats.total++;
+			while (!constraints.isValid(next) && (SKIPPABLE < 0 || skipped < SKIPPABLE)) {
 				next = mutator.mutate(current);
+				stats.skipped++;
+				stats.total++;
+				skipped++;
 			}
 			try {
+				skipped = 0;
 				work.put(next);
 			} catch (InterruptedException e) {
 				// ignore
@@ -117,9 +140,13 @@ public class QueueSolver extends AbstractSolver {
 			// anneal
 			while (temp > 0) {
 				Solution next = complete.take();
+				stats.scored++;
 
 				// check if new best
-				updateBest(next);
+				if (updateBest(next)) {
+					stats.best = getBest().getScore();
+					stats.constraints = constraints.isValid(getBest());
+				}
 
 				// notify listeners
 				for (Listener l : listeners) {
@@ -135,15 +162,22 @@ public class QueueSolver extends AbstractSolver {
 
 				// get our next temperature
 				temp = schedule.next(current);
+				stats.temperature = temp;
+				stats.elapsed = TimerUtils.getCounter();
 
 				// get a new solution that satisfies the constraints
 				next = context.getNext();
 				if (next == null) {
 					next = mutator.mutate(current);
 				}
-				while (!constraints.isValid(next)) {
+				stats.total++;
+				while (!constraints.isValid(next) && (SKIPPABLE < 0 || skipped < SKIPPABLE)) {
 					next = mutator.mutate(current);
+					stats.skipped++;
+					stats.total++;
+					skipped++;
 				}
+				skipped = 0;
 				work.put(next);
 			}
 		} catch (Exception e) {

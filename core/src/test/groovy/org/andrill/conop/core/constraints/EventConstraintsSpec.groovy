@@ -50,6 +50,6 @@ class EventConstraintsSpec extends Specification {
 
 	def "toString returns as expected"() {
 		expect:
-		new EventConstraints().toString() == "Event"
+		new EventConstraints().toString() == "Event Constraints"
 	}
 }

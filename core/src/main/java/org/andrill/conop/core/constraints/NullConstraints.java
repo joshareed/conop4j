@@ -10,12 +10,13 @@ import org.andrill.conop.core.Solution;
  */
 public class NullConstraints extends AbstractConfigurable implements Constraints {
 
+	@Override
 	public boolean isValid(final Solution solution) {
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "Null";
+		return "Null Constraints";
 	}
 }

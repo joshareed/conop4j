@@ -1,5 +1,5 @@
 repositories {
-	remote url: 'https://raw.githubusercontent.com/joshareed/conop4j/develop/data/src/test/resources/repos/local/'
+	remote url: 'https://raw.githubusercontent.com/joshareed/conop4j/master/data/src/test/resources/repos/local/'
 }
 
 data {
@@ -42,11 +42,12 @@ solver {
 	solver 'qnop'
 
 	mutator 'random'
-	constraints 'event', taxa: true
+	constraints 'event', taxa: true, ages: true
 	schedule 'exponential', initial: 1000, delta: 0.001, steps: 5000
 	penalty 'placement', processors: 1
 
 	listener 'console'
+	listener 'stats'
 	listener 'snapshot'
 	listener 'positions'
 	listener 'stopping', progressTime: 360

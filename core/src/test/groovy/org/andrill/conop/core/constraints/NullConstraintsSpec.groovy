@@ -1,7 +1,7 @@
 package org.andrill.conop.core.constraints
 
 import org.andrill.conop.core.Solution
-import org.andrill.conop.core.test.DatasetFixtures;
+import org.andrill.conop.core.test.DatasetFixtures
 
 import spock.lang.Specification
 
@@ -23,6 +23,6 @@ class NullConstraintsSpec extends Specification {
 
 	def "toString returns as expected"() {
 		expect:
-		new NullConstraints().toString() == "Null"
+		new NullConstraints().toString() == "Null Constraints"
 	}
 }

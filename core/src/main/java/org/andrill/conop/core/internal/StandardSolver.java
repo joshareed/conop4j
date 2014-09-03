@@ -10,20 +10,33 @@ import org.andrill.conop.core.penalties.Penalty;
 import org.andrill.conop.core.schedules.Schedule;
 import org.andrill.conop.core.solver.AbstractSolver;
 import org.andrill.conop.core.solver.SolverConfiguration;
+import org.andrill.conop.core.solver.SolverStats;
+import org.andrill.conop.core.util.TimerUtils;
 
 public class StandardSolver extends AbstractSolver {
+	private static final int SKIPPABLE = 100;
+
 	protected Constraints constraints;
 	protected Mutator mutator;
 	protected Penalty penalty;
 	protected Schedule schedule;
 	protected Random random = new Random();
+	protected SolverStats stats = new SolverStats();
 
 	@Override
 	protected void initialize(final SolverConfiguration config) {
 		constraints = config.getConstraints();
+		log.info("Using constraints '{}'", constraints);
+
 		mutator = config.getMutator();
+		log.info("Using mutator '{}'", mutator);
+
 		penalty = config.getPenalty();
+		log.info("Using penalty '{}'", penalty);
+
 		schedule = config.getSchedule();
+		log.info("Using schedule '{}'", schedule);
+
 		setContext(constraints, mutator, penalty, schedule);
 
 		if (constraints instanceof Listener) {
@@ -41,6 +54,7 @@ public class StandardSolver extends AbstractSolver {
 		for (Listener l : config.getListeners()) {
 			addListener(l);
 		}
+		context.put(SolverStats.class, stats);
 	}
 
 	@Override
@@ -54,6 +68,8 @@ public class StandardSolver extends AbstractSolver {
 		// initialize the listeners
 		started(initial);
 
+		int skipped = 0;
+
 		try {
 			// anneal
 			while (temp > 0) {
@@ -62,15 +78,24 @@ public class StandardSolver extends AbstractSolver {
 				if (next == null) {
 					next = mutator.mutate(current);
 				}
-				while (!constraints.isValid(next)) {
+				stats.total++;
+				while (!constraints.isValid(next) && (SKIPPABLE < 0 || skipped < SKIPPABLE)) {
 					next = mutator.mutate(current);
+					skipped++;
+					stats.skipped++;
+					stats.total++;
 				}
+				skipped = 0;
 
 				// score this solution
 				next.setScore(penalty.score(next));
+				stats.scored++;
 
 				// save as best if the penalty is less
-				updateBest(next);
+				if (updateBest(next)) {
+					stats.best = getBest().getScore();
+					stats.constraints = constraints.isValid(getBest());
+				}
 
 				// notify listeners
 				for (Listener l : listeners) {
@@ -85,6 +110,8 @@ public class StandardSolver extends AbstractSolver {
 				}
 
 				temp = schedule.next(current);
+				stats.temperature = temp;
+				stats.elapsed = TimerUtils.getCounter();
 			}
 		} catch (Exception e) {
 			handleError(e);
