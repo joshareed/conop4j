@@ -11,7 +11,7 @@ class RunCommand implements CliCommand {
 	@Override
 	void execute(List<String> args) {
 		if (!args) {
-			println "Usage: dataset <simulation file or URL>"
+			println "Usage: run <simulation file or URL>"
 			System.exit(0)
 		}
 
