@@ -9,8 +9,8 @@ import org.andrill.conop.data.Repository
 
 @Slf4j
 class SimulationScript extends Script {
-	def repos = []
-	def locs = []
+	def repoCtx
+	def dataCtx
 	def config
 
 	def run() {
@@ -18,12 +18,16 @@ class SimulationScript extends Script {
 	}
 
 	Dataset getDataset() {
-		def locations = locs.collect { getLocation(it) }
-		new DefaultDataset(locations)
+		def locations = dataCtx.locations
+		if (locations) {
+			return new DefaultDataset(locations.collect { getLocation(it) })
+		} else if (dataCtx.all) {
+			return new DefaultDataset(repoCtx.repositories.collect { it.locations }.flatten())
+		}
 	}
 
 	protected getLocation(id) {
-		for (Repository repo : repos) {
+		for (Repository repo : repoCtx.repositories) {
 			def location = repo.getLocation(id)
 			if (location) {
 				return location
@@ -38,22 +42,16 @@ class SimulationScript extends Script {
 
 	protected repositories(Closure closure) {
 		// setup our delegate
-		def delegate = new RepositoriesDelegate()
-		closure.delegate = delegate
+		repoCtx = new RepositoriesDelegate()
+		closure.delegate = repoCtx
 		closure()
-
-		// add all parsed repositories
-		repos.addAll(delegate.repositories)
 	}
 
 	protected data(Closure closure) {
 		// setup our delegate
-		def delegate = new DataDelegate()
-		closure.delegate = delegate
+		dataCtx = new DataDelegate()
+		closure.delegate = dataCtx
 		closure()
-
-		// add all parsed locations
-		locs.addAll(delegate.locations)
 	}
 
 	protected solver(Closure closure) {

@@ -1,13 +1,13 @@
 package org.andrill.conop.data
 
+import org.andrill.conop.core.Dataset
 import org.andrill.conop.core.Event
 import org.andrill.conop.core.Location
 import org.andrill.conop.core.Observation
-import org.andrill.conop.core.Dataset
+import org.andrill.conop.core.internal.DefaultDataset
 import org.andrill.conop.core.internal.DefaultEvent
 import org.andrill.conop.core.internal.DefaultLocation
 import org.andrill.conop.core.internal.DefaultObservation
-import org.andrill.conop.core.internal.DefaultDataset
 
 import com.google.common.collect.HashMultimap
 import com.google.common.collect.Lists
@@ -17,12 +17,16 @@ import com.google.common.collect.Multimap
 class CONOP9Repository implements Repository {
 	protected Dataset dataset
 
-	CONOP9Repository(File root) {
-		dataset = loadCONOP9Run(root)
+	CONOP9Repository(File root, boolean overrideWeights = false) {
+		dataset = loadCONOP9Run(root, overrideWeights)
 	}
 
-	CONOP9Repository(File locations, File events, File observations) {
-		dataset = loadCONOP9Run(locations, events, observations)
+	CONOP9Repository(File locations, File events, File observations, boolean overrideWeights = false) {
+		dataset = loadCONOP9Run(locations, events, observations, overrideWeights)
+	}
+
+	List<Location> getLocations() {
+		dataset.locations.asList();
 	}
 
 	Location getLocation(String locationId) {
@@ -35,23 +39,11 @@ class CONOP9Repository implements Repository {
 	 *
 	 * @param dir
 	 *            the dataset directory.
-	 * @return the dataset.
-	 */
-	public static Dataset loadCONOP9Run(final File dir) {
-		return loadCONOP9Run(dir, false);
-	}
-
-	/**
-	 * Load a CONOP9 dataset from the specified directory. This assumes the standard
-	 * filenames of sections.sct, events.evt, and loadfile.dat.
-	 *
-	 * @param dir
-	 *            the dataset directory.
 	 * @param overrideWeights
 	 *            override the specified weights.
 	 * @return the dataset.
 	 */
-	public static Dataset loadCONOP9Run(final File dir, final boolean overrideWeights) {
+	public static Dataset loadCONOP9Run(final File dir, final boolean overrideWeights = false) {
 		return loadCONOP9Run(new File(dir, "sections.sct"), new File(dir, "events.evt"), new File(dir, "loadfile.dat"),
 		overrideWeights);
 	}
@@ -69,8 +61,7 @@ class CONOP9Repository implements Repository {
 	 *            override the specified weights.
 	 * @return the dataset.
 	 */
-	public static Dataset loadCONOP9Run(final File sectionFile, final File eventFile, final File loadFile,
-			final boolean overrideWeights) {
+	public static Dataset loadCONOP9Run(final File sectionFile, final File eventFile, final File loadFile, final boolean overrideWeights = false) {
 
 		// parse section names
 		Map<String, String> sectionNames = Maps.newHashMap();
