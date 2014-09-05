@@ -14,8 +14,6 @@ import org.andrill.conop.core.solver.SolverStats;
 import org.andrill.conop.core.util.TimerUtils;
 
 public class StandardSolver extends AbstractSolver {
-	private static final int SKIPPABLE = 100;
-
 	protected Constraints constraints;
 	protected Mutator mutator;
 	protected Penalty penalty;
@@ -65,27 +63,18 @@ public class StandardSolver extends AbstractSolver {
 		double temp = schedule.getInitial();
 		initial.setScore(penalty.score(initial));
 
+		SolutionGenerator generator = new SolutionGenerator(context, mutator, constraints, 20);
+		generator.setCurrent(initial);
+		generator.start();
+
 		// initialize the listeners
 		started(initial);
-
-		int skipped = 0;
 
 		try {
 			// anneal
 			while (temp > 0) {
-				// get a new solution that satisfies the constraints
-				Solution next = context.getNext();
-				if (next == null) {
-					next = mutator.mutate(current);
-				}
-				stats.total++;
-				while (!constraints.isValid(next) && (SKIPPABLE < 0 || skipped < SKIPPABLE)) {
-					next = mutator.mutate(current);
-					skipped++;
-					stats.skipped++;
-					stats.total++;
-				}
-				skipped = 0;
+				// get a new potential solution
+				Solution next = generator.getNext();
 
 				// score this solution
 				next.setScore(penalty.score(next));
@@ -107,6 +96,7 @@ public class StandardSolver extends AbstractSolver {
 				if ((next.getScore() < current.getScore())
 						|| (Math.exp(-(next.getScore() - current.getScore()) / temp) > random.nextDouble())) {
 					current = next;
+					generator.setCurrent(current);
 				}
 
 				temp = schedule.next(current);
