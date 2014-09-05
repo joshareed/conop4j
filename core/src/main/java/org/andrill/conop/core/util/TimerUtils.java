@@ -41,6 +41,10 @@ public class TimerUtils {
 		return thread.counter;
 	}
 
+	public static void reset() {
+		thread.counter = 0;
+	}
+
 	private TimerUtils() {
 		// not to be instantiated
 	}
