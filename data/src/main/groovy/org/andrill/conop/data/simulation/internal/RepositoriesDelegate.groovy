@@ -30,14 +30,23 @@ class RepositoriesDelegate {
 		log.info "Registered remote repository '{}'", url
 	}
 
+	def conop9(String dir) {
+		repositories << new CONOP9Repository(new File(dir))
+		log.info "Registered CONOP9 repository '{}'", dir
+	}
+
 	def conop9(Map params) {
-		if (params.dir) {
-			repositories << new CONOP9Repository(new File(params.dir))
-			log.info "Registered CONOP9 repository '{}'", params.dir
-		} else {
-			repositories << new CONOP9Repository(new File(params.sections),
-					new File(params.events), new File(params.observations))
-			log.info "Registered CONOP9 repository using '{}', '{}', and '{}'", params.sections, params.events, params.observations
-		}
+		def dir = new File(params.dir ?: '.')
+		def sections = new File(dir, params.sections ?: 'sections.sct')
+		def events = new File(dir, params.events ?: 'events.evt')
+		def observations = new File(dir, params.observations ?: 'loadfile.dat')
+		def overrideWeights = params.containsKey('overrideWeights') ? params.overrideWeights : false
+
+		repositories << new CONOP9Repository(sections, events, observations, overrideWeights)
+
+		log.info "Registered CONOP9 repository '{}'", dir
+		log.info "Reading sections from '{}'", sections
+		log.info "Reading events from '{}'", events
+		log.info "Reading observations from '{}'", observations
 	}
 }

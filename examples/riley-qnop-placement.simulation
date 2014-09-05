@@ -1,0 +1,22 @@
+repositories {
+	conop9 dir: '../data/src/test/resources/repos/conop9/riley', sections: 'sections.sct', events: 'events.evt', observations: 'loadfile.dat'
+}
+
+data {
+	all()
+}
+
+solver {
+	solver 'qnop'
+
+	mutator 'random'
+	constraints 'event', taxa: true
+	schedule 'exponential', initial: 1000, delta: 0.001, steps: 5000
+	penalty 'placement'
+
+	listener 'console'
+	listener 'stats'
+	listener 'snapshot'
+	listener 'positions'
+	listener 'stopping', progressTime: 360
+}

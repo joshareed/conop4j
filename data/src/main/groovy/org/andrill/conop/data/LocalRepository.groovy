@@ -2,6 +2,7 @@ package org.andrill.conop.data
 
 import groovy.util.logging.Slf4j
 
+import org.andrill.conop.core.Location
 import org.andrill.conop.data.internal.AbstractJsonRepository
 
 @Slf4j

@@ -43,6 +43,11 @@ abstract class AbstractJsonRepository implements Repository {
 		return new DefaultLocation(json.name, observations)
 	}
 
+	@Override
+	public List<Location> getLocations() {
+		throw new UnsupportedOperationException("Unable to enumerate locations");
+	}
+
 	protected double getWeightUp(Event e) {
 		if (e.name.endsWith("AGE")) {
 			return 1000000
