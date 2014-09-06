@@ -1,5 +1,7 @@
 package org.andrill.conop.data;
 
+import java.util.List;
+
 import org.andrill.conop.core.Location;
 
 /**
@@ -17,4 +19,14 @@ public interface Repository {
 	 * @return the Location or null.
 	 */
 	Location getLocation(String locationId);
+
+	/**
+	 * Gets all {@link Location}.
+	 * 
+	 * Implementors may throw an {@link UnsupportedOperationException} if they
+	 * cannot reliably enumerate all available locations.
+	 * 
+	 * @return the list of all locations in this repository.
+	 */
+	List<Location> getLocations();
 }

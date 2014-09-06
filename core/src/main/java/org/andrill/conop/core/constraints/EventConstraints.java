@@ -2,7 +2,6 @@ package org.andrill.conop.core.constraints;
 
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.andrill.conop.core.AbstractConfigurable;
 import org.andrill.conop.core.Configuration;
@@ -15,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * Ensures all event constraints are satisfied.
@@ -27,30 +27,14 @@ public class EventConstraints extends AbstractConfigurable implements Constraint
 	private static final boolean DEFAULT_AGES = true;
 	private static final boolean DEFAULT_INFER = false;
 
-	protected class Constraint implements Comparable<Constraint> {
+	protected class Constraint {
 		Event before;
 		Event after;
-		int failed = 0;
 
 		boolean check(final Solution test) {
 			int i1 = test.getPosition(before);
 			int i2 = test.getPosition(after);
 			return (i1 < i2);
-		}
-
-		@Override
-		public int compareTo(Constraint o) {
-			int result = Integer.compare(failed, o.failed);
-			if (result != 0) {
-				return result;
-			}
-
-			result = before.getName().compareTo(o.before.getName());
-			if (result != 0) {
-				return result;
-			}
-
-			return after.getName().compareTo(o.after.getName());
 		}
 	}
 
@@ -62,7 +46,7 @@ public class EventConstraints extends AbstractConfigurable implements Constraint
 	protected int support = DEFAULT_SUPPORT;
 
 	protected void calculateConstraints(final Dataset dataset) {
-		constraints = new TreeSet<>();
+		constraints = Sets.newConcurrentHashSet();
 
 		if (taxa) {
 			calculateTaxaConstraints(dataset.getEvents());
@@ -162,12 +146,6 @@ public class EventConstraints extends AbstractConfigurable implements Constraint
 
 		for (Constraint c : constraints) {
 			if (!c.check(solution)) {
-				c.failed++;
-
-				// so it stays sorted
-				constraints.remove(c);
-				constraints.add(c);
-
 				return false;
 			}
 		}

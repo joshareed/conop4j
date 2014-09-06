@@ -1,0 +1,21 @@
+repositories {
+	// defaults to 'sections.sct', 'events.evt', and 'loadfile.dat' so can be omitted if named that
+	conop9 url: 'https://raw.githubusercontent.com/joshareed/conop4j/master/data/src/test/resources/repos/conop9/riley/', sections: 'sections.sct', events: 'events.evt', observations: 'loadfile.dat'
+}
+
+data {
+	all()
+}
+
+solver {
+	mutator 'random'
+	constraints 'event', taxa: true
+	schedule 'exponential', initial: 1000, delta: 0.001, steps: 5000
+	penalty 'matrix'
+
+	listener 'console'
+	listener 'stats'
+	listener 'snapshot'
+	listener 'positions'
+	listener 'stopping', progressTime: 360
+}

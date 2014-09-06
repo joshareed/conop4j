@@ -17,8 +17,6 @@ import org.andrill.conop.core.solver.SolverStats;
 import org.andrill.conop.core.util.TimerUtils;
 
 public class QueueSolver extends AbstractSolver {
-	private static final int SKIPPABLE = 100;
-
 	private class ScorerThread extends Thread {
 		private final Penalty objective;
 
@@ -30,7 +28,7 @@ public class QueueSolver extends AbstractSolver {
 		public void run() {
 			while (!stopped) {
 				try {
-					Solution next = work.take();
+					Solution next = generator.getNext();
 					next.setScore(objective.score(next));
 					complete.put(next);
 				} catch (InterruptedException e) {
@@ -40,12 +38,12 @@ public class QueueSolver extends AbstractSolver {
 		}
 	}
 
-	protected LinkedBlockingQueue<Solution> work;
 	protected LinkedBlockingQueue<Solution> complete;
 	protected Set<ScorerThread> scorers;
 	protected Constraints constraints;
 	protected Mutator mutator;
 	protected Schedule schedule;
+	protected SolutionGenerator generator;
 	protected Random random = new Random();
 	protected SolverStats stats = new SolverStats();
 
@@ -54,7 +52,6 @@ public class QueueSolver extends AbstractSolver {
 		int procs = Runtime.getRuntime().availableProcessors();
 		log.debug("Configuring queue size as '{}'", procs);
 
-		work = new LinkedBlockingQueue<>(procs + 1);
 		complete = new LinkedBlockingQueue<>(procs + 1);
 
 		// save our important components
@@ -109,27 +106,11 @@ public class QueueSolver extends AbstractSolver {
 		double temp = schedule.getInitial();
 		initial.setScore(Double.MAX_VALUE);
 
+		generator = new SolutionGenerator(context, mutator, constraints, 20);
+		generator.setCurrent(initial);
+		generator.start();
+
 		started(initial);
-
-		int skipped = 0;
-
-		// fill the work queue
-		for (int i = 0; i < scorers.size(); i++) {
-			Solution next = mutator.mutate(current);
-			stats.total++;
-			while (!constraints.isValid(next) && (SKIPPABLE < 0 || skipped < SKIPPABLE)) {
-				next = mutator.mutate(current);
-				stats.skipped++;
-				stats.total++;
-				skipped++;
-			}
-			try {
-				skipped = 0;
-				work.put(next);
-			} catch (InterruptedException e) {
-				// ignore
-			}
-		}
 
 		// start all scorer threads
 		for (ScorerThread thread : scorers) {
@@ -158,27 +139,13 @@ public class QueueSolver extends AbstractSolver {
 				if ((next.getScore() < current.getScore())
 						|| (Math.exp(-(next.getScore() - current.getScore()) / temp) > random.nextDouble())) {
 					current = next;
+					generator.setCurrent(current);
 				}
 
 				// get our next temperature
 				temp = schedule.next(current);
 				stats.temperature = temp;
 				stats.elapsed = TimerUtils.getCounter();
-
-				// get a new solution that satisfies the constraints
-				next = context.getNext();
-				if (next == null) {
-					next = mutator.mutate(current);
-				}
-				stats.total++;
-				while (!constraints.isValid(next) && (SKIPPABLE < 0 || skipped < SKIPPABLE)) {
-					next = mutator.mutate(current);
-					stats.skipped++;
-					stats.total++;
-					skipped++;
-				}
-				skipped = 0;
-				work.put(next);
 			}
 		} catch (Exception e) {
 			handleError(e);
