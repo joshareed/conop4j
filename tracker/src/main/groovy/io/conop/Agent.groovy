@@ -4,6 +4,7 @@ import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
 
 import org.andrill.conop.core.listeners.SnapshotListener
+import org.andrill.conop.core.util.TimerUtils
 import org.andrill.conop.data.simulation.SimulationDSL
 
 @Slf4j
@@ -19,6 +20,8 @@ class Agent extends Thread {
 		log.info "Starting job {}", job.url
 
 		try {
+			TimerUtils.reset()
+
 			def dsl = new SimulationDSL()
 			dsl.parse(job.source)
 			def dataset = dsl.dataset
