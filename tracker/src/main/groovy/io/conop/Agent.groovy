@@ -11,9 +11,11 @@ import org.andrill.conop.data.simulation.SimulationDSL
 class Agent extends Thread {
 	protected static final long DELAY = 30 * 1000
 	protected URL api
+	protected String name
 
-	Agent(String path) {
+	Agent(String path, String name) {
 		api = new URL(path)
+		this.name = name
 	}
 
 	protected void runJob(job) {
@@ -29,10 +31,11 @@ class Agent extends Thread {
 			def config = dsl.solverConfiguration
 			//config.filterListeners ConsoleProgressListener.class
 			config.filterListeners SnapshotListener.class
-			config.configureListener(AgentListener.class, [api: job.url, frequency: 60])
+			config.configureListener(AgentListener.class, [api: job.url, name: name, frequency: 60])
 
 			def solver = config.solver
-			solver.solve(config, dataset)
+			def context = solver.solve(config, dataset)
+			log.info "Finished job"
 		} catch (e) {
 			log.info "Halted: {}", e.message
 			log.debug "Halted", e
@@ -41,12 +44,12 @@ class Agent extends Thread {
 
 	@Override
 	public void run() {
-		log.info "Agent starting using tracker url: {}", api
+		log.info "Agent '{}' starting using tracker url {}", name, api
 		while (true) {
 			try {
 				log.debug "Fetching jobs..."
 
-				def jobs = new JsonSlurper().parse(api)
+				def jobs = new JsonSlurper().parse(new URL(api, 'api/jobs'))
 				if (jobs) {
 					def active = jobs.findAll { it?.active }
 					if (active) {
