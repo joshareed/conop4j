@@ -11,6 +11,7 @@ import org.andrill.conop.core.Solution
 import org.andrill.conop.core.internal.DefaultEvent
 import org.andrill.conop.core.listeners.AsyncListener
 import org.andrill.conop.core.listeners.PositionsMatrix
+import org.andrill.conop.core.solver.SolverStats
 import org.andrill.conop.core.util.TimerUtils
 
 @Slf4j
@@ -18,7 +19,7 @@ class AgentListener extends AsyncListener {
 	protected long next = 0
 	protected ReentrantLock lock = new ReentrantLock()
 	protected URL api = null
-	protected long iterations = 0
+	protected String name = null
 	protected int frequency = 60
 
 	@Override
@@ -27,6 +28,7 @@ class AgentListener extends AsyncListener {
 		if (url) {
 			api = new URL(url)
 		}
+		name = config.get "name", ""
 		frequency = config.get "frequency", 60
 	}
 
@@ -35,7 +37,7 @@ class AgentListener extends AsyncListener {
 		if (lock.tryLock()) {
 			try {
 				next = TimerUtils.counter + frequency
-				updateTracker(temp, iteration, best)
+				updateTracker(best)
 			} catch (e) {
 				log.debug "Error in AgentListener", e
 			} finally {
@@ -44,12 +46,20 @@ class AgentListener extends AsyncListener {
 		}
 	}
 
-	protected buildStatsJson(temp, iterations, best) {
-		[
-			temperature: temp,
-			iterations: (iterations - this.iterations),
-			score: best.score
-		]
+	protected buildStatsJson() {
+		def json = [:]
+		def stats = context.get(SolverStats)
+		if (stats) {
+			json.scored = stats.scored
+			json.skipped = stats.skipped
+			json.total = stats.total
+			json.elapsed = stats.elapsed
+			json.updated = System.currentTimeMillis()
+			json.score = stats.best
+			json.temperature = stats.temperature
+			json.constraints = stats.constraints
+		}
+		json
 	}
 
 	protected buildSolutionJson(Solution best) {
@@ -80,15 +90,20 @@ class AgentListener extends AsyncListener {
 		json
 	}
 
-	protected void updateTracker(double temp, long iterations, Solution best) {
+	@Override
+	public void stopped(Solution best) {
+		updateTracker(best);
+	}
+
+	protected void updateTracker(Solution best) {
 		log.info "Sending best solution to ${api}"
 
 		try {
 			def payload = [
-				stats: buildStatsJson(temp, iterations, best),
+				agent: name,
+				stats: buildStatsJson(),
 				solution: buildSolutionJson(best)
 			]
-			this.iterations = iterations
 
 			// POST to the server
 			def conn = api.openConnection()
@@ -119,5 +134,10 @@ class AgentListener extends AsyncListener {
 	@Override
 	protected boolean test(double temp, long iteration, Solution current, Solution best) {
 		api != null && TimerUtils.counter > next
+	}
+
+	@Override
+	public String toString() {
+		"Agent Listener"
 	}
 }

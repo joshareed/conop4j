@@ -51,7 +51,7 @@ public class LinearSchedule extends AbstractConfigurable implements Schedule {
 		} else if (score == -1) {
 			score = solution.getScore();
 			return current;
-		} else if (solution.getScore() <= score) {
+		} else if (solution.getScore() < score) {
 			score = solution.getScore();
 			count = 0;
 			return current;

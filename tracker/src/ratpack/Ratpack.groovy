@@ -21,9 +21,14 @@ ratpack {
 				}
 				post {
 					def job = service.add(request.body.text)
-					response.status 201
-					response.headers.set "Location", job.url
-					render json(job)
+					if (job) {
+						response.status 201
+						response.headers.set "Location", job.url
+						render json(job)
+					} else {
+						response.status 400
+						render "Invalid simulation file"
+					}
 				}
 			}
 		}

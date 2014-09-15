@@ -51,7 +51,7 @@ public class Conop4jMain {
 	}
 
 	protected static String getVersion() {
-		return "0.11.3";
+		return "0.12.0-SNAPSHOT";
 	}
 
 	public static void main(final String[] args) {

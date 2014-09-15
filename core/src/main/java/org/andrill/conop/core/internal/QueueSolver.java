@@ -151,6 +151,9 @@ public class QueueSolver extends AbstractSolver {
 			handleError(e);
 		}
 
+		// kill our generator thread
+		generator.kill();
+
 		// clean up
 		stopped(getBest());
 	}

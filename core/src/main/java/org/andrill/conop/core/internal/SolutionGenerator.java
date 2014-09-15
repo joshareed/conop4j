@@ -16,6 +16,7 @@ public class SolutionGenerator extends Thread {
 	protected final LinkedBlockingQueue<Solution> valid;
 	protected final LinkedBlockingQueue<Solution> invalid;
 	protected final SolverStats stats;
+	protected boolean alive = true;
 
 	public SolutionGenerator(SolverContext context, Mutator mutator, Constraints constraints, int count) {
 		this.context = context;
@@ -45,9 +46,13 @@ public class SolutionGenerator extends Thread {
 		}
 	}
 
+	public void kill() {
+		alive = false;
+	}
+
 	@Override
 	public void run() {
-		while (true) {
+		while (alive) {
 			Solution next = context.getNext();
 			if (next == null) {
 				next = mutator.mutate(current);

@@ -50,16 +50,27 @@ class JobService {
 	}
 
 	Map add(String source) {
+		if (!source.trim()) {
+			return null
+		}
+
+		long now = System.currentTimeMillis()
+
 		def job = [
 			id: id(),
 			active: true,
 			source: source,
+			created: now,
+			updated: now,
 			stats: [
-				created: null,
-				updated: null,
-				iterations: 0,
-				score: -1
-			]
+				scored: 0,
+				skipped: 0,
+				total: 0,
+				score: -1,
+				temperature: -1,
+				constraints: false
+			],
+			agents: [:]
 		]
 		job.url = "${publicAddress}/api/jobs/${job.id}".toString()
 		jobs << job
@@ -81,20 +92,57 @@ class JobService {
 		jobs.findAll { it.active } ?: []
 	}
 
+	protected updateStats(job) {
+		long now = System.currentTimeMillis()
+		long since = now - (5 * 60 * 1000)
+
+		try {
+			// update timestamps
+			if (!job.created) { job.created = now }
+			job.updated = now
+
+			// update stats
+			def stats = job.stats
+			stats.scored = 0
+			stats.skipped = 0
+			stats.total = 0
+			stats.score = Double.MAX_VALUE
+			stats.temperature = Double.MAX_VALUE
+			stats.constraints = false
+
+			job.agents.each { name, agent ->
+				stats.scored += agent.scored
+				stats.skipped += agent.skipped
+				stats.total += agent.total
+				stats.score = Math.min(stats.score, agent.score)
+				stats.temperature = Math.min(stats.temperature, agent.temperature)
+				stats.constraints = stats.constraints | agent.constraints
+
+				agent.active = agent.updated >= since
+			}
+
+
+			// update job status
+			if (stats.temperature <= 0.1) {
+				job.active = false
+			}
+		} catch (e) {
+			log.error "Error updating stats", e
+		}
+	}
+
 	def update(id, body) {
 		def job = get(id)
 		if (job) {
 
 			def json = new JsonSlurper().parse(body.inputStream)
 
-			// update
-			job.stats.updated = System.currentTimeMillis()
-			if (!job.stats.created) {
-				job.stats.created = job.stats.updated
+			// handle agent
+			if (json.agent && json.stats) {
+				job.agents[json.agent] = json.stats
 			}
-			if (json?.stats?.iterations) {
-				job.stats.iterations += json.stats.iterations
-			}
+
+			// update solution
 			if (!job.solution || json?.solution?.score <= job.solution.score) {
 				job.solution = json.solution
 				job.stats.score = json.solution.score
@@ -107,6 +155,8 @@ class JobService {
 				}
 				job.solution = json.solution
 			}
+
+			updateStats(job)
 
 			writeJobs()
 
