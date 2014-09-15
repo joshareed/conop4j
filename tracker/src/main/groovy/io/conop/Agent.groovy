@@ -13,6 +13,7 @@ class Agent extends Thread {
 	protected static final long DELAY = 30 * 1000
 	protected URL api
 	protected String name
+	protected int jobs = 0
 
 	Agent(String path, String name) {
 		api = new URL(path)
@@ -21,6 +22,7 @@ class Agent extends Thread {
 
 	protected void runJob(job) {
 		log.info "Starting job {}", job.url
+		jobs++
 
 		try {
 			TimerUtils.reset()
@@ -45,7 +47,7 @@ class Agent extends Thread {
 			}
 
 			config.filterListeners SnapshotListener.class
-			config.configureListener(AgentListener.class, [api: job.url, name: name, frequency: 60])
+			config.configureListener(AgentListener.class, [api: job.url, name: "${name} (Job #${jobs})", frequency: 60])
 
 			def solver = config.solver
 			def context = solver.solve(config, dataset)
