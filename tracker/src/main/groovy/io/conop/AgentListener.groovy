@@ -135,4 +135,9 @@ class AgentListener extends AsyncListener {
 	protected boolean test(double temp, long iteration, Solution current, Solution best) {
 		api != null && TimerUtils.counter > next
 	}
+
+	@Override
+	public String toString() {
+		"Agent Listener"
+	}
 }
