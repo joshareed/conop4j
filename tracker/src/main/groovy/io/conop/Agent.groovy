@@ -3,6 +3,7 @@ package io.conop
 import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
 
+import org.andrill.conop.core.Solution
 import org.andrill.conop.core.listeners.SnapshotListener
 import org.andrill.conop.core.util.TimerUtils
 import org.andrill.conop.data.simulation.SimulationDSL
@@ -29,7 +30,20 @@ class Agent extends Thread {
 			def dataset = dsl.dataset
 
 			def config = dsl.solverConfiguration
-			//config.filterListeners ConsoleProgressListener.class
+
+			if (job?.stats?.temperature > 0) {
+				log.info "Resuming existing job, using initial temperature {}C", job.stats.temperature
+				config.updateSchedule(initial: job.stats.temperature, true)
+			}
+			if (job?.solution?.events) {
+				log.info "Resuming existing job, overriding initial solution"
+				def events = []
+				job?.solution?.events.each { e ->
+					events << dataset.events.find { it.name == e.name }
+				}
+				config.configureInitialSolution(new Solution(events))
+			}
+
 			config.filterListeners SnapshotListener.class
 			config.configureListener(AgentListener.class, [api: job.url, name: name, frequency: 60])
 
