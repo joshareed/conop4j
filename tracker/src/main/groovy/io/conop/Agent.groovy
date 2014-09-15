@@ -3,6 +3,7 @@ package io.conop
 import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
 
+import org.andrill.conop.core.Solution
 import org.andrill.conop.core.listeners.SnapshotListener
 import org.andrill.conop.core.util.TimerUtils
 import org.andrill.conop.data.simulation.SimulationDSL
@@ -11,13 +12,17 @@ import org.andrill.conop.data.simulation.SimulationDSL
 class Agent extends Thread {
 	protected static final long DELAY = 30 * 1000
 	protected URL api
+	protected String name
+	protected int jobs = 0
 
-	Agent(String path) {
+	Agent(String path, String name) {
 		api = new URL(path)
+		this.name = name
 	}
 
 	protected void runJob(job) {
 		log.info "Starting job {}", job.url
+		jobs++
 
 		try {
 			TimerUtils.reset()
@@ -27,12 +32,26 @@ class Agent extends Thread {
 			def dataset = dsl.dataset
 
 			def config = dsl.solverConfiguration
-			//config.filterListeners ConsoleProgressListener.class
+
+			if (job?.stats?.temperature > 0) {
+				log.info "Resuming existing job, using initial temperature {}C", job.stats.temperature
+				config.updateSchedule(initial: job.stats.temperature, true)
+			}
+			if (job?.solution?.events) {
+				log.info "Resuming existing job, overriding initial solution"
+				def events = []
+				job?.solution?.events.each { e ->
+					events << dataset.events.find { it.name == e.name }
+				}
+				config.configureInitialSolution(new Solution(events))
+			}
+
 			config.filterListeners SnapshotListener.class
-			config.configureListener(AgentListener.class, [api: job.url, frequency: 60])
+			config.configureListener(AgentListener.class, [api: job.url, name: "${name} (Job #${jobs})", frequency: 60])
 
 			def solver = config.solver
-			solver.solve(config, dataset)
+			def context = solver.solve(config, dataset)
+			log.info "Finished job"
 		} catch (e) {
 			log.info "Halted: {}", e.message
 			log.debug "Halted", e
@@ -41,12 +60,12 @@ class Agent extends Thread {
 
 	@Override
 	public void run() {
-		log.info "Agent starting using tracker url: {}", api
+		log.info "Agent '{}' starting using tracker url {}", name, api
 		while (true) {
 			try {
 				log.debug "Fetching jobs..."
 
-				def jobs = new JsonSlurper().parse(api)
+				def jobs = new JsonSlurper().parse(new URL(api, 'api/jobs'))
 				if (jobs) {
 					def active = jobs.findAll { it?.active }
 					if (active) {

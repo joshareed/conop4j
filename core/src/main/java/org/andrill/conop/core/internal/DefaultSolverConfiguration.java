@@ -49,6 +49,13 @@ public class DefaultSolverConfiguration implements SolverConfiguration {
 		constraints = new ClassConfig<Constraints>(clazz, config);
 	}
 
+	public void updateConstraints(final Map<Object, Object> config, boolean merge) {
+		if (!merge) {
+			constraints.config.clear();
+		}
+		constraints.config.putAll(config);
+	}
+
 	public void configureInitialSolution(final Solution initial) {
 		this.initial = initial;
 	}
@@ -61,16 +68,44 @@ public class DefaultSolverConfiguration implements SolverConfiguration {
 		mutator = new ClassConfig<Mutator>(clazz, config);
 	}
 
+	public void updateMutator(final Map<Object, Object> config, boolean merge) {
+		if (!merge) {
+			mutator.config.clear();
+		}
+		mutator.config.putAll(config);
+	}
+
 	public void configurePenalty(final Class<? extends Penalty> clazz, final Map<Object, Object> config) {
 		penalty = new ClassConfig<Penalty>(clazz, config);
+	}
+
+	public void updatePenalty(final Map<Object, Object> config, boolean merge) {
+		if (!merge) {
+			penalty.config.clear();
+		}
+		penalty.config.putAll(config);
 	}
 
 	public void configureSchedule(final Class<? extends Schedule> clazz, final Map<Object, Object> config) {
 		schedule = new ClassConfig<Schedule>(clazz, config);
 	}
 
+	public void updateSchedule(final Map<Object, Object> config, boolean merge) {
+		if (!merge) {
+			schedule.config.clear();
+		}
+		schedule.config.putAll(config);
+	}
+
 	public void configureSolver(final Class<? extends Solver> clazz, final Map<Object, Object> config) {
 		solver = new ClassConfig<Solver>(clazz, config);
+	}
+
+	public void updateSolver(final Map<Object, Object> config, boolean merge) {
+		if (!merge) {
+			solver.config.clear();
+		}
+		solver.config.putAll(config);
 	}
 
 	public void filterListeners(final Class<? extends Listener> clazz) {
