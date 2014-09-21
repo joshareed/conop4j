@@ -63,9 +63,9 @@ class JobService {
 			created: now,
 			updated: now,
 			stats: [
-				scored: 0,
-				skipped: 0,
-				total: 0,
+				scored: 0l,
+				skipped: 0l,
+				total: 0l,
 				score: -1,
 				temperature: -1,
 				constraints: false
@@ -98,29 +98,31 @@ class JobService {
 
 		try {
 			// update timestamps
-			if (!job.created) { job.created = now }
 			job.updated = now
 
 			// update stats
 			def stats = job.stats
-			stats.scored = 0
-			stats.skipped = 0
-			stats.total = 0
+			def scored = BigInteger.valueOf(0)
+			def skipped = BigInteger.valueOf(0)
+			def total = BigInteger.valueOf(0)
+
 			stats.score = Double.MAX_VALUE
 			stats.temperature = Double.MAX_VALUE
 			stats.constraints = false
 
 			job.agents.each { name, agent ->
-				stats.scored += agent.scored
-				stats.skipped += agent.skipped
-				stats.total += agent.total
+				scored = scored.add(agent.scored)
+				skipped = skipped.add(agent.skipped)
+				total = total.add(agent.total)
 				stats.score = Math.min(stats.score, agent.score)
 				stats.temperature = Math.min(stats.temperature, agent.temperature)
 				stats.constraints = stats.constraints | agent.constraints
 
 				agent.active = agent.updated >= since
 			}
-
+			stats.scored = scored
+			stats.skipped = skipped
+			stats.total = total
 
 			// update job status
 			if (stats.temperature <= 0.1) {
