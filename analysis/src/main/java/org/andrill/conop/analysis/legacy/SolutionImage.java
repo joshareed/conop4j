@@ -1,4 +1,4 @@
-package org.andrill.conop.analysis;
+package org.andrill.conop.analysis.legacy;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
