@@ -2,11 +2,11 @@ package org.andrill.conop.data
 
 import spock.lang.Specification
 
-class CONOP9RepositorySpec extends Specification {
+class Conop9RepositorySpec extends Specification {
 
 	def "can load a CONOP9 dataset from a local directory and preserve the weights"() {
 		when:
-		def dataset = new CONOP9Repository(new File('src/test/resources/repos/conop9/riley')).dataset
+		def dataset = new Conop9Repository(new File('src/test/resources/repos/conop9/riley')).dataset
 
 		then: 'the dataset was parsed'
 		dataset != null
@@ -23,7 +23,7 @@ class CONOP9RepositorySpec extends Specification {
 
 	def "can load a CONOP9 dataset from a local directory and override the weights"() {
 		when:
-		def dataset = new CONOP9Repository(new File('src/test/resources/repos/conop9/riley'), true).dataset
+		def dataset = new Conop9Repository(new File('src/test/resources/repos/conop9/riley'), true).dataset
 
 		then: 'the dataset was parsed'
 		dataset != null
@@ -40,7 +40,7 @@ class CONOP9RepositorySpec extends Specification {
 
 	def "can load a CONOP9 dataset from a remote url and override the weights"() {
 		when:
-		def dataset = new CONOP9Repository(new URL('https://raw.githubusercontent.com/joshareed/conop4j/master/data/src/test/resources/repos/conop9/riley/'), true).dataset
+		def dataset = new Conop9Repository(new URL('https://raw.githubusercontent.com/joshareed/conop4j/master/data/src/test/resources/repos/conop9/riley/'), true).dataset
 
 		then: 'the dataset was parsed'
 		dataset != null
