@@ -1,0 +1,901 @@
+{
+  "id" : "rn5lrc",
+  "active" : true,
+  "source" : "repositories {\n\t// defaults to 'sections.sct', 'events.evt', and 'loadfile.dat' so can be omitted if named that\n\tconop9 url: 'https://raw.githubusercontent.com/joshareed/conop4j/master/data/src/test/resources/repos/conop9/riley/', sections: 'sections.sct', events: 'events.evt', observations: 'loadfile.dat'\n}\n\ndata {\n\tall()\n}\n\nsolver {\n\tmutator 'random'\n\tconstraints 'event', taxa: true\n\tschedule 'exponential', initial: 1000, delta: 0.001, steps: 5000\n\tpenalty 'matrix'\n\n\tlistener 'console'\n\tlistener 'stats'\n\tlistener 'snapshot'\n\tlistener 'positions'\n\tlistener 'stopping', progressTime: 360\n}\n",
+  "created" : 1411436336799,
+  "updated" : 1411436594576,
+  "stats" : {
+    "scored" : 4305537,
+    "skipped" : 19116332,
+    "total" : 23421892,
+    "score" : 1765.0,
+    "temperature" : 1.2135922330097098,
+    "constraints" : false
+  },
+  "agents" : {
+    "Joshuas-MacBook-Pro.local (Job #1)" : {
+      "active" : true,
+      "constraints" : false,
+      "elapsed" : 245,
+      "score" : 1765,
+      "scored" : 4305537,
+      "skipped" : 19116332,
+      "temperature" : 1.2135922330097098,
+      "total" : 23421892,
+      "updated" : 1411436594553
+    }
+  },
+  "url" : "http://localhost:5050/api/jobs/rn5lrc",
+  "solution" : {
+    "events" : [ {
+      "name" : "Apsotreta expansus LAD",
+      "positions" : {
+        "final" : 0,
+        "max" : 1,
+        "min" : 0
+      }
+    }, {
+      "name" : "Apsotreta expansus FAD",
+      "positions" : {
+        "final" : 1,
+        "max" : 6,
+        "min" : 1
+      }
+    }, {
+      "name" : "Labiostria sigmoidalis LAD",
+      "positions" : {
+        "final" : 2,
+        "max" : 9,
+        "min" : 2
+      }
+    }, {
+      "name" : "Dysoristus lochmanae LAD",
+      "positions" : {
+        "final" : 3,
+        "max" : 6,
+        "min" : 1
+      }
+    }, {
+      "name" : "Dysoristus lochmanae FAD",
+      "positions" : {
+        "final" : 4,
+        "max" : 5,
+        "min" : 0
+      }
+    }, {
+      "name" : "Dytremacephalus granulosus LAD",
+      "positions" : {
+        "final" : 5,
+        "max" : 6,
+        "min" : 1
+      }
+    }, {
+      "name" : "Labiostria sigmoidalis FAD",
+      "positions" : {
+        "final" : 6,
+        "max" : 10,
+        "min" : 1
+      }
+    }, {
+      "name" : "Dunderbergia variagranula LAD",
+      "positions" : {
+        "final" : 7,
+        "max" : 7,
+        "min" : 4
+      }
+    }, {
+      "name" : "Dytremacephalus laevis LAD",
+      "positions" : {
+        "final" : 8,
+        "max" : 18,
+        "min" : 6
+      }
+    }, {
+      "name" : "Dunderbergia variagranula FAD",
+      "positions" : {
+        "final" : 9,
+        "max" : 10,
+        "min" : 6
+      }
+    }, {
+      "name" : "Dytremacephalus granulosus FAD",
+      "positions" : {
+        "final" : 10,
+        "max" : 10,
+        "min" : 7
+      }
+    }, {
+      "name" : "Aphelaspis walcotti LAD",
+      "positions" : {
+        "final" : 11,
+        "max" : 11,
+        "min" : 10
+      }
+    }, {
+      "name" : "Angulotreta triangularis LAD",
+      "positions" : {
+        "final" : 12,
+        "max" : 12,
+        "min" : 11
+      }
+    }, {
+      "name" : "Cheilocephalus breviloba LAD",
+      "positions" : {
+        "final" : 13,
+        "max" : 17,
+        "min" : 12
+      }
+    }, {
+      "name" : "Labiostria conveximarginata LAD",
+      "positions" : {
+        "final" : 14,
+        "max" : 17,
+        "min" : 12
+      }
+    }, {
+      "name" : "Pseudagnostus josephus FAD",
+      "positions" : {
+        "final" : 15,
+        "max" : 29,
+        "min" : 12
+      }
+    }, {
+      "name" : "Pseudagnostus communis LAD",
+      "positions" : {
+        "final" : 16,
+        "max" : 19,
+        "min" : 14
+      }
+    }, {
+      "name" : "Dytremacephalus laevis FAD",
+      "positions" : {
+        "final" : 17,
+        "max" : 31,
+        "min" : 17
+      }
+    }, {
+      "name" : "Geragnostus cf.tumidosus FAD",
+      "positions" : {
+        "final" : 18,
+        "max" : 39,
+        "min" : 13
+      }
+    }, {
+      "name" : "Pseudagnostus communis FAD",
+      "positions" : {
+        "final" : 19,
+        "max" : 20,
+        "min" : 16
+      }
+    }, {
+      "name" : "Aphelaspis longifrons LAD",
+      "positions" : {
+        "final" : 20,
+        "max" : 25,
+        "min" : 17
+      }
+    }, {
+      "name" : "Aphelaspis constricta FAD",
+      "positions" : {
+        "final" : 21,
+        "max" : 25,
+        "min" : 17
+      }
+    }, {
+      "name" : "Aphelaspis constricta LAD",
+      "positions" : {
+        "final" : 22,
+        "max" : 25,
+        "min" : 19
+      }
+    }, {
+      "name" : "Cheilocephalus minutus LAD",
+      "positions" : {
+        "final" : 23,
+        "max" : 37,
+        "min" : 16
+      }
+    }, {
+      "name" : "Aphelaspis longifrons FAD",
+      "positions" : {
+        "final" : 24,
+        "max" : 26,
+        "min" : 18
+      }
+    }, {
+      "name" : "Labiostria conveximarginata FAD",
+      "positions" : {
+        "final" : 25,
+        "max" : 28,
+        "min" : 21
+      }
+    }, {
+      "name" : "Labiostria platifrons LAD",
+      "positions" : {
+        "final" : 26,
+        "max" : 30,
+        "min" : 23
+      }
+    }, {
+      "name" : "Pseudagnostus josephus LAD",
+      "positions" : {
+        "final" : 27,
+        "max" : 31,
+        "min" : 13
+      }
+    }, {
+      "name" : "Labiostria platifrons FAD",
+      "positions" : {
+        "final" : 28,
+        "max" : 30,
+        "min" : 24
+      }
+    }, {
+      "name" : "Cheilocephalus minutus FAD",
+      "positions" : {
+        "final" : 29,
+        "max" : 38,
+        "min" : 13
+      }
+    }, {
+      "name" : "Angulotreta triangularis FAD",
+      "positions" : {
+        "final" : 30,
+        "max" : 31,
+        "min" : 27
+      }
+    }, {
+      "name" : "Angulotreta triangularis digitalis LAD",
+      "positions" : {
+        "final" : 31,
+        "max" : 33,
+        "min" : 28
+      }
+    }, {
+      "name" : "Raaschella ornata LAD",
+      "positions" : {
+        "final" : 32,
+        "max" : 32,
+        "min" : 28
+      }
+    }, {
+      "name" : "Dictyonina perforata LAD",
+      "positions" : {
+        "final" : 33,
+        "max" : 38,
+        "min" : 30
+      }
+    }, {
+      "name" : "Angulotreta triangularis digitalis FAD",
+      "positions" : {
+        "final" : 34,
+        "max" : 36,
+        "min" : 31
+      }
+    }, {
+      "name" : "Raaschella ornata FAD",
+      "positions" : {
+        "final" : 35,
+        "max" : 37,
+        "min" : 30
+      }
+    }, {
+      "name" : "Dictyonina perforata FAD",
+      "positions" : {
+        "final" : 36,
+        "max" : 40,
+        "min" : 33
+      }
+    }, {
+      "name" : "Sponge spicule C LAD",
+      "positions" : {
+        "final" : 37,
+        "max" : 43,
+        "min" : 35
+      }
+    }, {
+      "name" : "Geragnostus cf.tumidosus LAD",
+      "positions" : {
+        "final" : 38,
+        "max" : 39,
+        "min" : 12
+      }
+    }, {
+      "name" : "Sponge spicule C FAD",
+      "positions" : {
+        "final" : 39,
+        "max" : 43,
+        "min" : 38
+      }
+    }, {
+      "name" : "Cheilocephalus breviloba FAD",
+      "positions" : {
+        "final" : 40,
+        "max" : 41,
+        "min" : 39
+      }
+    }, {
+      "name" : "Crepicephalus perplexus LAD",
+      "positions" : {
+        "final" : 41,
+        "max" : 47,
+        "min" : 41
+      }
+    }, {
+      "name" : "Aphelaspis spinosa LAD",
+      "positions" : {
+        "final" : 42,
+        "max" : 43,
+        "min" : 34
+      }
+    }, {
+      "name" : "Aphelaspis spinosa FAD",
+      "positions" : {
+        "final" : 43,
+        "max" : 44,
+        "min" : 35
+      }
+    }, {
+      "name" : "Aphelaspis walcotti FAD",
+      "positions" : {
+        "final" : 44,
+        "max" : 45,
+        "min" : 40
+      }
+    }, {
+      "name" : "Crepicephalus perplexus FAD",
+      "positions" : {
+        "final" : 45,
+        "max" : 47,
+        "min" : 41
+      }
+    }, {
+      "name" : "Tricrepicephalus coria LAD",
+      "positions" : {
+        "final" : 46,
+        "max" : 47,
+        "min" : 44
+      }
+    }, {
+      "name" : "Maryvillia cf.ariston LAD",
+      "positions" : {
+        "final" : 47,
+        "max" : 47,
+        "min" : 44
+      }
+    }, {
+      "name" : "Crepicephalus cf.iowensis LAD",
+      "positions" : {
+        "final" : 48,
+        "max" : 55,
+        "min" : 48
+      }
+    }, {
+      "name" : "Coosia cf.albertensis LAD",
+      "positions" : {
+        "final" : 49,
+        "max" : 53,
+        "min" : 48
+      }
+    }, {
+      "name" : "Llanoaspis peculiaris FAD",
+      "positions" : {
+        "final" : 50,
+        "max" : 55,
+        "min" : 48
+      }
+    }, {
+      "name" : "Meteoraspis cf.loisi LAD",
+      "positions" : {
+        "final" : 51,
+        "max" : 62,
+        "min" : 49
+      }
+    }, {
+      "name" : "Crepicephalus cf.iowensis FAD",
+      "positions" : {
+        "final" : 52,
+        "max" : 56,
+        "min" : 48
+      }
+    }, {
+      "name" : "Llanoaspis peculiaris LAD",
+      "positions" : {
+        "final" : 53,
+        "max" : 55,
+        "min" : 48
+      }
+    }, {
+      "name" : "Meteoraspis cf.loisi FAD",
+      "positions" : {
+        "final" : 54,
+        "max" : 60,
+        "min" : 50
+      }
+    }, {
+      "name" : "Coosia cf.albertensis FAD",
+      "positions" : {
+        "final" : 55,
+        "max" : 57,
+        "min" : 49
+      }
+    }, {
+      "name" : "Pemphigaspis inexpectans FAD",
+      "positions" : {
+        "final" : 56,
+        "max" : 72,
+        "min" : 52
+      }
+    }, {
+      "name" : "Llanoaspis undulata FAD",
+      "positions" : {
+        "final" : 57,
+        "max" : 63,
+        "min" : 56
+      }
+    }, {
+      "name" : "Llanoaspis undulata granulata LAD",
+      "positions" : {
+        "final" : 58,
+        "max" : 61,
+        "min" : 56
+      }
+    }, {
+      "name" : "Sponge spicule B LAD",
+      "positions" : {
+        "final" : 59,
+        "max" : 63,
+        "min" : 55
+      }
+    }, {
+      "name" : "Llanoaspis undulata LAD",
+      "positions" : {
+        "final" : 60,
+        "max" : 62,
+        "min" : 54
+      }
+    }, {
+      "name" : "Llanoaspis undulata granulata FAD",
+      "positions" : {
+        "final" : 61,
+        "max" : 62,
+        "min" : 55
+      }
+    }, {
+      "name" : "Maryvillia cf.ariston FAD",
+      "positions" : {
+        "final" : 62,
+        "max" : 62,
+        "min" : 54
+      }
+    }, {
+      "name" : "Opisthotreta depressa LAD",
+      "positions" : {
+        "final" : 63,
+        "max" : 64,
+        "min" : 62
+      }
+    }, {
+      "name" : "Metoeraspis metra LAD",
+      "positions" : {
+        "final" : 64,
+        "max" : 65,
+        "min" : 63
+      }
+    }, {
+      "name" : "Pemphigaspis inexpectans LAD",
+      "positions" : {
+        "final" : 65,
+        "max" : 74,
+        "min" : 53
+      }
+    }, {
+      "name" : "Llanoaspis modesta LAD",
+      "positions" : {
+        "final" : 66,
+        "max" : 67,
+        "min" : 64
+      }
+    }, {
+      "name" : "Crepicephalus australis LAD",
+      "positions" : {
+        "final" : 67,
+        "max" : 67,
+        "min" : 65
+      }
+    }, {
+      "name" : "Crepicephalus australis FAD",
+      "positions" : {
+        "final" : 68,
+        "max" : 70,
+        "min" : 66
+      }
+    }, {
+      "name" : "Kingstonia pontotocensis LAD",
+      "positions" : {
+        "final" : 69,
+        "max" : 71,
+        "min" : 67
+      }
+    }, {
+      "name" : "Sponge spicule A LAD",
+      "positions" : {
+        "final" : 70,
+        "max" : 70,
+        "min" : 66
+      }
+    }, {
+      "name" : "Llanoaspis modesta FAD",
+      "positions" : {
+        "final" : 71,
+        "max" : 71,
+        "min" : 67
+      }
+    }, {
+      "name" : "Kingstonia pontotocensis FAD",
+      "positions" : {
+        "final" : 72,
+        "max" : 76,
+        "min" : 71
+      }
+    }, {
+      "name" : "Pseudagnostus? nordicus FAD",
+      "positions" : {
+        "final" : 73,
+        "max" : 74,
+        "min" : 70
+      }
+    }, {
+      "name" : "Pseudagnostus? nordicus LAD",
+      "positions" : {
+        "final" : 74,
+        "max" : 76,
+        "min" : 72
+      }
+    }, {
+      "name" : "Coosella cf.widnerensis FAD",
+      "positions" : {
+        "final" : 75,
+        "max" : 78,
+        "min" : 75
+      }
+    }, {
+      "name" : "Coosella cf.widnerensis LAD",
+      "positions" : {
+        "final" : 76,
+        "max" : 78,
+        "min" : 75
+      }
+    }, {
+      "name" : "Sponge spicule B FAD",
+      "positions" : {
+        "final" : 77,
+        "max" : 79,
+        "min" : 77
+      }
+    }, {
+      "name" : "Kinsabia varigata LAD",
+      "positions" : {
+        "final" : 78,
+        "max" : 80,
+        "min" : 78
+      }
+    }, {
+      "name" : "Coosella beltensis LAD",
+      "positions" : {
+        "final" : 79,
+        "max" : 83,
+        "min" : 79
+      }
+    }, {
+      "name" : "Arcuolimbus convexus LAD",
+      "positions" : {
+        "final" : 80,
+        "max" : 83,
+        "min" : 79
+      }
+    }, {
+      "name" : "Arcuolimbus convexus FAD",
+      "positions" : {
+        "final" : 81,
+        "max" : 84,
+        "min" : 79
+      }
+    }, {
+      "name" : "Dieracephalus aster LAD",
+      "positions" : {
+        "final" : 82,
+        "max" : 83,
+        "min" : 79
+      }
+    }, {
+      "name" : "Metoeraspis metra FAD",
+      "positions" : {
+        "final" : 83,
+        "max" : 86,
+        "min" : 83
+      }
+    }, {
+      "name" : "Llanoaspis virginica LAD",
+      "positions" : {
+        "final" : 84,
+        "max" : 99,
+        "min" : 72
+      }
+    }, {
+      "name" : "Dieracephalus aster FAD",
+      "positions" : {
+        "final" : 85,
+        "max" : 92,
+        "min" : 85
+      }
+    }, {
+      "name" : "Genevievella cf.spinosa FAD",
+      "positions" : {
+        "final" : 86,
+        "max" : 87,
+        "min" : 83
+      }
+    }, {
+      "name" : "Genevievella cf.spinosa LAD",
+      "positions" : {
+        "final" : 87,
+        "max" : 87,
+        "min" : 83
+      }
+    }, {
+      "name" : "Coosella granulosa LAD",
+      "positions" : {
+        "final" : 88,
+        "max" : 92,
+        "min" : 86
+      }
+    }, {
+      "name" : "Holcacephalus tenerus LAD",
+      "positions" : {
+        "final" : 89,
+        "max" : 92,
+        "min" : 87
+      }
+    }, {
+      "name" : "Opisthotreta depressa FAD",
+      "positions" : {
+        "final" : 90,
+        "max" : 92,
+        "min" : 89
+      }
+    }, {
+      "name" : "Holcacephalus tenerus FAD",
+      "positions" : {
+        "final" : 91,
+        "max" : 91,
+        "min" : 86
+      }
+    }, {
+      "name" : "Norwoodia quadrangularis FAD",
+      "positions" : {
+        "final" : 92,
+        "max" : 104,
+        "min" : 92
+      }
+    }, {
+      "name" : "Sponge spicule A FAD",
+      "positions" : {
+        "final" : 93,
+        "max" : 105,
+        "min" : 92
+      }
+    }, {
+      "name" : "Tricrepicephalus texanus LAD",
+      "positions" : {
+        "final" : 94,
+        "max" : 99,
+        "min" : 92
+      }
+    }, {
+      "name" : "Llanoaspis virginica FAD",
+      "positions" : {
+        "final" : 95,
+        "max" : 97,
+        "min" : 72
+      }
+    }, {
+      "name" : "Norwoodia quadrangularis LAD",
+      "positions" : {
+        "final" : 96,
+        "max" : 105,
+        "min" : 92
+      }
+    }, {
+      "name" : "Tricrepicephalus coria FAD",
+      "positions" : {
+        "final" : 97,
+        "max" : 97,
+        "min" : 92
+      }
+    }, {
+      "name" : "Coosella beltensis FAD",
+      "positions" : {
+        "final" : 98,
+        "max" : 98,
+        "min" : 94
+      }
+    }, {
+      "name" : "Coosella granulosa FAD",
+      "positions" : {
+        "final" : 99,
+        "max" : 101,
+        "min" : 92
+      }
+    }, {
+      "name" : "Kormagnostus simplex LAD",
+      "positions" : {
+        "final" : 100,
+        "max" : 100,
+        "min" : 95
+      }
+    }, {
+      "name" : "Tricrepicephalus texanus FAD",
+      "positions" : {
+        "final" : 101,
+        "max" : 101,
+        "min" : 99
+      }
+    }, {
+      "name" : "Apsotreta orifera LAD",
+      "positions" : {
+        "final" : 102,
+        "max" : 105,
+        "min" : 100
+      }
+    }, {
+      "name" : "Coosia connata FAD",
+      "positions" : {
+        "final" : 103,
+        "max" : 105,
+        "min" : 101
+      }
+    }, {
+      "name" : "Apsotreta orifera FAD",
+      "positions" : {
+        "final" : 104,
+        "max" : 104,
+        "min" : 100
+      }
+    }, {
+      "name" : "Coosia connata LAD",
+      "positions" : {
+        "final" : 105,
+        "max" : 105,
+        "min" : 100
+      }
+    }, {
+      "name" : "Meteoraspis cf.robusta LAD",
+      "positions" : {
+        "final" : 106,
+        "max" : 108,
+        "min" : 106
+      }
+    }, {
+      "name" : "Kinsabia varigata FAD",
+      "positions" : {
+        "final" : 107,
+        "max" : 108,
+        "min" : 106
+      }
+    }, {
+      "name" : "Syspacheilus cf.camurus LAD",
+      "positions" : {
+        "final" : 108,
+        "max" : 108,
+        "min" : 106
+      }
+    }, {
+      "name" : "Syspacheilus cf.camurus FAD",
+      "positions" : {
+        "final" : 109,
+        "max" : 110,
+        "min" : 109
+      }
+    }, {
+      "name" : "Meteoraspis cf.robusta FAD",
+      "positions" : {
+        "final" : 110,
+        "max" : 110,
+        "min" : 109
+      }
+    }, {
+      "name" : "Cedarina eurycheilos LAD",
+      "positions" : {
+        "final" : 111,
+        "max" : 111,
+        "min" : 111
+      }
+    }, {
+      "name" : "Cedarina eurycheilos FAD",
+      "positions" : {
+        "final" : 112,
+        "max" : 112,
+        "min" : 112
+      }
+    }, {
+      "name" : "Kormagnostus simplex FAD",
+      "positions" : {
+        "final" : 113,
+        "max" : 113,
+        "min" : 113
+      }
+    }, {
+      "name" : "Cedarina cordilleras LAD",
+      "positions" : {
+        "final" : 114,
+        "max" : 114,
+        "min" : 114
+      }
+    }, {
+      "name" : "Modocia cf.centralis FAD",
+      "positions" : {
+        "final" : 115,
+        "max" : 116,
+        "min" : 115
+      }
+    }, {
+      "name" : "Modocia cf.centralis LAD",
+      "positions" : {
+        "final" : 116,
+        "max" : 116,
+        "min" : 115
+      }
+    }, {
+      "name" : "Cedarina cordilleras FAD",
+      "positions" : {
+        "final" : 117,
+        "max" : 117,
+        "min" : 117
+      }
+    }, {
+      "name" : "Bolaspidella burnetensis LAD",
+      "positions" : {
+        "final" : 118,
+        "max" : 118,
+        "min" : 118
+      }
+    }, {
+      "name" : "Bolaspidella burnetensis FAD",
+      "positions" : {
+        "final" : 119,
+        "max" : 119,
+        "min" : 119
+      }
+    }, {
+      "name" : "Bolaspidella wellsvillensis LAD",
+      "positions" : {
+        "final" : 120,
+        "max" : 120,
+        "min" : 120
+      }
+    }, {
+      "name" : "Bolaspidella wellsvillensis FAD",
+      "positions" : {
+        "final" : 121,
+        "max" : 122,
+        "min" : 121
+      }
+    }, {
+      "name" : "Modocia cf.oweni LAD",
+      "positions" : {
+        "final" : 122,
+        "max" : 122,
+        "min" : 121
+      }
+    }, {
+      "name" : "Modocia cf.oweni FAD",
+      "positions" : {
+        "final" : 123,
+        "max" : 123,
+        "min" : 123
+      }
+    } ],
+    "score" : 1765
+  }
+}
