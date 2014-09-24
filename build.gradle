@@ -27,6 +27,7 @@ allprojects {
 dependencies {
 	compile project(':core')
 	compile project(':data')
+	compile project(':analysis')
 	compile project(':tracker')
 
 	runtime 'org.slf4j:slf4j-simple:1.7.7'

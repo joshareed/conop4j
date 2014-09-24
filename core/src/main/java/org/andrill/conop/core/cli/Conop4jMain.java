@@ -2,16 +2,17 @@ package org.andrill.conop.core.cli;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.Lists;
 
 public class Conop4jMain {
+	private static final Logger log = LoggerFactory.getLogger(Conop4jMain.class);
 
-	private static final String[] COMMANDS = {
-		"org.andrill.conop.core.cli.HelpCommand",
-		"org.andrill.conop.data.cli.RunCommand",
-		"io.conop.cli.AgentCommand",
-		"io.conop.cli.TrackerCommand"
-	};
+	private static final String[] COMMANDS = { "org.andrill.conop.core.cli.HelpCommand",
+		"org.andrill.conop.data.cli.RunCommand", "io.conop.cli.AgentCommand", "io.conop.cli.TrackerCommand",
+	"org.andrill.conop.analysis.RangeChartCommand" };
 
 	protected static void execute(final String name, final List<String> args) {
 		CliCommand cmd = null;
@@ -40,10 +41,13 @@ public class Conop4jMain {
 				commands.add(clazz.newInstance());
 			} catch (ClassNotFoundException e) {
 				// ignore
+				log.error("Foo", e);
 			} catch (InstantiationException e) {
 				// ignore
+				log.error("Foo", e);
 			} catch (IllegalAccessException e) {
 				// ignore
+				log.error("Foo", e);
 			}
 		}
 
