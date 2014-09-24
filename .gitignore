@@ -6,3 +6,4 @@ bin/
 build/
 
 docker/conop4j-all.jar
+.DS_Store
