@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/joshareed/conop4j.png?label=ready&title=Ready)](https://waffle.io/joshareed/conop4j)
 CONOP4J [![Build Status](https://travis-ci.org/joshareed/conop4j.png?branch=master)](https://travis-ci.org/joshareed/conop4j)
 =======
 
