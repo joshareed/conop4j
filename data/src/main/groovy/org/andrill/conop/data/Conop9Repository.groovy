@@ -14,26 +14,26 @@ import com.google.common.collect.Lists
 import com.google.common.collect.Maps
 import com.google.common.collect.Multimap
 
-class CONOP9Repository implements Repository {
+class Conop9Repository implements Repository {
 	public static final String LOCATIONS_FILE = 'sections.sct'
 	public static final String EVENTS_FILE = 'events.evt'
 	public static final String OBSERVATIONS_FILE = 'loadfile.dat'
 
 	protected Dataset dataset
 
-	CONOP9Repository(File root, boolean overrideWeights = false) {
+	Conop9Repository(File root, boolean overrideWeights = false) {
 		dataset = parseDataset(new File(root, LOCATIONS_FILE).text, new File(root, EVENTS_FILE).text, new File(root, OBSERVATIONS_FILE).text, overrideWeights)
 	}
 
-	CONOP9Repository(File locations, File events, File observations, boolean overrideWeights = false) {
+	Conop9Repository(File locations, File events, File observations, boolean overrideWeights = false) {
 		dataset = parseDataset(locations.text, events.text, observations.text, overrideWeights)
 	}
 
-	CONOP9Repository(URL root, boolean overrideWeights = false) {
+	Conop9Repository(URL root, boolean overrideWeights = false) {
 		dataset = parseDataset(new URL(root, LOCATIONS_FILE).text, new URL(root, EVENTS_FILE).text, new URL(root, OBSERVATIONS_FILE).text, overrideWeights)
 	}
 
-	CONOP9Repository(URL locations, URL events, URL observations, boolean overrideWeights = false) {
+	Conop9Repository(URL locations, URL events, URL observations, boolean overrideWeights = false) {
 		dataset = parseDataset(locations.text, events.text, observations.text, overrideWeights)
 	}
 

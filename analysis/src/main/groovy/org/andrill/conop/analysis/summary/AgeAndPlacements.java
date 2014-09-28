@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import org.andrill.conop.analysis.Solution;
+import org.andrill.conop.analysis.legacy.Solution;
 import org.andrill.conop.analysis.summary.SummarySpreadsheet.Summary;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;

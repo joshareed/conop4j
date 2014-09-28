@@ -1,4 +1,4 @@
-package org.andrill.conop.analysis;
+package org.andrill.conop.analysis.legacy;
 
 import java.util.List;
 import java.util.Map;

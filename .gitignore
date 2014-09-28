@@ -1,9 +1,8 @@
+.DS_Store
 .project
 .classpath
 .settings
 .gradle
 bin/
 build/
-
 docker/conop4j-all.jar
-.DS_Store
