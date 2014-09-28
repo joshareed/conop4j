@@ -11,8 +11,6 @@ class RangeChartCommand implements CliCommand {
 			System.exit(0)
 		}
 
-		println "Foo"
-
 		def source = args[0].contains('http') ? new URL(args[0]).text : new File(args[0]).text
 		Conop4jOutput output = new Conop4jOutput(source)
 
