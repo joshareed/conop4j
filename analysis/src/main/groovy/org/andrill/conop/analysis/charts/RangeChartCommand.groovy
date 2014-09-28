@@ -1,5 +1,6 @@
-package org.andrill.conop.analysis
+package org.andrill.conop.analysis.charts
 
+import org.andrill.conop.analysis.Conop4jOutput;
 import org.andrill.conop.core.cli.CliCommand
 
 class RangeChartCommand implements CliCommand {

@@ -1,4 +1,4 @@
-package org.andrill.conop.analysis;
+package org.andrill.conop.analysis.charts;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -14,6 +14,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
+
+import org.andrill.conop.analysis.AnnotatedEvent;
+import org.andrill.conop.analysis.AnnotatedSolution;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
