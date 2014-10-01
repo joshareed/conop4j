@@ -2,11 +2,13 @@ archivesBaseName = 'conop4j-analysis'
 
 dependencies {
 	compile project(':core')
+	compile project(':data')
 
 	compile 'org.apache.poi:poi:3.7'
 	compile 'org.apache.poi:poi-ooxml:3.7'
 	compile 'net.sf.jopt-simple:jopt-simple:3.2'
 
-	testCompile "org.codehaus.groovy:groovy-all:2.1.3"
+	compile "org.codehaus.groovy:groovy-all:$groovyVersion"
+
 	testCompile "org.spockframework:spock-core:1.0-groovy-2.0-SNAPSHOT"
 }
