@@ -14,7 +14,7 @@ class CrossPlotChartCommand implements CliCommand {
 		def source1 = args[0].contains('http') ? new URL(args[0]).text : new File(args[0]).text
 		Conop4jOutput output1 = new Conop4jOutput(source1)
 
-		def source2 = args[1].contains('http') ? new URL(args[0]).text : new File(args[1]).text
+		def source2 = args[1].contains('http') ? new URL(args[1]).text : new File(args[1]).text
 		Conop4jOutput output2 = new Conop4jOutput(source2)
 
 		def chart = new CrossPlotChart()
