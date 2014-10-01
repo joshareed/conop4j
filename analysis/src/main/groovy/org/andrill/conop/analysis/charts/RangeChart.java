@@ -23,7 +23,7 @@ import com.google.common.collect.Maps;
 
 public class RangeChart {
 	private static final int PADDING = 6;
-	private static final int W = 10;
+	private static final int W = 5;
 
 	void build(final AnnotatedSolution solution, final File file) throws IOException {
 		Map<String, List<AnnotatedEvent>> coalesced = coalesceEvents(solution);
@@ -59,8 +59,8 @@ public class RangeChart {
 		// draw our horizontal hairlines
 		graphics.setColor(Color.lightGray);
 		graphics.setStroke(new BasicStroke(1.0f));
-		for (int j = 0; j < (coalesced.size() - 1); j++) {
-			graphics.translate(0, rowHeight);
+		for (int j = 10; j < (coalesced.size() - 1); j += 10) {
+			graphics.translate(0, 10 * rowHeight);
 			graphics.drawLine(0, 0, width, 0);
 		}
 
@@ -87,15 +87,13 @@ public class RangeChart {
 		graphics.translate(PADDING, -PADDING);
 
 		// draw the labels and bars
-		int i = 0;
 		for (Entry<String, List<AnnotatedEvent>> e : coalesced.entrySet()) {
 			graphics.setColor(Color.black);
 			graphics.translate(0, rowHeight);
 			graphics.drawString(e.getKey(), 0, 0);
 			graphics.translate(labelWidth + PADDING, -PADDING);
-			drawEvents(e.getValue(), i, graphics);
+			drawEvents(e.getValue(), graphics);
 			graphics.translate(-labelWidth - PADDING, PADDING);
-			i++;
 		}
 
 		ImageIO.write(image, "png", file);
@@ -117,7 +115,7 @@ public class RangeChart {
 		return coalesced;
 	}
 
-	protected void drawEvents(final List<AnnotatedEvent> events, final int i, final Graphics2D graphics) {
+	protected void drawEvents(final List<AnnotatedEvent> events, final Graphics2D graphics) {
 		int offsetY = 0;
 		AnnotatedEvent e = events.get(0);
 		int e1 = (int) e.getAnnotation(AnnotatedEvent.POS, 0);
