@@ -11,8 +11,9 @@ public class Conop4jMain {
 	private static final Logger log = LoggerFactory.getLogger(Conop4jMain.class);
 
 	private static final String[] COMMANDS = { "org.andrill.conop.core.cli.HelpCommand",
-		"org.andrill.conop.data.cli.RunCommand", "io.conop.cli.AgentCommand", "io.conop.cli.TrackerCommand",
-	"org.andrill.conop.analysis.RangeChartCommand" };
+			"org.andrill.conop.data.cli.RunCommand", "io.conop.cli.AgentCommand", "io.conop.cli.TrackerCommand",
+			"org.andrill.conop.analysis.charts.RangeChartCommand",
+			"org.andrill.conop.analysis.charts.CrossPlotChartCommand" };
 
 	protected static void execute(final String name, final List<String> args) {
 		CliCommand cmd = null;

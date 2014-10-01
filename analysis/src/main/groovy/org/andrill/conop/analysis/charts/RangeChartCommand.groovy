@@ -1,5 +1,6 @@
-package org.andrill.conop.analysis
+package org.andrill.conop.analysis.charts
 
+import org.andrill.conop.analysis.Conop4jOutput
 import org.andrill.conop.core.cli.CliCommand
 
 class RangeChartCommand implements CliCommand {
@@ -7,7 +8,7 @@ class RangeChartCommand implements CliCommand {
 	@Override
 	void execute(List args) {
 		if (!args || args.size() < 2) {
-			println "Usage: range-chart <url> <file>"
+			println "Usage: range-chart <solution> <output>"
 			System.exit(0)
 		}
 
@@ -25,7 +26,7 @@ class RangeChartCommand implements CliCommand {
 
 	@Override
 	String getHelp() {
-		"""\trange-chart <url> <file> - renders a range chart of the specified solution to a file"""
+		"""\trange-chart <solution> <output> - renders a range chart of the specified solution to a file"""
 	}
 
 	@Override
