@@ -9,14 +9,18 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
 import org.andrill.conop.analysis.AnnotatedEvent;
 import org.andrill.conop.analysis.AnnotatedSolution;
 
+import com.google.common.collect.Maps;
+
 public class CrossPlotChart {
 	private static final int PADDING = 6;
+	protected int rowHeight = 10;
 
 	void build(final AnnotatedSolution solution1, final AnnotatedSolution solution2, final File file)
 			throws IOException {
@@ -31,7 +35,7 @@ public class CrossPlotChart {
 
 		// calculate metrics
 		FontMetrics metrics = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB).createGraphics().getFontMetrics();
-		int rowHeight = metrics.getHeight() + PADDING;
+		rowHeight = metrics.getHeight() + PADDING;
 		int labelWidth = metrics.stringWidth(longest) + PADDING;
 
 		// figure out size
@@ -52,8 +56,8 @@ public class CrossPlotChart {
 		// draw our horizontal hairlines
 		graphics.setColor(Color.lightGray);
 		graphics.setStroke(new BasicStroke(1.0f));
-		for (int j = 0; j < (solution1.getEvents().size() - 1); j++) {
-			graphics.translate(0, rowHeight);
+		for (int j = 10; j < solution1.getEvents().size(); j += 10) {
+			graphics.translate(0, 10 * rowHeight);
 			graphics.drawLine(0, 0, width, 0);
 		}
 
@@ -85,10 +89,48 @@ public class CrossPlotChart {
 			graphics.translate(0, rowHeight);
 			graphics.drawString(e.getName(), 0, 0);
 			graphics.translate(labelWidth + PADDING, -PADDING);
-			// drawEvents(e.getValue(), i, graphics);
+			drawHorizontalEvent(e, graphics);
 			graphics.translate(-labelWidth - PADDING, PADDING);
 		}
 
+		// draw the vertical events
+		Map<String, AnnotatedEvent> events = Maps.newHashMap();
+		for (AnnotatedEvent e : solution2.getEvents()) {
+			events.put(e.getName(), e);
+		}
+
+		graphics.setTransform(initial);
+		graphics.translate(labelWidth - PADDING, PADDING);
+
+		for (AnnotatedEvent e : solution1.getEvents()) {
+			graphics.translate(rowHeight, 0);
+			drawVerticalEvent(events.get(e.getName()), graphics);
+		}
+
 		ImageIO.write(image, "png", file);
+	}
+
+	protected void drawHorizontalEvent(final AnnotatedEvent e, final Graphics2D graphics) {
+		int min = (int) e.getAnnotation(AnnotatedEvent.MIN_POS, e.getAnnotation(AnnotatedEvent.POS, 0));
+		int max = (int) e.getAnnotation(AnnotatedEvent.MAX_POS, e.getAnnotation(AnnotatedEvent.POS, 0));
+		int pos = (int) e.getAnnotation(AnnotatedEvent.POS, 0);
+
+		graphics.setStroke(new BasicStroke(8));
+		graphics.setColor(new Color(0, 0, 0, 64));
+		graphics.drawLine(min * rowHeight, 0, ((max + 1) * rowHeight) - PADDING - 4, 0);
+		graphics.setColor(new Color(0, 0, 0, 128));
+		graphics.drawLine(pos * rowHeight, 0, ((pos + 1) * rowHeight) - PADDING - 4, 0);
+	}
+
+	protected void drawVerticalEvent(final AnnotatedEvent e, final Graphics2D graphics) {
+		int min = (int) e.getAnnotation(AnnotatedEvent.MIN_POS, e.getAnnotation(AnnotatedEvent.POS, 0));
+		int max = (int) e.getAnnotation(AnnotatedEvent.MAX_POS, e.getAnnotation(AnnotatedEvent.POS, 0));
+		int pos = (int) e.getAnnotation(AnnotatedEvent.POS, 0);
+
+		graphics.setStroke(new BasicStroke(8));
+		graphics.setColor(new Color(0, 0, 0, 64));
+		graphics.drawLine(0, min * rowHeight, 0, ((max + 1) * rowHeight) - PADDING - 4);
+		graphics.setColor(new Color(0, 0, 0, 128));
+		graphics.drawLine(0, pos * rowHeight, 0, ((pos + 1) * rowHeight) - PADDING - 4);
 	}
 }
